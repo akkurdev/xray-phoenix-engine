@@ -275,6 +275,8 @@
     <ClInclude Include="ai_sounds.h" />
     <ClInclude Include="ISoundRenderSource.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundEnvironment.h" />
+    <ClInclude Include="SoundEnvironmentLibrary.h" />
     <ClInclude Include="SoundRender.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
@@ -284,7 +286,6 @@
     <ClInclude Include="SoundRenderSource.h" />
     <ClInclude Include="ISoundRenderTarget.h" />
     <ClInclude Include="OalSoundRenderTarget.h" />
-    <ClInclude Include="SoundRender_Environment.h" />
     <ClInclude Include="SoundRenderCache.h" />
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +301,8 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="SoundEnvironment.cpp" />
+    <ClCompile Include="SoundEnvironmentLibrary.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -318,7 +321,6 @@
     <ClCompile Include="SoundRender_Emitter_streamer.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />
     <ClCompile Include="OalSoundRenderTarget.cpp" />
-    <ClCompile Include="SoundRender_Environment.cpp" />
     <ClCompile Include="SoundRenderCache.cpp" />
   </ItemGroup>
   <ItemGroup>
