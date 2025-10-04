@@ -178,10 +178,10 @@ public:
 //};
 
 /// definition (Sound Source)
-class XRSOUND_API CSound_environment
-{
-public:
-};
+//class XRSOUND_API CSound_environment
+//{
+//public:
+//};
 
 /// definition (Sound Params)
 class XRSOUND_API CSound_params

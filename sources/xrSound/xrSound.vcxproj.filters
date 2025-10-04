@@ -57,15 +57,18 @@
     <ClInclude Include="OalSoundRenderTarget.h">
       <Filter>Target</Filter>
     </ClInclude>
-    <ClInclude Include="SoundRender_Environment.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
     <ClInclude Include="SoundRenderCache.h">
       <Filter>Cache</Filter>
     </ClInclude>
     <ClInclude Include="ai_sounds.h" />
     <ClInclude Include="ISoundRenderSource.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEnvironment.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEnvironmentLibrary.h">
+      <Filter>Environment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,12 +117,15 @@
     <ClCompile Include="OalSoundRenderTarget.cpp">
       <Filter>Target</Filter>
     </ClCompile>
-    <ClCompile Include="SoundRender_Environment.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
     <ClCompile Include="SoundRenderCache.cpp">
       <Filter>Cache</Filter>
     </ClCompile>
     <ClCompile Include="ai_sounds.cpp" />
+    <ClCompile Include="SoundEnvironment.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEnvironmentLibrary.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

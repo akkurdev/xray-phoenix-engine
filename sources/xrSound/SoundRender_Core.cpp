@@ -27,6 +27,8 @@ CSound_manager_interface* Sound = 0;
 
 //////////////////////////////////////////////////
 #include <efx.h>
+#include <SoundEnvironment.h>
+#include <SoundEnvironmentLibrary.h>
 #define LOAD_PROC(x, type) ((x) = (type)alGetProcAddress(#x))
 static LPALEFFECTF alEffectf;
 static LPALEFFECTI alEffecti;
@@ -50,8 +52,8 @@ CSoundRender_Core::CSoundRender_Core()
     Handler = NULL;
     s_targets_pu = 0;
     s_emitters_u = 0;
-    e_current.set_identity();
-    e_target.set_identity();
+    e_current.SetIdentity();
+    e_target.SetIdentity();
     bListenerMoved = FALSE;
     bReady = FALSE;
     bLocked = FALSE;
@@ -137,16 +139,17 @@ void CSoundRender_Core::env_load()
 {
     // Load environment
     string_path fn;
+
     if (FS.exist(fn, "$game_data$", SNDENV_FILENAME))
     {
         Msg("Loading of [%s]", SNDENV_FILENAME);
 
-        s_environment = xr_new<SoundEnvironment_LIB>();
+        s_environment = xr_new<SoundEnvironmentLibrary>();
         s_environment->Load(fn);
 
         for (u32 chunk = 0; chunk < s_environment->Library().size(); chunk++)
         {
-            shared_str name = s_environment->Library()[chunk]->name;
+            shared_str name = s_environment->Library()[chunk]->Name();
 
             Msg("~ env id=[%d] name=[%s]", chunk, name.c_str());
         }
@@ -236,7 +239,7 @@ void CSoundRender_Core::set_geometry_env(IReader* I)
     {
         string256 n;
         names->r_stringZ(n, sizeof(n));
-        int id = s_environment->GetID(n);
+        int id = s_environment->GetEnvironmentId(n);
         R_ASSERT(id >= 0);
         s_environment_ids.push_back(u16(id));
         Msg("~ set_geometry_env id=%d name[%s]=environment id[%d]", s_environment_ids.size() - 1, n, id);
@@ -412,9 +415,9 @@ void CSoundRender_Core::_destroy_data(ref_sound_data& S)
     S.handle = NULL;
 }
 
-CSoundRender_Environment* CSoundRender_Core::get_environment(const Fvector& P)
+SoundEnvironment* CSoundRender_Core::get_environment(const Fvector& P)
 {
-    static CSoundRender_Environment identity;
+    static SoundEnvironment identity;
 
     if (geom_ENV)
     {
@@ -452,18 +455,18 @@ CSoundRender_Environment* CSoundRender_Core::get_environment(const Fvector& P)
             {
                 u16 id_front = (u16)((((u32)T->dummy) & 0x0000ffff) >> 0); //	front face
 
-                return s_environment->Get(s_environment_ids[id_front]);
+                return s_environment->GetById(s_environment_ids[id_front]);
             }
             else
             {
                 u16 id_back = (u16)((((u32)T->dummy) & 0xffff0000) >> 16); //	back face
 
-                return s_environment->Get(s_environment_ids[id_back]);
+                return s_environment->GetById(s_environment_ids[id_back]);
             }
         }
     }
 
-    identity.set_identity();
+    identity.SetIdentity();
     return &identity;
 }
 
@@ -535,27 +538,28 @@ bool CSoundRender_Core::EFXTestSupport()
 
 inline static float mB_to_gain(float mb) { return powf(10.0f, mb / 2000.0f); }
 
-void CSoundRender_Core::i_efx_listener_set(CSound_environment* _E)
+void CSoundRender_Core::i_efx_listener_set(SoundEnvironment* _E)
 {
-    const auto E = static_cast<CSoundRender_Environment*>(_E);
+    const auto E = static_cast<SoundEnvironment*>(_E);
 
     // http://openal.org/pipermail/openal/2014-March/000083.html
-    float density = powf(E->EnvironmentSize, 3.0f) / 16.0f;
+    float density = powf(E->EnvironmentSize(), 3.0f) / 16.0f;
+
     if (density > 1.0f)
         density = 1.0f;
 
     alEffectf(effect, AL_REVERB_DENSITY, density);
-    alEffectf(effect, AL_REVERB_DIFFUSION, E->EnvironmentDiffusion);
-    alEffectf(effect, AL_REVERB_GAIN, mB_to_gain(E->Room));
-    alEffectf(effect, AL_REVERB_GAINHF, mB_to_gain(E->RoomHF));
-    alEffectf(effect, AL_REVERB_DECAY_TIME, E->DecayTime);
-    alEffectf(effect, AL_REVERB_DECAY_HFRATIO, E->DecayHFRatio);
-    alEffectf(effect, AL_REVERB_REFLECTIONS_GAIN, mB_to_gain(E->Reflections));
-    alEffectf(effect, AL_REVERB_REFLECTIONS_DELAY, E->ReflectionsDelay);
-    alEffectf(effect, AL_REVERB_LATE_REVERB_DELAY, E->ReverbDelay);
-    alEffectf(effect, AL_REVERB_LATE_REVERB_GAIN, mB_to_gain(E->Reverb));
-    alEffectf(effect, AL_REVERB_AIR_ABSORPTION_GAINHF, mB_to_gain(E->AirAbsorptionHF));
-    alEffectf(effect, AL_REVERB_ROOM_ROLLOFF_FACTOR, E->RoomRolloffFactor);
+    alEffectf(effect, AL_REVERB_DIFFUSION, E->EnvironmentDiffusionFactor());
+    alEffectf(effect, AL_REVERB_GAIN, mB_to_gain(E->RoomEffectFactor()));
+    alEffectf(effect, AL_REVERB_GAINHF, mB_to_gain(E->RoomEffectHighFactor()));
+    alEffectf(effect, AL_REVERB_DECAY_TIME, E->DecayTimeFactor());
+    alEffectf(effect, AL_REVERB_DECAY_HFRATIO, E->DecayHighFrequencyFactor());
+    alEffectf(effect, AL_REVERB_REFLECTIONS_GAIN, mB_to_gain(E->ReflectionFactor()));
+    alEffectf(effect, AL_REVERB_REFLECTIONS_DELAY, E->ReflectionDelayFactor());
+    alEffectf(effect, AL_REVERB_LATE_REVERB_DELAY, E->ReverberationDelayFactor());
+    alEffectf(effect, AL_REVERB_LATE_REVERB_GAIN, mB_to_gain(E->ReverberationFactor()));
+    alEffectf(effect, AL_REVERB_AIR_ABSORPTION_GAINHF, mB_to_gain(E->AirAbsorptionFactor()));
+    alEffectf(effect, AL_REVERB_ROOM_ROLLOFF_FACTOR, E->RoomRollOffFactor());
 }
 
 bool CSoundRender_Core::i_efx_commit_setting()
@@ -577,24 +581,25 @@ bool CSoundRender_Core::i_efx_commit_setting()
 }
 //////////////////////////////////////////////////
 
-void CSoundRender_Core::i_eax_listener_set(CSound_environment* _E)
+void CSoundRender_Core::i_eax_listener_set(SoundEnvironment* _E)
 {
     VERIFY(bEAX);
-    CSoundRender_Environment* E = static_cast<CSoundRender_Environment*>(_E);
+    SoundEnvironment* E = static_cast<SoundEnvironment*>(_E);
+
     EAXLISTENERPROPERTIES ep;
-    ep.lRoom = iFloor(E->Room); // room effect level at low frequencies
-    ep.lRoomHF = iFloor(E->RoomHF); // room effect high-frequency level re. low frequency level
-    ep.flRoomRolloffFactor = E->RoomRolloffFactor; // like DS3D flRolloffFactor but for room effect
-    ep.flDecayTime = E->DecayTime; // reverberation decay time at low frequencies
-    ep.flDecayHFRatio = E->DecayHFRatio; // high-frequency to low-frequency decay time ratio
-    ep.lReflections = iFloor(E->Reflections); // early reflections level relative to room effect
-    ep.flReflectionsDelay = E->ReflectionsDelay; // initial reflection delay time
-    ep.lReverb = iFloor(E->Reverb); // late reverberation level relative to room effect
-    ep.flReverbDelay = E->ReverbDelay; // late reverberation delay time relative to initial reflection
+    ep.lRoom = iFloor(E->RoomEffectFactor()); // room effect level at low frequencies
+    ep.lRoomHF = iFloor(E->RoomEffectHighFactor()); // room effect high-frequency level re. low frequency level
+    ep.flRoomRolloffFactor = E->RoomRollOffFactor(); // like DS3D flRolloffFactor but for room effect
+    ep.flDecayTime = E->DecayTimeFactor(); // reverberation decay time at low frequencies
+    ep.flDecayHFRatio = E->DecayHighFrequencyFactor(); // high-frequency to low-frequency decay time ratio
+    ep.lReflections = iFloor(E->ReflectionFactor()); // early reflections level relative to room effect
+    ep.flReflectionsDelay = E->ReflectionDelayFactor(); // initial reflection delay time
+    ep.lReverb = iFloor(E->ReverberationFactor()); // late reverberation level relative to room effect
+    ep.flReverbDelay = E->ReverberationDelayFactor(); // late reverberation delay time relative to initial reflection
     ep.dwEnvironment = EAXLISTENER_DEFAULTENVIRONMENT; // sets all listener properties
-    ep.flEnvironmentSize = E->EnvironmentSize; // environment size in meters
-    ep.flEnvironmentDiffusion = E->EnvironmentDiffusion; // environment diffusion
-    ep.flAirAbsorptionHF = E->AirAbsorptionHF; // change in level per meter at 5 kHz
+    ep.flEnvironmentSize = E->EnvironmentSize(); // environment size in meters
+    ep.flEnvironmentDiffusion = E->EnvironmentDiffusionFactor(); // environment diffusion
+    ep.flAirAbsorptionHF = E->AirAbsorptionFactor(); // change in level per meter at 5 kHz
     ep.dwFlags = EAXLISTENER_DEFAULTFLAGS; // modifies the behavior of properties
 
     u32 deferred = bDeferredEAX ? DSPROPERTY_EAXLISTENER_DEFERRED : 0;

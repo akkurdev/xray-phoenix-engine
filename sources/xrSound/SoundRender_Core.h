@@ -1,12 +1,10 @@
 #pragma once
-
 #include <al.h>
 #include <efx-presets.h>
-
 #include "SoundRender.h"
-#include "SoundRender_Environment.h"
 #include "SoundRenderCache.h"
 #include "ISoundrenderTarget.h"
+#include <SoundEnvironmentLibrary.h>
 
 class CSoundRender_Core : public CSound_manager_interface
 {
@@ -19,8 +17,8 @@ protected:
 protected:
     BOOL bListenerMoved;
 
-    CSoundRender_Environment e_current;
-    CSoundRender_Environment e_target;
+    SoundEnvironment e_current;
+    SoundEnvironment e_target;
 
 public:
     typedef std::pair<ref_sound_data_ptr, float> event;
@@ -52,7 +50,7 @@ protected:
     xr_vector<ISoundRenderTarget*> s_targets;
     xr_vector<ISoundRenderTarget*> s_targets_defer;
     u32 s_targets_pu; // parameters update
-    SoundEnvironment_LIB* s_environment;
+    SoundEnvironmentLibrary* s_environment;
     xr_vector<u16> s_environment_ids;
 
     int m_iPauseCounter;
@@ -102,11 +100,11 @@ public:
     virtual void update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) = 0;
 
     // eax listener
-    void i_eax_listener_set(CSound_environment* E);
+    void i_eax_listener_set(SoundEnvironment* E);
     void i_eax_commit_setting();
 
     // efx listener
-    void i_efx_listener_set(CSound_environment* E);
+    void i_efx_listener_set(SoundEnvironment* E);
     bool i_efx_commit_setting();
 
 public:
@@ -123,7 +121,7 @@ public:
 
     virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
     float get_occlusion(Fvector& P, float R, Fvector* occ);
-    CSoundRender_Environment* get_environment(const Fvector& P);
+    SoundEnvironment* get_environment(const Fvector& P);
 
     void env_load();
     void env_unload();
