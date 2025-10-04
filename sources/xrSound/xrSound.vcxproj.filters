@@ -60,7 +60,7 @@
     <ClInclude Include="SoundRender_Environment.h">
       <Filter>Environment</Filter>
     </ClInclude>
-    <ClInclude Include="SoundRender_Cache.h">
+    <ClInclude Include="SoundRenderCache.h">
       <Filter>Cache</Filter>
     </ClInclude>
     <ClInclude Include="ai_sounds.h" />
@@ -117,7 +117,7 @@
     <ClCompile Include="SoundRender_Environment.cpp">
       <Filter>Environment</Filter>
     </ClCompile>
-    <ClCompile Include="SoundRender_Cache.cpp">
+    <ClCompile Include="SoundRenderCache.cpp">
       <Filter>Cache</Filter>
     </ClCompile>
     <ClCompile Include="ai_sounds.cpp" />

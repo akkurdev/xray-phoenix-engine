@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "Sound.h"
-#include "SoundRender_Cache.h"
+#include "SoundRenderCache.h"
 
 __interface XRSOUND_API ISoundRenderSource
 {
