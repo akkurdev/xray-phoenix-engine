@@ -92,7 +92,7 @@ void CSoundRender_Core::_initialize(int stage)
 
     // Cache
     cache_bytes_per_line = (sdef_target_block / 8) * 276400 / 1000;
-    cache.initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
+    cache.Initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
 
     bReady = TRUE;
 }
@@ -101,7 +101,7 @@ extern xr_vector<u8> g_target_temp_data;
 void CSoundRender_Core::_clear()
 {
     bReady = FALSE;
-    cache.destroy();
+    cache.Destroy();
     env_unload();
 
     // remove sources
@@ -170,8 +170,8 @@ void CSoundRender_Core::env_unload()
 
 void CSoundRender_Core::_restart()
 {
-    cache.destroy();
-    cache.initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
+    cache.Destroy();
+    cache.Initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
     env_apply();
 }
 

@@ -5,7 +5,7 @@
 
 #include "SoundRender.h"
 #include "SoundRender_Environment.h"
-#include "SoundRender_Cache.h"
+#include "SoundRenderCache.h"
 #include "ISoundrenderTarget.h"
 
 class CSoundRender_Core : public CSound_manager_interface
@@ -59,7 +59,7 @@ protected:
 
 public:
     // Cache
-    CSoundRender_Cache cache;
+    SoundRenderCache cache;
     u32 cache_bytes_per_line{};
 
 protected:

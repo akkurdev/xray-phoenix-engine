@@ -174,10 +174,10 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
                 dest->_rendered++;
         }
         dest->_simulated = s_emitters.size();
-        dest->_cache_hits = cache._stat_hit;
-        dest->_cache_misses = cache._stat_miss;
+        dest->_cache_hits = cache.StatsHits();
+        dest->_cache_misses = cache.StatsMiss();
         dest->_events = g_saved_event_count;
-        cache.stats_clear();
+        cache.ClearStatistic();
     }
     if (ext)
     {

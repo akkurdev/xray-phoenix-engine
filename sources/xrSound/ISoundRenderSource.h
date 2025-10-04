@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "Sound.h"
+#include "SoundRenderCache.h"
 
 __interface XRSOUND_API ISoundRenderSource
 {
@@ -17,5 +18,5 @@ __interface XRSOUND_API ISoundRenderSource
     uint32_t Type() const;
     uint32_t BytesCount() const;
     WAVEFORMATEX Format() const;
-    cache_cat* Cache() const;
+    CacheTable* Cache() const;
 };

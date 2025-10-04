@@ -1,5 +1,5 @@
 #pragma once
-#include "SoundRender_Cache.h"
+#include "SoundRenderCache.h"
 #include "ISoundRenderSource.h" 
 
 class SoundRenderSource final : public ISoundRenderSource
@@ -22,7 +22,7 @@ public:
     virtual uint32_t BytesCount() const;
 
     virtual WAVEFORMATEX Format() const;
-    virtual cache_cat* Cache() const;
+    virtual CacheTable* Cache() const;
 
 private:
     void PrepareFile(const char* fileName);
@@ -38,7 +38,7 @@ private:
     uint32_t m_gameType;
     uint32_t m_bytesCount;
 
-    cache_cat* m_cache;
+    CacheTable* m_cache;
     shared_str m_fileName;
     WAVEFORMATEX m_format;
 };

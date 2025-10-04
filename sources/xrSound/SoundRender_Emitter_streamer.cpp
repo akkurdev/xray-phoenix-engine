@@ -6,7 +6,7 @@
 
 void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
 {
-    u32 line_size = SoundRender->cache.get_linesize();
+    u32 line_size = SoundRender->cache.LineSize();
     u32 line = offset / line_size;
 
     // prepare for first line (it can be unaligned)
@@ -16,14 +16,14 @@ void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
     while (size)
     {
         // cache access
-        if (SoundRender->cache.request(*source()->Cache(), line))
+        if (SoundRender->cache.Request(*source()->Cache(), line))
         {
             source()->Decompress(line, target->OggFile());
         }
 
         // fill block
         u32 blk_size = _min(size, line_amount);
-        u8* ptr = (u8*)SoundRender->cache.get_dataptr(*source()->Cache(), line);
+        u8* ptr = (u8*)SoundRender->cache.GetDataById(*source()->Cache(), line);
         CopyMemory(_dest, ptr + line_offs, blk_size);
 
         // advance
