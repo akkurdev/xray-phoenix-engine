@@ -1,7 +1,6 @@
 #include "stdafx.h"
-
 #include "SoundRender_Core.h"
-#include "SoundRender_Source.h"
+#include "SoundRenderSource.h"
 
 ISoundRenderSource* CSoundRender_Core::i_create_source(LPCSTR name)
 {

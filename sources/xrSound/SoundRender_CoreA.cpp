@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "soundrender_coreA.h"
-#include "DefaultSoundRenderTarget.h"
+#include "OalSoundRenderTarget.h"
 
 CSoundRender_CoreA* SoundRenderA = 0;
 

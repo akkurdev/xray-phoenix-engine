@@ -281,9 +281,9 @@
     <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="SoundRender_CoreA.h" />
     <ClInclude Include="SoundRender_Emitter.h" />
-    <ClInclude Include="SoundRender_Source.h" />
+    <ClInclude Include="SoundRenderSource.h" />
     <ClInclude Include="ISoundRenderTarget.h" />
-    <ClInclude Include="DefaultSoundRenderTarget.h" />
+    <ClInclude Include="OalSoundRenderTarget.h" />
     <ClInclude Include="SoundRender_Environment.h" />
     <ClInclude Include="SoundRenderCache.h" />
   </ItemGroup>
@@ -316,8 +316,8 @@
     <ClCompile Include="SoundRender_Emitter_FSM.cpp" />
     <ClCompile Include="SoundRender_Emitter_StartStop.cpp" />
     <ClCompile Include="SoundRender_Emitter_streamer.cpp" />
-    <ClCompile Include="SoundRender_Source.cpp" />
-    <ClCompile Include="DefaultSoundRenderTarget.cpp" />
+    <ClCompile Include="SoundRenderSource.cpp" />
+    <ClCompile Include="OalSoundRenderTarget.cpp" />
     <ClCompile Include="SoundRender_Environment.cpp" />
     <ClCompile Include="SoundRenderCache.cpp" />
   </ItemGroup>

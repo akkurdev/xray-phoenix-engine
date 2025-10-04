@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "SoundRender_Core.h"
-#include "SoundRender_Source.h"
+#include "SoundRenderSource.h"
 #include "SoundRender_Emitter.h"
-#include "DefaultSoundRenderTarget.h"
+#include "OalSoundRenderTarget.h"
 
 void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
 {

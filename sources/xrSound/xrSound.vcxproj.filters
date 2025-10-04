@@ -48,13 +48,13 @@
     <ClInclude Include="SoundRender_Emitter.h">
       <Filter>Emitter</Filter>
     </ClInclude>
-    <ClInclude Include="SoundRender_Source.h">
+    <ClInclude Include="SoundRenderSource.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="ISoundRenderTarget.h">
       <Filter>Target</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultSoundRenderTarget.h">
+    <ClInclude Include="OalSoundRenderTarget.h">
       <Filter>Target</Filter>
     </ClInclude>
     <ClInclude Include="SoundRender_Environment.h">
@@ -108,10 +108,10 @@
     <ClCompile Include="SoundRender_Emitter_streamer.cpp">
       <Filter>Emitter</Filter>
     </ClCompile>
-    <ClCompile Include="SoundRender_Source.cpp">
+    <ClCompile Include="SoundRenderSource.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="DefaultSoundRenderTarget.cpp">
+    <ClCompile Include="OalSoundRenderTarget.cpp">
       <Filter>Target</Filter>
     </ClCompile>
     <ClCompile Include="SoundRender_Environment.cpp">

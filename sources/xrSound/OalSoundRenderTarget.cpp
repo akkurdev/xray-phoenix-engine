@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "DefaultSoundRenderTarget.h"
+#include "OalSoundRenderTarget.h"
 #include "soundrender_emitter.h"
-#include "soundrender_source.h"
+#include "SoundRenderSource.h"
 #include "soundrender_core.h"
 #include <efx.h>
 

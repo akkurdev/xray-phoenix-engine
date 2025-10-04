@@ -1,8 +1,7 @@
 #include "stdafx.h"
-
 #include "SoundRender_Emitter.h"
 #include "SoundRender_Core.h"
-#include "SoundRender_Source.h"
+#include "SoundRenderSource.h"
 
 XRSOUND_API extern float psSoundCull;
 constexpr float TIME_TO_STOP_INFINITE = static_cast<float>(0xffffffff);

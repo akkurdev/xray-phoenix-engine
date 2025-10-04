@@ -1,8 +1,7 @@
 #include "stdafx.h"
-
 #include "SoundRender_Core.h"
 #include "SoundRender_Emitter.h"
-#include "SoundRender_Source.h"
+#include "SoundRenderSource.h"
 
 void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
 {
