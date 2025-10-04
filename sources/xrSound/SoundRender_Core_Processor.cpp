@@ -2,8 +2,8 @@
 #include "../xrcdb/cl_intersect.h"
 #include "SoundRender_Core.h"
 #include "SoundRender_Emitter.h"
-#include "DefaultSoundRenderTarget.h"
-#include "SoundRender_Source.h"
+#include "OalSoundRenderTarget.h"
+#include "SoundRenderSource.h"
 
 CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
 {

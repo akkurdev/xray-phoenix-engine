@@ -1,9 +1,8 @@
 #include "stdafx.h"
-
 #include "soundrender_emitter.h"
 #include "soundrender_core.h"
-#include "soundrender_source.h"
-#include "DefaultSoundRenderTarget.h"
+#include "SoundRenderSource.h"
+#include "OalSoundRenderTarget.h"
 
 extern u32 psSoundModel;
 extern float psSoundVEffects;
@@ -119,7 +118,7 @@ u32 CSoundRender_Emitter::play_time()
         return 0;
 }
 
-#include "SoundRender_Source.h"
+
 void CSoundRender_Emitter::set_cursor(u32 p)
 {
     m_stream_cursor = p;

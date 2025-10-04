@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "SoundRender_Core.h"
 #include "SoundRender_Emitter.h"
-#include "DefaultSoundRenderTarget.h"
-#include "SoundRender_Source.h"
+#include "OalSoundRenderTarget.h"
+#include "SoundRenderSource.h"
 
 void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
 {

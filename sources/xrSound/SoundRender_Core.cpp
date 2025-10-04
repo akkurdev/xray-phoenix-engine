@@ -1,9 +1,8 @@
 #include "stdafx.h"
-
 #include "../xr_3da/xrLevel.h"
 #include "soundrender_core.h"
-#include "soundrender_source.h"
-#include "soundrender_emitter.h"
+#include "SoundRenderSource.h"
+#include "SoundRender_emitter.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4995)

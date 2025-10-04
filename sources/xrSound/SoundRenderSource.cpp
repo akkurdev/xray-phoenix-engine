@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "soundrender_core.h"
-#include "soundrender_source.h"
+#include "SoundRenderSource.h"
 
 int ov_seek_func(void* dataSource, s64 offset, int whence)
 {
