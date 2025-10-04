@@ -43,9 +43,9 @@ SoundRenderSource::SoundRenderSource() :
     m_length(0.f),
     m_bytesCount(0)    
 {
-    m_cache = xr_new<cache_cat>();
-    m_cache->size = 0;
-    m_cache->table = nullptr;
+    m_cache = xr_new<CacheTable>();
+    m_cache->Size = 0;
+    m_cache->Lines = nullptr;
 
     m_format = WAVEFORMATEX{};
 }
@@ -80,12 +80,12 @@ void SoundRenderSource::Load(const char* fileName)
     ov_clear(&oggFile);
     FS.r_close(reader);
 
-    SoundRender->cache.cat_create(*m_cache, m_bytesCount);
+    SoundRender->cache.CreateTable(*m_cache, m_bytesCount);
 }
 
 void SoundRenderSource::Unload()
 {
-    SoundRender->cache.cat_destroy(*m_cache);
+    SoundRender->cache.DestroyTable(*m_cache);
     m_length = 0.0f;
     m_bytesCount = 0;
 }
@@ -95,8 +95,8 @@ void SoundRenderSource::Decompress(uint32_t lineNumber, OggVorbis_File* oggFile)
     VERIFY(oggFile);
 
     // decompression of one cache-line
-    uint32_t lineSize = SoundRender->cache.get_linesize();
-    char* cachePosition = (char*)SoundRender->cache.get_dataptr(*m_cache, lineNumber);
+    uint32_t lineSize = SoundRender->cache.LineSize();
+    char* cachePosition = (char*)SoundRender->cache.GetDataById(*m_cache, lineNumber);
     uint32_t bufferOffset = (lineNumber * lineSize) / 2 / m_format.nChannels;
 
     uint32_t leftPosition = m_bytesCount - bufferOffset;
@@ -173,7 +173,7 @@ WAVEFORMATEX SoundRenderSource::Format() const
     return m_format;
 }
 
-cache_cat* SoundRenderSource::Cache() const
+CacheTable* SoundRenderSource::Cache() const
 {
     return m_cache;
 }

@@ -59,7 +59,7 @@ protected:
 
 public:
     // Cache
-    CSoundRender_Cache cache;
+    SoundRenderCache cache;
     u32 cache_bytes_per_line{};
 
 protected:
