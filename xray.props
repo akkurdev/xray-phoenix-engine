@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <XrPlatform Condition="'$(Platform)'=='Win32'">x86</XrPlatform>
+    <XrPlatform Condition="'$(Platform)'=='x86'">x86</XrPlatform>
+    <XrPlatform Condition="'$(Platform)'=='x64'">x64</XrPlatform>
+    <XrPlatform Condition="'$(XrPlatform)'==''">$(Platform)</XrPlatform>
+    
+    <XrBinaries>$(SolutionDir)binaries\$(Configuration)\</XrBinaries>
+    <XrInterm>$(SolutionDir)intermediate\temp\$(XrPlatform)\$(Configuration)\</XrInterm>
+    <XrLibraries>$(SolutionDir)intermediate\lib\$(Configuration)\</XrLibraries>
+    <XrExternals>$(SolutionDir)externals\</XrExternals>
+    <XrSdk>$(SolutionDir)resources\sdk\</XrSdk>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="OutputDirectories">
+    <OutDir Condition="'$(ConfigurationType)'=='Application'"   >$(XrBinaries)</OutDir>
+    <OutDir Condition="'$(ConfigurationType)'=='DynamicLibrary'">$(XrBinaries)</OutDir>
+    <OutDir Condition="'$(ConfigurationType)'=='StaticLibrary'" >$(XrLibraries)</OutDir>
+    <IntDir>$(XrInterm)$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        $(ProjectDir);
+        $(SolutionDir);
+        $(SolutionDir)sources;
+        $(XrExternals);
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>
+        $(XrLibraries);
+        $(XrSdk);
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <ImportLibrary>$(XrLibraries)\$(ProjectName).lib</ImportLibrary>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+        $(XrLibraries);
+        $(XrSdk);
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <OutputFile>$(XrLibraries)\$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>  
+  
+</Project>

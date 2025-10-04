@@ -1,0 +1,822 @@
+----------------------------------------------------------------------------------------------------
+-- Physic vehicle control
+----------------------------------------------------------------------------------------------------
+-- Исходный скрипт: Evgeniy Negrobov (Jon) jon@gsc-game.kiev.ua
+-- Перевод на xr_logic: Andrey Fidrya (Zmey) af@svitonline.com
+-- Доработка для БТР: Oleg Kreptul (Haron) haronk@ukr.net
+----------------------------------------------------------------------------------------------------
+
+local pi_2 = math.pi / 3 -- 60 degree
+
+local def_min_delta_per_sec = 0.2
+local def_min_car_explode_time = 1000
+local def_moving_speed = 10
+local def_arriving_dist = 1.0
+local def_not_rotating_angle = 0.4
+local def_min_fire_time = 0
+local def_update_time = 1.6
+local def_fire_range = 50
+
+local def_max_fc_upd_num = 1000 -- default maximum fastcall updates num
+local def_arriving_koef = 3 --70
+
+local delay_after_ignition = 500
+
+-- Флаги для эмуляции реалистичного использования КПВТ 
+-- (стрельба короткими очередями, время на переприцеливание наводчиком, перезарядка)
+local kpvt_mag_size = 50
+local kpvt_reload_timeout = 20000
+local kpvt_min_queue_size = 2
+local kpvt_max_queue_size = 7
+local kpvt_min_aim_timeout = 1000
+local kpvt_max_aim_timeout = 5000
+
+local state_none = 0
+
+local state_moving_fwd = 1
+local state_moving_rot_left = 2
+local state_moving_rot_right = 3
+local state_moving_stop = 4
+local state_moving_end = 5
+
+local state_cannon_rotate = 1
+local state_cannon_follow = 2
+local state_cannon_delay = 3
+local state_cannon_stop = 4
+
+local state_shooting_off = 0
+local state_shooting_on = 1
+local state_shooting_aim = 2
+local state_shooting_reload = 3
+
+--local state_firetarget_points = 1
+local state_firetarget_enemy = 1
+
+function angle_xz(npc, target_pos)
+  local dir1 = npc:direction()
+  dir1.y = 0
+  local dir2 = utils.vector_copy_by_val(target_pos):sub(npc:position())
+  dir2.y = 0
+  local dp = dir1:dotproduct(dir2)
+  if dp < 0 then
+      return math.pi - yaw(dir1, dir2)
+  end
+  return yaw(dir1, dir2)
+end
+
+----------------------------------------------------------------
+-- МЕНЕДЖЕР МАШИНЫ ---------------------------------------------
+----------------------------------------------------------------
+
+class "vehicle_manager"
+
+-------------------
+
+-- Конструктор
+function vehicle_manager:__init(obj, storage)
+  self.object = obj
+  self.car = self.object:get_car()
+  self.st = storage
+end
+
+-------------------
+
+-- Сброс схемы на значения по умолчанию
+function vehicle_manager:reset_scheme(loading)
+  self.destroyed = false
+  self.object:set_nonscript_usable(false)
+  self.object:set_tip_text("")
+
+  if self.st.invulnerable then
+    self.def_health = self.object.health
+  end
+
+  self.usable = self.st.usable
+    
+  if self.usable == nil then
+    self.car:SetExplodeTime(0) -- (-1)
+
+    if self.car:HasWeapon() then
+      self.car:Action(CCar.eWpnActivate,1)
+      self.hasWeapon = true
+    else
+      self.hasWeapon = false
+    end
+
+    if loading then
+      self.speed = xr_logic.pstor_retrieve(self.object, "speed")
+      self.loop = xr_logic.pstor_retrieve(self.object, "loop")
+      self.min_delta_per_sec = xr_logic.pstor_retrieve(self.object, "min_delta_per_sec")
+      self.min_car_explode_time = xr_logic.pstor_retrieve(self.object, "min_car_explode_time")
+      self.state_moving = xr_logic.pstor_retrieve(self.object, "state_moving")
+    else
+      self.speed = def_moving_speed
+      self.loop = false
+      self.min_delta_per_sec = def_min_delta_per_sec
+      self.min_car_explode_time = def_min_car_explode_time
+      self.state_moving = state_none
+    end
+
+    self.st.signals = {}
+    self.fc_upd_num = 0 -- fastcall updates num
+    self.fc_upd_avg = 10 -- average time of the fastcall updates (in millisecond)
+    self.fc_last_upd_tm = -1 -- fastcall last update time    
+    self.last_pos = nil
+    self.last_pos_time = 0      
+    self.state_delaying = false
+    self.target_walk_pt = -1
+
+    if self.st.path_walk then
+      self.path_walk = patrol(self.st.path_walk)
+      
+      if not self.path_walk then
+        abort("object '%s': unable to find path_walk '%s' on the map", self.object:name(), self.st.path_walk)
+      end
+
+      self:start_car()
+      self.path_walk_count = self.path_walk:count()
+      self.path_walk_info = utils.path_parse_waypoints(self.st.path_walk)
+      
+      if not self.path_walk_info then
+        abort("object '%s': path_walk ('%s'): unable to obtain path_walk_info from path",
+        self.object:name(), self.st.path_walk)
+      end
+
+      self.arrival_signalled = false
+      self.target_dist = -1
+
+      if loading then
+        self.target_walk_pt = xr_logic.pstor_retrieve(self.object, "target_walk_pt")        
+        if self.target_walk_pt == -1 then
+          self.target_walk_pt = self:get_nearest_walkpoint()
+        end
+      else
+        self.target_walk_pt = self:get_nearest_walkpoint()
+      end
+
+      if self:at_target_walkpoint() then
+        self:walk_arrival_callback(self.target_walk_pt)
+      end
+        
+      self:go_to_walkpoint(self.target_walk_pt)
+    else
+      self.target_walk_pt = -2
+      self.state_moving = state_moving_stop
+    end
+    
+    self.state_firetarget = state_none
+    self.state_cannon = state_none
+    self.state_shooting = state_shooting_off
+    
+    local rpm = utils.cfg_get_number(system_ini(), "stationary_mgun", "rpm", npc, 400)
+    self.shot_time = 60000.0 / rpm
+    self.mag_size_count = kpvt_mag_size
+    self.shoot_timeout = 0
+    self.aim_timeout = 0
+    self.reload_timeout = 0
+    self.shooting_enabled = false
+    self.tracking_enabled = true
+    
+    self.target_fire_pt = nil
+    self.target_obj = nil
+    
+    self.on_target_vis = nil
+    self.on_target_nvis = nil
+
+    if self.hasWeapon then
+      local n = 0
+      
+      if self.st.fire_target == "actor" and db.actor:alive() then
+        self.target_obj = db.actor
+        self.state_firetarget = state_firetarget_enemy
+      else
+        n = tonumber(self.st.fire_target)
+        if n then
+          obj = level_object_by_sid(n)
+          if obj and obj:alive() then
+            self.target_obj = obj
+            self.state_firetarget = state_firetarget_enemy
+          end
+        end
+      end
+        
+      self.fire_track_target = self.st.fire_track_target
+
+      if self.st.on_target_vis then
+        vis = self.st.on_target_vis
+        if vis.v1 == "actor" then
+          vis.v1 = db.actor
+          self.on_target_vis = vis
+        else
+          n = tonumber(vis.v1)
+          if n then
+            obj = level_object_by_sid(n)
+            if obj and obj:alive() then
+              vis.v1 = obj
+              self.on_target_vis = vis
+            end
+          end
+        end
+      end
+      
+      if self.st.on_target_nvis then
+        nvis = self.st.on_target_nvis
+        if nvis.v1 == "actor" then
+          nvis.v1 = db.actor
+          self.on_target_nvis = nvis
+        else
+          n = tonumber(nvis.v1)
+          if n then
+            obj = level_object_by_sid(n)
+            if obj and obj:alive() then
+              nvis.v1 = obj
+              self.on_target_nvis = nvis
+            end
+          end
+        end
+      end
+                
+      self.fire_range_sqr = self.st.fire_range * self.st.fire_range
+            
+      if self.state_firetarget == state_firetarget_enemy then        
+        self.state_cannon = state_cannon_follow
+      else
+        self.state_firetarget = state_none
+        self.state_cannon = state_none
+      end
+      
+      --self.shooting_enabled = false
+    end
+  end
+
+  self.object:set_fastcall(self.fastcall, self)
+end
+
+-------------------
+
+-- Сохранение статуса машины
+function vehicle_manager:save()
+  if self.usable == nil then
+    xr_logic.pstor_store(self.object, "speed", self.speed)
+    xr_logic.pstor_store(self.object, "loop", self.loop)
+    xr_logic.pstor_store(self.object, "min_delta_per_sec", self.min_delta_per_sec)
+    xr_logic.pstor_store(self.object, "min_car_explode_time", self.min_car_explode_time)
+    xr_logic.pstor_store(self.object, "state_moving", self.state_moving)
+    xr_logic.pstor_store(self.object, "target_walk_pt", self.target_walk_pt) -- or -2)
+  end
+end
+
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+--++++++++++++++++++++-- MOVE SECTION --++++++++++++++++++++--
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+
+-- Получение ближайшей точки пути
+function vehicle_manager:get_nearest_walkpoint()
+  return utils.get_nearest_waypoint(self.object, self.st.path_walk, self.path_walk, self.path_walk_count)
+end
+
+-------------------
+
+-- Получение следующей точки пути
+function vehicle_manager:get_next_walkpoint()
+  if self.target_walk_pt >= 0 and self.target_walk_pt < self.path_walk_count - 1 then
+    return self.target_walk_pt + 1
+  elseif self.target_walk_pt == -1 or self.loop then
+    return 0
+  end
+  return -2
+end
+
+-------------------
+
+-- Находится ли машина в текущий момент на точке пути
+function vehicle_manager:at_target_walkpoint()
+  if self.target_walk_pt == -2 then 
+    return true 
+  end
+
+  local curVel = self.car:CurrentVel():magnitude()
+  local dist = self.object:position():distance_to(self.path_walk:point(self.target_walk_pt))
+  local arrived = false --2000 * dist < def_arriving_koef * self.fc_upd_avg * (curVel + self.speed)
+  
+  if self.fc_upd_avg < 100 then
+    arrived = 2000 * dist < def_arriving_koef * self.fc_upd_avg * (curVel + self.speed)
+  end
+  
+  if not arrived then
+    local diff_angle = angle_xz(self.object, self.path_walk:point(self.target_walk_pt))
+    arrived = dist < 2 or diff_angle >= math.pi
+  end
+  
+  local diff = dist - self.target_dist
+  
+  if self.target_dist ~= -1 and not arrived then
+    if diff > 0 then
+      if diff > def_arriving_dist then
+        arrived = true
+      end
+    else
+      self.target_dist = dist
+    end
+  else
+    self.target_dist = dist
+  end
+
+  if arrived then
+    self.target_dist = -1
+  end
+  
+  return arrived
+end
+
+-------------------
+
+-- Отправка машины на точку пути
+function vehicle_manager:go_to_walkpoint(pt)
+  if self.state_delaying then
+    if time_global() - self.delay_time_start >= delay_after_ignition then
+      self.state_delaying = false
+    else
+      self.state_moving = state_moving_stop
+      return
+    end
+  end
+
+  if pt == nil or pt < 0 then
+    if self.state_cannon ~= state_cannon_stop then
+      self:stop_car()
+      self.state_moving = state_moving_end
+    end
+    return
+  end
+
+  local diff_angle = angle_xz(self.object, self.path_walk:point(pt))
+  local accel = move.none
+  local curVel = self.car:CurrentVel():magnitude()
+
+  if curVel < self.speed then
+    accel = move.fwd
+  elseif curVel > self.speed * 1.15 or diff_angle >= math.pi then
+    accel = move.back
+  end
+
+  if diff_angle < def_not_rotating_angle then
+    if self.state_moving ~= state_moving_fwd and accel ~= move.none then
+       xr_logic.mob_capture(self.object, true)
+      action(self.object,  move(accel, self.speed), cond(cond.time_end, time_infinite)) --self.fc_upd_avg))
+      self.state_moving = state_moving_fwd
+    end
+  else
+    -- Поворачиваться нужно, но в какую сторону?
+    local rotate_left = utils.angle_left_xz(self.object:direction(), utils.vector_copy_by_val(self.path_walk:point(pt)):sub(self.object:position()))
+
+    if rotate_left then
+      if self.state_moving ~= state_moving_rot_left then 
+        xr_logic.mob_capture(self.object, true)
+        action(self.object,  move(accel + move.left, self.speed), cond(cond.time_end, time_infinite)) --self.fc_upd_avg))
+        self.state_moving = state_moving_rot_left
+      end
+    else
+      if self.state_moving ~= state_moving_rot_right then
+        xr_logic.mob_capture(self.object, true)
+        action(self.object,  move(accel + move.right, self.speed),  cond(cond.time_end, time_infinite)) --self.fc_upd_avg))
+        self.state_moving = state_moving_rot_right
+      end
+    end
+  end
+end
+
+-------------------
+
+-- Старт машины
+function vehicle_manager:start_car()
+  xr_logic.mob_capture(self.object, true)
+  action(self.object, move(move.on + move.fwd, 100), cond(cond.time_end, 5000))
+  self.state_delaying = true
+  self.delay_time_start = time_global()
+end
+
+-------------------
+
+-- Остановка машины
+function vehicle_manager:stop_car()
+  self.state_delaying = false
+  self.speed = 0
+  xr_logic.mob_capture(self.object, true)
+  action(self.object, move(move.off + move.handbrake, 0), cond(cond.time_end, 3000)) --cond(cond.move_end))
+end
+
+-------------------
+
+-- Каллбэк на прибытие в точку пути
+function vehicle_manager:walk_arrival_callback(index)
+  if index == -2 then 
+    return 
+  end
+
+  local suggested_explode = self.path_walk_info[index]["explode"]  
+  if suggested_explode == "true" then
+    self.object.health = 0
+    self.car:Action(CCar.eWpnActivate, 0)
+  end
+
+  local suggested_spd = self.path_walk_info[index]["spd"]  
+  if suggested_spd then
+    self.speed = tonumber(suggested_spd)
+  else
+    self.speed = def_moving_speed
+  end
+
+  local suggested_loop = self.path_walk_info[index]["loop"]  
+  if suggested_loop == "true" then
+    self.loop = true
+  else
+    self.loop = false
+  end
+
+  local suggested_dps = self.path_walk_info[index]["dps"]
+  if suggested_dps then
+    self.min_delta_per_sec = tonumber(suggested_dps)
+  else
+    self.min_delta_per_sec = def_min_delta_per_sec
+  end
+
+  local suggested_exptm = self.path_walk_info[index]["exptm"]
+  if suggested_exptm then
+    self.min_car_explode_time = tonumber(suggested_exptm)
+  else
+    self.min_car_explode_time = def_min_car_explode_time
+  end
+
+  local sig = self.path_walk_info[index]["sig"]
+  if sig then
+    self:set_signal(sig)
+  end
+
+  -- Выбрать следующую точку езды:
+  self.target_walk_pt = self:get_next_walkpoint()
+
+  if self.target_walk_pt >= 0 then
+    -- Если эта точка рядом и уже приехали - не ждать апдейта, чтобы вызвать callback
+    if self:at_target_walkpoint() then
+      self:walk_arrival_callback(self.target_walk_pt)
+    else
+      self:go_to_walkpoint(self.target_walk_pt)
+    end
+  else
+    self.target_walk_pt = -2
+    if self.state_moving ~= state_moving_stop and self.state_moving ~= state_moving_end then
+      self:stop_car()
+      self.state_moving = state_moving_end
+    end
+  end
+end
+
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+--++++++++++++++++++++-- FIRE SECTION --++++++++++++++++++++--
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+
+-- Открытие огня
+function vehicle_manager:switch_shooting(shooting_state)
+
+  local flag = shooting_state > 1
+    and state_shooting_off
+    or shooting_state
+
+  news_manager.send_tip(db.actor, "switch> state: "..shooting_state.." flag: "..flag, nil, nil, 5000)
+  
+  self.car:Action(CCar.eWpnAutoFire, state_shooting_off)
+  self.car:Action(CCar.eWpnFire, flag)   
+end
+
+-------------------
+
+-- Разворот оружия в сторону цели
+function vehicle_manager:rotate_to_firepoint(point)
+
+  local distance = self.object:position():distance_to(point)
+  
+  local can_track = 
+    distance > 5.0 and 
+    self.car:IsObjectVisible(self.target_obj) and 
+    self.target_fire_pt ~= nil
+    
+  -- if self.tracking_enabled ~= can_track
+    -- self.tracking_enabled = can_track
+    -- news_manager.send_tip(db.actor, "tracking: "..tostring(self.tracking_enabled), nil, nil, 5000)
+  -- end
+
+  if can_track then
+    self.car:SetParam(CCar.eWpnDesiredPos, self.target_fire_pt)
+  end
+end
+
+-------------------
+
+-- Эмуляция режимов стрельбы (огонь/прицеливание/перезарядка)
+function vehicle_manager:emulate_shooting_state(shooting_state)
+  
+  -- Если мы начали стрельбу
+  if shooting_state == state_shooting_on then    
+    -- Рассчитываем размер очереди
+    local queue_size = math.random(kpvt_min_queue_size, kpvt_max_queue_size)
+    
+    -- Если размер превышает оставшееся количество патронов в ленте - принудительно выставляем
+    if queue_size > self.mag_size_count then
+      queue_size = self.mag_size_count
+    end   
+    
+    -- Рассчитываем и сохраняем момент времени, когда должна прекратиться очередь
+    local queue_time = self.shot_time * (queue_size - 1)
+    self.shoot_timeout = time_global() + queue_time
+    
+    -- Рассчитываем и сохраняем остаток патронов в ленте
+    self.mag_size_count = self.mag_size_count - queue_size
+    
+    -- local text = "shoot> state: "..shooting_state..", queue: "..queue_size..", magsize: "..self.mag_size_count
+    -- news_manager.send_tip(db.actor, text, nil, nil, 5000)
+  end
+  
+  -- Если мы отстрелялись - наводчику надо снова прицелиться
+  if shooting_state == state_shooting_aim then
+    -- Рассчитываем и сохраняем момент времени, когда виртуальный наводчик поймает цель в прицеле
+    local aim_time = math.random(kpvt_min_aim_timeout, kpvt_max_aim_timeout)    
+    self.aim_timeout = time_global() + aim_time
+    
+    --news_manager.send_tip(db.actor, "aim> state: "..shooting_state, nil, nil, 5000)
+  end
+  
+  -- Если мы расстреляли все патроны в ленте - нужно время на перезарядку
+  if shooting_state == state_shooting_reload then
+    -- Рассчитываем и сохраняем момент времени, когда закончится перезарядка
+    self.reload_timeout = time_global() + kpvt_reload_timeout
+    
+    -- Восстанавливаем ленту
+    self.mag_size_count = kpvt_mag_size
+    
+    --news_manager.send_tip(db.actor, "reload> state: "..shooting_state, nil, nil, 5000)
+  end
+  
+  -- Переключаем режим (стрельба/предохранитель)
+  self:switch_shooting(shooting_state)
+end
+
+-------------------
+
+-- Обновление схемы
+function vehicle_manager:update(delta)
+
+  if xr_logic.try_switch_to_another_section(self.object, self.st, db.actor) then
+    return
+  end
+  
+  if self.destroyed then
+    xr_logic.switch_to_section(self.object, self.st, "nil")
+    return
+  end
+  
+  if self.st.invulnerable then
+    self.object.health = self.def_health
+  end
+  
+  -- проверки состояния пулемета для эмуляции реалистичного поведения 
+  local state = self.state_shooting 
+  
+  if self.shooting_enabled then  
+    
+    if self.state_shooting == state_shooting_off and self.reload_timeout == 0 then
+      self.state_shooting = state_shooting_on
+    end
+    
+    if self.state_shooting == state_shooting_on and self.shoot_timeout ~= 0 and time_global() > self.shoot_timeout then
+      self.shoot_timeout = 0
+      
+      if self.mag_size_count > 0 then
+        self.state_shooting = state_shooting_aim
+      else
+        self.state_shooting = state_shooting_reload
+      end
+    end
+    
+    if self.state_shooting == state_shooting_aim and self.aim_timeout ~= 0 and time_global() > self.aim_timeout then
+      self.aim_timeout = 0
+      self.state_shooting = state_shooting_on
+    end
+    
+    if self.state_shooting == state_shooting_reload and self.reload_timeout ~= 0 and time_global() > self.reload_timeout then
+      self.reload_timeout = 0
+      self.state_shooting = state_shooting_on
+    end
+  else
+    self.state_shooting = state_shooting_off 
+  end
+  
+  if self.state_shooting ~= state then
+    self:emulate_shooting_state(self.state_shooting)
+  end  
+end
+
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+--+++++++++++++++++++-- COMMON SECTION --+++++++++++++++++++--
+--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+
+-- Отправка сигнала
+function vehicle_manager:set_signal(sig)
+  local stor = db.storage[self.object:id()]
+  stor[stor.active_scheme].signals[sig] = true
+end
+
+-------------------
+
+-- Быстрый вызов схемы
+function vehicle_manager:fastcall()
+  if db.storage[self.object:id()].active_scheme ~= "ph_car" then
+    -- Если активная схема - не машина, снять быстрый апдейт
+    return true
+  end
+  return self:fast_update()
+end
+
+-------------------
+
+-- Уничтожение машины
+function vehicle_manager:destroy_car()
+  self.state_moving = state_moving_end
+  self:stop_car()
+  self.state_cannon = state_none
+  self.state_firetarget = state_none
+  self.shooting_enabled = false
+  self.car:Action(CCar.eWpnAutoFire, 0)
+
+  -- turn off lights
+  xr_logic.mob_capture(self.object, true)
+  action(self.object, object("left_light",  object.deactivate), cond(cond.time_end, time_infinite))
+  xr_logic.mob_capture(self.object, true)
+  action(self.object, object("right_light", object.deactivate), cond(cond.time_end, time_infinite))
+
+  xr_logic.mob_release(self.object)
+  if self.st.on_death_info ~= nil then
+    db.actor:give_info_portion(self.st.on_death_info)
+  end
+  self.destroyed = true
+end
+
+-------------------
+
+-- Обновление состояния машины
+function vehicle_manager:fast_update()  
+  -- Вернуть true, если апдейты больше не нужны
+  if self.car:GetfHealth() <= 0 then
+    self:destroy_car()
+    return true
+  end
+  
+  local cur_time = time_global()
+
+  if self.state_moving == state_moving_end and
+    self.state_cannon == state_cannon_stop and
+    self.state_firetarget == state_none
+  then
+    if xr_logic.mob_captured(self.object) and not self.object:action() then
+      self:destroy_car()
+      return true -- апдейты больше не нужны
+    end
+    return false
+  end
+
+  if self.state_moving ~= state_moving_end and
+    self.state_moving ~= state_moving_stop and 
+    cur_time >= self.last_pos_time + self.min_car_explode_time
+  then
+    if not self.last_pos then
+      self.last_pos = self.object:position()
+      self.last_pos_time = cur_time
+    else
+      local cur_pos = self.object:position()
+      local diff = self.last_pos:distance_to(cur_pos)
+      
+      if diff < self.min_delta_per_sec then
+        self:stop_car()
+        self.state_moving = state_moving_end
+      else
+        self.last_pos = cur_pos
+      end
+      
+      self.last_pos_time = cur_time
+    end
+  end
+  
+  if self.state_moving ~= state_moving_end and self.state_moving ~= state_none then
+    if self.target_walk_pt >= 0 then    
+      if self:at_target_walkpoint() then      
+        if self.state_moving ~= state_moving_stop then
+          self:stop_car()
+        end
+        self.state_moving = state_moving_stop
+      else
+        -- Продолжать ехать, или поворачиваться
+        self:go_to_walkpoint(self.target_walk_pt)
+      end      
+    else
+      if self.state_cannon ~= state_cannon_stop then
+        self:stop_car()
+        self.state_moving = state_moving_stop
+      end
+    end
+  end
+  
+  if self.hasWeapon then
+  
+    if self.on_target_vis and self.on_target_vis.v1:alive() and self.car:IsObjectVisible(self.on_target_vis.v1) then
+      local new_section = xr_logic.pick_section_from_condlist(db.actor, self.object, self.on_target_vis.condlist)
+      if new_section then
+        xr_logic.switch_to_section(self.object, self.st, new_section)
+      end
+    end
+
+    if self.on_target_nvis and self.on_target_nvis.v1:alive() and not self.car:IsObjectVisible(self.on_target_nvis.v1) then
+      local new_section = xr_logic.pick_section_from_condlist(db.actor, self.object, self.on_target_nvis.condlist)
+      if new_section then
+        xr_logic.switch_to_section(self.object, self.st, new_section)
+      end
+    end
+      
+    if self.state_firetarget == state_firetarget_enemy then
+    
+      if self.target_obj:alive() and
+        self.object:position():distance_to_sqr(self.target_obj:position()) <= self.fire_range_sqr and
+        self.car:IsObjectVisible(self.target_obj)
+      then
+
+        self.target_fire_pt = self.target_obj:position()
+        
+        if self.target_obj:id() ~= db.actor:id() then
+          if self.target_obj:target_body_state() == move.crouch then
+            self.target_fire_pt.y = self.target_fire_pt.y + 0.6 -- FAKE
+          elseif not xr_wounded.is_heavy_wounded_by_id(self.target_obj:id()) then
+            self.target_fire_pt.y = self.target_fire_pt.y + 1.5 -- FAKE
+          else
+            self.target_fire_pt.y = self.target_fire_pt.y + 0.15 -- FAKE
+          end
+        else
+          self.target_fire_pt.y = self.target_fire_pt.y + 0.75
+        end
+        
+        self.shooting_enabled = self.car:CanHit()
+        self:rotate_to_firepoint(self.target_fire_pt)        
+        
+      end
+    end
+  end
+  return false
+end
+
+-------------------
+
+-- Подрыв машины
+function vehicle_manager:car_explode()
+  self.object:explode(time_global())
+end
+
+-------------------
+
+-- Уничтожение серверного объекта машины
+function vehicle_manager:net_destroy()
+  if self.object and xr_logic.mob_captured(self.object) then
+    xr_logic.mob_release(self.object)
+    if self.st.on_death_info ~= nil then
+      db.actor:give_info_portion(self.st.on_death_info)
+    end
+  end
+end
+
+
+----------------------------------------------------------------
+
+function add_to_binder(npc, ini, scheme, section, storage)
+
+  local new_action = vehicle_manager(npc, storage)
+
+  -- Зарегистрировать все actions, в которых должен быть вызван метод reset_scheme при изменении настроек схемы:
+  xr_logic.subscribe_action_for_events(npc, storage, new_action)
+end
+
+function set_scheme(npc, ini, scheme, section, gulag_name)
+  local st = xr_logic.assign_storage_and_bind(npc, ini, scheme, section)
+
+  st.logic = xr_logic.cfg_get_switch_conditions(ini, section, npc)
+  st.usable = xr_logic.cfg_get_condlist(ini, section, "usable", npc)
+  
+  if st.usable == nil then
+    st.path_walk          = utils.cfg_get_string(ini, section, "path_walk",       npc, false, gulag_name)
+    st.fire_range         = utils.cfg_get_number(ini, section, "fire_range",      npc, false, def_fire_range)
+    st.fire_target        = utils.cfg_get_string(ini, section, "target",          npc, false, gulag_name, "points")
+    st.fire_track_target  = utils.cfg_get_bool(ini,   section, "track_target",    npc, false, false)
+    st.on_target_vis      = xr_logic.cfg_get_string_and_condlist(ini, section, "on_target_vis", npc)
+    st.on_target_nvis     = xr_logic.cfg_get_string_and_condlist(ini, section, "on_target_nvis", npc)
+    st.path_walk_info     = nil -- Будут инициализированы в reset(), сейчас пути могут быть еще не загружены.
+  end
+
+  st.invulnerable     = utils.cfg_get_bool(ini,   section, "invulnerable",    npc, false, false)
+  st.on_death_info    = utils.cfg_get_string(ini, section, "on_death_info",   npc, false, gulag_name, nil)
+end

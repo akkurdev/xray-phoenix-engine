@@ -1,0 +1,235 @@
+-- Watchers System
+-- S.T.A.L.K.E.R. Shadow of Chernobyl Update 2.0
+-- Akkur © 2024
+
+----------------------------------------------------------------------------------------
+-- Обработчик ситуации, когда свидетель видел, -----------------------------------------
+-- как жертву ранили или убили, но не увидел стрелявшего -------------------------------
+----------------------------------------------------------------------------------------
+function on_watched(action, victim_id, watcher_id, goodwill, reputation, rank)
+
+  local victim = level.object_by_id(victim_id)
+  local watcher = level.object_by_id(watcher_id)
+  
+  if db.actor ~= nil and victim ~= nil and watcher ~= nil then  
+    if not IsMonster(victim) then
+      news_manager.send_tip(db.actor, "Watcher: "..watcher_id, nil, nil, 5000)
+    
+      local relation = watcher:relation(victim)
+      local relation_index = relation == game_object.enemy and 0 or 1
+      local rank_id = get_rank_id(watcher:character_rank())
+      
+      local index = (action * 6) + (relation_index * 3) + rank_id
+      if index > 0 and index <= #watch_reactions then
+        local reaction = watch_reactions[index]
+        
+        if reaction ~= nil then
+          reaction(victim, watcher)
+        end
+      end
+      
+      if is_character_at_camp(victim) then
+        -- Поднять тревогу
+      end
+      
+    end
+  end  
+end
+
+-----------------------------------------------------------------------------------------
+--- Обработчик ситуации, когда свидетель видел, как актор лично ранил или убил жертву ---
+-----------------------------------------------------------------------------------------
+function on_busted(action, victim_id, watcher_id, goodwill, reputation, rank)
+  news_manager.send_tip(db.actor, "Actor busted", nil, nil, 5000)  
+end
+
+-----------------------------------------------------------------------------------------
+----- Обработчик ситуации, когда свидетель решил рассказать об увиденном окружающим -----
+-----------------------------------------------------------------------------------------
+function on_revealed(action, victim_id, watcher_id, goodwill, reputation, rank)    
+  
+  local victim = level.object_by_id(victim_id)
+  local watcher = level.object_by_id(watcher_id)
+  
+  if db.actor ~= nil and victim ~= nil and watcher ~= nil then  
+    if not IsMonster(victim) then
+    
+      local relation = get_actor_relation(db.actor, victim, watcher)
+      local goodwill_delta = get_metric_delta(goodwill, action, relation)
+      local reputation_delta = get_metric_delta(reputation, action, relation)
+      
+      relation_system.change_personal_goodwill(watcher:id(), db.actor:id(), goodwill_delta)
+      relation_system.change_community_goodwill(watcher:character_community(), db.actor:id(), goodwill_delta)  
+      relation_system.change_reputation(db.actor:id(), reputation_delta)
+      
+      if relation ~= game_object.friend and (watcher:character_community() ~= victim:character_community()) then
+        relation_system.change_community_goodwill(victim:character_community(), db.actor:id(), goodwill_delta)
+      end
+    else    
+      relation_system.change_personal_goodwill(watcher:id(), db.actor:id(), (math.abs(goodwill) / 5))
+      relation_system.change_community_goodwill(watcher:character_community(), db.actor:id(), (math.abs(goodwill) / 10))
+      relation_system.change_reputation(db.actor:id(), (math.abs(reputation) / 5))
+    end
+  end
+end
+
+-----------------------------------------------------------------------------------------
+-------------------------- ОБЩИЕ ФУНКЦИИ И ТАБЛИЦЫ --------------------------------------
+-----------------------------------------------------------------------------------------
+
+-- Определение отношения свидетеля к главному герою, относительно отношения к жертве
+function get_actor_relation(actor, victim, watcher)  
+  if actor == nil or victim == nil or watcher == nil then
+    return game_object.dummy
+  end
+  
+  if IsMonster(victim) then
+    return game_object.neutral
+  end
+  
+  local relation_to_actor = watcher:relation(actor)
+  local relation_to_victim = watcher:relation(victim)
+  
+  if relation_to_actor == relation_to_victim then
+    return game_object.neutral
+  elseif relation_to_actor < relation_to_victim then
+    return game_object.friend
+  elseif relation_to_actor > relation_to_victim then
+    return game_object.enemy
+  else
+    return game_object.dummy
+  end  
+end
+
+-----------------------------------------------------------------------------------------
+
+-- Находится ли NPC на чьей-либо базе или стоянке
+function is_character_at_camp(npc)
+  for k,v in pairs(camps) do
+    if npc:is_in_restrictor(v) then
+      return true
+    end
+  end
+  return false
+end
+
+-----------------------------------------------------------------------------------------
+
+-- Получение дельты изменения метрики отношения к главному герою, 
+-- в зависимости от действия и отношения свидетеля
+function get_metric_delta(value, action, relation)
+  
+  local values = {
+    (math.abs(value) / 8),    -- you are friend, victim wounded 
+    (value / 8),              -- you are neutral, victim wounded 
+    (value / 4),              -- you are enemy, victim wounded 
+    (math.abs(value) / 4),    -- you are friend, victim killed 
+    (value / 4),              -- you are neutral, victim killed
+    (value / 2)               -- you are enemy, victim killed
+  }
+  local index = (action * 3) + (relation + 1)
+  
+  if index > 0 and index <= #values then
+    return values[index]
+  else
+    return 0
+  end  
+end
+
+-----------------------------------------------------------------------------------------
+
+-- Получение индекса ранга
+function get_rank_id(rank)
+  
+  if rank == nil then
+    return -1
+  end
+  
+  if rank >= 600 then 
+    return 3
+  elseif rank >= 300 then 
+    return 2
+  elseif rank >= 0 then 
+    return 1
+  else 
+    return -1
+  end  
+end
+
+-----------------------------------------------------------------------------------------
+
+camps = {
+  "esc_lager_guard_kill_zone",
+  "escape_blockpost_zone",
+  "esc_fabrika_bandit_space_restrictor",
+  "esc_return_from_gar"
+}
+
+-----------------------------------------------------------------------------------------
+----------- 
+-----------------------------------------------------------------------------------------
+
+local wound_enemy_novice_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by enemy novice "..watcher:id(), nil, nil, 5000)
+end
+
+local wound_enemy_exp_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by enemy stalker "..watcher:id(), nil, nil, 5000)
+end
+
+local wound_enemy_veteran_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by enemy veteran "..watcher:id(), nil, nil, 5000)
+end
+
+local wound_friend_novice_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by friend novice "..watcher:id(), nil, nil, 5000)
+end
+
+local wound_friend_exp_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by friend stalker "..watcher:id(), nil, nil, 5000)
+end
+
+local wound_friend_veteran_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim wound watched by friend veteran "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_enemy_novice_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by enemy novice "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_enemy_exp_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by enemy stalker "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_enemy_veteran_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by enemy veteran "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_friend_novice_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by friend novice "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_friend_exp_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by friend stalker "..watcher:id(), nil, nil, 5000)
+end
+
+local kill_friend_veteran_watch_reaction = function(victim, watcher)
+  news_manager.send_tip(db.actor, "Victim death watched by friend veteran "..watcher:id(), nil, nil, 5000)
+end
+
+watch_reactions = {
+  wound_enemy_novice_watch_reaction,
+  wound_enemy_exp_watch_reaction,
+  wound_enemy_veteran_watch_reaction,
+  wound_friend_novice_watch_reaction,
+  wound_friend_exp_watch_reaction,
+  wound_friend_veteran_watch_reaction,
+  kill_enemy_novice_watch_reaction,
+  kill_enemy_exp_watch_reaction,
+  kill_enemy_veteran_watch_reaction,
+  kill_friend_novice_watch_reaction,
+  kill_friend_exp_watch_reaction,
+  kill_friend_veteran_watch_reaction
+}
+
+-----------------------------------------------------------------------------------------

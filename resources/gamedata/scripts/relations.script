@@ -1,0 +1,28 @@
+-- Relation System
+-- S.T.A.L.K.E.R. Shadow of Chernobyl Update 2.0
+-- Akkur © 2024
+
+-- Скриптовый обработчик действий актора в адрес NPC
+-- если хочется оригинальную логику - следует отключить скриптовый обработчик в настройках отношений, 
+-- либо дополнить этот скрипт, вычислив в округе всех NPC с такими же, как у убитого, значениями team, squad и group,
+-- и заагрить их всех на актора.
+function on_handle(action)
+  
+  -- если NPC убит
+  if action:type() == 1 then
+    news_manager.send_tip(db.actor, "npc killed", nil, nil, 5000)
+    -- если планируется использовать систему свидетелей - изменяем ТОЛЬКО ранг игрока
+    relation_system.change_rank(db.actor:id(), action.rank_delta)
+    -- иначе, можно понизить репутацию игрока. 
+    -- отношение всей группировки менять не стоит, это не логично, если NPC был убит вдалеке от всех.    
+    -- relation_system.change_reputation(db.actor:id(), action.reputation_delta)  
+  else
+    -- если NPC ранен
+    news_manager.send_tip(db.actor, "npc wounded", nil, nil, 5000)
+    -- если планируется использовать систему свидетелей - изменяем ТОЛЬКО персональное отношение раненого NPC к игроку
+    relation_system.change_personal_goodwill(action.victim_id, db.actor:id(), action.goodwill_delta)    
+    -- иначе, можно понизить еще и репутацию игрока
+    -- relation_system.change_reputation(db.actor:id(), action.reputation_delta)
+  end
+  
+end

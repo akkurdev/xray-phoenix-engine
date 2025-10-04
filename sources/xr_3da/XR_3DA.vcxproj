@@ -1,0 +1,573 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2578C6D8-660D-48AE-9322-7422F8664F06}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(SolutionDir)xray.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>xrEngine</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>xrEngine</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>xrEngine</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>xrEngine</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>x:\XR_3DA.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>
+        $(XrExternals)d3dx;
+        $(SolutionDir)sources/xrCore;
+        $(XrExternals)imgui;
+        $(XrExternals)libogg\include;
+        $(XrExternals)libtheora\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;XRGAME_STATIC;XRRENDER_STATIC;XRCORE_STATIC;XRCDB_STATIC;XRSOUND_STATIC;XR_PARTICLES_STATIC;NDEBUG;_WINDOWS;XRENGINE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4456;4457;4458;4995;4652;4577;4267;4324;</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0422</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>ode.lib;libvorbis_static.lib;libvorbisfile_static.lib;OpenAL32.lib;lzo.lib;libogg_static.lib;libtheora_static.lib;vfw32.lib;winmm.lib;dinput8.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)xrEngine.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>
+      </MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <FixedBaseAddress>false</FixedBaseAddress>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+        copy /Y "$(XrSdk)soft_oal.dll" "$(OutDir)soft_oal.dll"
+        copy /Y "$(XrSdk)dbghelp_$(PlatformShortName).dll" "$(OutDir)dbghelp.dll"
+        copy /Y "$(XrSdk)LuaJIT.dll" "$(OutDir)LuaJIT.dll"
+      </Command>
+    </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>x:\XR_3DA.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>
+        $(XrExternals)d3dx;
+        $(SolutionDir)sources/xrCore;
+        $(XrExternals)imgui;
+        $(XrExternals)libogg\include;
+        $(XrExternals)libtheora\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;XRGAME_STATIC;XRRENDER_STATIC;XRCORE_STATIC;XRCDB_STATIC;XRSOUND_STATIC;XR_PARTICLES_STATIC;_WINDOWS;XRENGINE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4456;4457;4458;4995;4652;4577;4267;4324;</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0422</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/MACHINE:I386  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>ode.lib;libvorbis_static.lib;libvorbisfile_static.lib;OpenAL32.lib;lzo.lib;libogg_static.lib;libtheora_static.lib;vfw32.lib;winmm.lib;dinput8.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)xrEngine.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>
+      </MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>
+      </OptimizeReferences>
+      <EnableCOMDATFolding>
+      </EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <FixedBaseAddress>false</FixedBaseAddress>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+        copy /Y "$(XrSdk)soft_oal.dll" "$(OutDir)soft_oal.dll"
+        copy /Y "$(XrSdk)dbghelp_$(PlatformShortName).dll" "$(OutDir)dbghelp.dll"
+        copy /Y "$(XrSdk)LuaJIT.dll" "$(OutDir)LuaJIT.dll"
+      </Command>
+    </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TypeLibraryName>x:\XR_3DA.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>
+        $(XrExternals)d3dx;
+        $(SolutionDir)sources/xrCore;
+        $(XrExternals)imgui;
+        $(XrExternals)libogg\include;
+        $(XrExternals)libtheora\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XRGAME_STATIC;XRRENDER_STATIC;XRCORE_STATIC;XRCDB_STATIC;XRSOUND_STATIC;XR_PARTICLES_STATIC;NDEBUG;_WINDOWS;XRENGINE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4456;4457;4458;4995;4577;4315;4267;4267;4324;</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0422</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>ode.lib;libvorbis_static.lib;libvorbisfile_static.lib;OpenAL32.lib;lzo.lib;libogg_static.lib;libtheora_static.lib;vfw32.lib;winmm.lib;dinput8.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)xrEngine.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>
+      </MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <FixedBaseAddress>false</FixedBaseAddress>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+        copy /Y "$(XrSdk)soft_oal.dll" "$(OutDir)soft_oal.dll"
+        copy /Y "$(XrSdk)dbghelp_$(PlatformShortName).dll" "$(OutDir)dbghelp.dll"
+        copy /Y "$(XrSdk)LuaJIT.dll" "$(OutDir)LuaJIT.dll"
+      </Command>
+    </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TypeLibraryName>x:\XR_3DA.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>
+        $(XrExternals)d3dx;
+        $(SolutionDir)sources/xrCore;
+        $(XrExternals)imgui;
+        $(XrExternals)libogg\include;
+        $(XrExternals)libtheora\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XRGAME_STATIC;XRRENDER_STATIC;XRCORE_STATIC;XRCDB_STATIC;XRSOUND_STATIC;XR_PARTICLES_STATIC;_WINDOWS;XRENGINE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level4</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4456;4457;4458;4995;4577;4315;4267;4267;4324;</DisableSpecificWarnings>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0422</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>ode.lib;libvorbis_static.lib;libvorbisfile_static.lib;OpenAL32.lib;lzo.lib;libogg_static.lib;libtheora_static.lib;vfw32.lib;winmm.lib;dinput8.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)xrEngine.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>
+      </MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>
+      </OptimizeReferences>
+      <EnableCOMDATFolding>
+      </EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <FixedBaseAddress>false</FixedBaseAddress>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+        copy /Y "$(XrSdk)soft_oal.dll" "$(OutDir)soft_oal.dll"
+        copy /Y "$(XrSdk)dbghelp_$(PlatformShortName).dll" "$(OutDir)dbghelp.dll"
+        copy /Y "$(XrSdk)LuaJIT.dll" "$(OutDir)LuaJIT.dll"
+      </Command>
+    </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>manifest.xml %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="edit_actions.h" />
+    <ClInclude Include="GameMtlLib.h" />
+    <ClInclude Include="ILoadingScreen.h" />
+    <ClInclude Include="LightAnimLibrary.h" />
+    <ClInclude Include="line_editor.h" />
+    <ClInclude Include="line_edit_control.h" />
+    <ClInclude Include="NET_Server_Trash\client_id.h" />
+    <ClInclude Include="NET_Server_Trash\NET_Client.h" />
+    <ClInclude Include="NET_Server_Trash\NET_Messages.h" />
+    <ClInclude Include="NET_Server_Trash\NET_Server.h" />
+    <ClInclude Include="NET_Server_Trash\NET_Shared.h" />
+    <ClInclude Include="NET_Server_Trash\NET_utils.h" />
+    <ClInclude Include="os_clipboard.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="x_ray.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="IInputReceiver.h" />
+    <ClInclude Include="xr_input.h" />
+    <ClInclude Include="ISheduled.h" />
+    <ClInclude Include="xrSheduler.h" />
+    <ClInclude Include="ICollidable.h" />
+    <ClInclude Include="IGame_Level.h" />
+    <ClInclude Include="IGame_Persistent.h" />
+    <ClInclude Include="IGame_ObjectPool.h" />
+    <ClInclude Include="pure_relcase.h" />
+    <ClInclude Include="xr_object.h" />
+    <ClInclude Include="xr_object_list.h" />
+    <ClInclude Include="CustomHUD.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="Rain.h" />
+    <ClInclude Include="thunderbolt.h" />
+    <ClInclude Include="xr_efflensflare.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="Effector.h" />
+    <ClInclude Include="EffectorPP.h" />
+    <ClInclude Include="xr_area.h" />
+    <ClInclude Include="xr_collide_form.h" />
+    <ClInclude Include="Feel_Sound.h" />
+    <ClInclude Include="Feel_Touch.h" />
+    <ClInclude Include="Feel_Vision.h" />
+    <ClInclude Include="FDemoPlay.h" />
+    <ClInclude Include="FDemoRecord.h" />
+    <ClInclude Include="PS_instance.h" />
+    <ClInclude Include="device.h" />
+    <ClInclude Include="Stats.h" />
+    <ClInclude Include="xrTheora_Stream.h" />
+    <ClInclude Include="xrTheora_Surface.h" />
+    <ClInclude Include="xr_ioc_cmd.h" />
+    <ClInclude Include="XR_IOConsole.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="EngineAPI.h" />
+    <ClInclude Include="EventAPI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="edit_actions.cpp" />
+    <ClCompile Include="GameMtlLib.cpp" />
+    <ClCompile Include="GameMtlLib_Engine.cpp" />
+    <ClCompile Include="LightAnimLibrary.cpp" />
+    <ClCompile Include="line_editor.cpp" />
+    <ClCompile Include="line_edit_control.cpp" />
+    <ClCompile Include="NET_Server_Trash\NET_Client.cpp" />
+    <ClCompile Include="NET_Server_Trash\NET_Server.cpp" />
+    <ClCompile Include="os_clipboard.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="XR_IOConsole_callback.cpp" />
+    <ClCompile Include="XR_IOConsole_control.cpp" />
+    <ClCompile Include="XR_IOConsole_get.cpp" />
+    <ClCompile Include="x_ray.cpp" />
+    <ClCompile Include="IInputReceiver.cpp" />
+    <ClCompile Include="Xr_input.cpp" />
+    <ClCompile Include="ISheduled.cpp" />
+    <ClCompile Include="xrSheduler.cpp" />
+    <ClCompile Include="ICollidable.cpp" />
+    <ClCompile Include="IGame_Level.cpp" />
+    <ClCompile Include="IGame_Level_check_textures.cpp" />
+    <ClCompile Include="IGame_Persistent.cpp" />
+    <ClCompile Include="IGame_ObjectPool.cpp" />
+    <ClCompile Include="pure_relcase.cpp" />
+    <ClCompile Include="xr_object.cpp" />
+    <ClCompile Include="xr_object_list.cpp" />
+    <ClCompile Include="CustomHUD.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Environment_misc.cpp" />
+    <ClCompile Include="Environment_render.cpp" />
+    <ClCompile Include="Rain.cpp" />
+    <ClCompile Include="thunderbolt.cpp" />
+    <ClCompile Include="xr_efflensflare.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="EffectorPP.cpp" />
+    <ClCompile Include="xr_area.cpp" />
+    <ClCompile Include="xr_area_query.cpp" />
+    <ClCompile Include="xr_area_raypick.cpp" />
+    <ClCompile Include="xr_collide_form.cpp" />
+    <ClCompile Include="interp.cpp" />
+    <ClCompile Include="Feel_Touch.cpp" />
+    <ClCompile Include="Feel_Vision.cpp" />
+    <ClCompile Include="FDemoPlay.cpp" />
+    <ClCompile Include="FDemoRecord.cpp" />
+    <ClCompile Include="PS_instance.cpp" />
+    <ClCompile Include="device.cpp" />
+    <ClCompile Include="Device_create.cpp" />
+    <ClCompile Include="Device_destroy.cpp" />
+    <ClCompile Include="Device_Initialize.cpp" />
+    <ClCompile Include="Device_overdraw.cpp" />
+    <ClCompile Include="Device_wndproc.cpp" />
+    <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="xrTheora_Stream.cpp" />
+    <ClCompile Include="xrTheora_Surface.cpp" />
+    <ClCompile Include="xr_ioc_cmd.cpp" />
+    <ClCompile Include="XR_IOConsole.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EngineAPI.cpp" />
+    <ClCompile Include="EventAPI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stalker.ico">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="ClientServer.txt" />
+    <None Include="Effects description.txt" />
+    <None Include="features.txt" />
+    <None Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\xrCDB\xrCDB.vcxproj">
+      <Project>{a19b1df2-82ec-4364-8bdf-85d13a1c89b5}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\xrCore\xrCore.vcxproj">
+      <Project>{a0f7d1fb-59a7-4717-a7e4-96f37e91998e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\xrGame\xrGame.vcxproj">
+      <Project>{200652a6-043e-4634-8837-87983b3bd5e0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\xrRender\xrRender.vcxproj">
+      <Project>{ac9b12ed-a2d7-4337-a981-5bd8430e96d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\xrSound\xrSound.vcxproj">
+      <Project>{ccca7859-eb86-493e-9b53-c4235f45b3c5}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ui_splash3.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties DevPartner_IsInstrumented="1" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

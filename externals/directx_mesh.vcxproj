@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>directx_mesh</ProjectName>
+    <ProjectGuid>{6857F086-F6FE-4150-9ED7-7446F1C1C220}</ProjectGuid>
+    <RootNamespace>DirectXMesh</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(SolutionDir)xray.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DEBUG;PROFILE;_WINDOWS;_LIB;_WIN32_WINNT=0x0601;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>DirectXMeshP.h</PrecompiledHeaderFile>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Manifest>
+      <EnableDPIAwareness>false</EnableDPIAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_LIB;_WIN32_WINNT=0x0601;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>DirectXMeshP.h</PrecompiledHeaderFile>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <GuardEHContMetadata>true</GuardEHContMetadata>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+    <Manifest>
+      <EnableDPIAwareness>false</EnableDPIAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshConcat.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshletGenerator.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshWeldVertices.cpp" />
+    <CLInclude Include="directx_mesh\DirectXMesh\DirectXMesh.h" />
+    <CLInclude Include="directx_mesh\DirectXMesh\DirectXMeshP.h" />
+    <CLInclude Include="directx_mesh\DirectXMesh\DirectXMesh.inl" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshAdjacency.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshClean.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshGSAdjacency.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshNormals.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshOptimize.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshOptimizeLRU.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshOptimizeTVC.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshRemap.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshTangentFrame.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshUtil.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshValidate.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshVBReader.cpp" />
+    <ClCompile Include="directx_mesh\DirectXMesh\DirectXMeshVBWriter.cpp" />
+    <CLInclude Include="directx_mesh\DirectXMesh\scoped.h" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>directx_tex</ProjectName>
+    <ProjectGuid>{371B9FA9-4C90-4AC6-A123-ACED756D6C77}</ProjectGuid>
+    <RootNamespace>DirectXTex</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(SolutionDir)xray.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <OpenMPSupport>true</OpenMPSupport>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/Zc:twoPhase- /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;WIN32;_DEBUG;_LIB;_WIN7_PLATFORM_UPDATE;_WIN32_WINNT=0x0601;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>DirectXTexP.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)directx_tex\DirectXTex\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Manifest>
+      <EnableDPIAwareness>false</EnableDPIAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <OpenMPSupport>true</OpenMPSupport>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/Zc:twoPhase- /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;WIN32;NDEBUG;_LIB;_WIN7_PLATFORM_UPDATE;_WIN32_WINNT=0x0601;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>DirectXTexP.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)directx_tex\DirectXTex\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <ExternalWarningLevel>Level4</ExternalWarningLevel>
+      <GuardEHContMetadata>true</GuardEHContMetadata>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+    <Manifest>
+      <EnableDPIAwareness>false</EnableDPIAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CLInclude Include="directx_tex\DirectXTex\BC.h" />
+    <ClCompile Include="directx_tex\DirectXTex\BC.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\BC4BC5.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\BC6HBC7.cpp" />
+    <ClInclude Include="directx_tex\DirectXTex\BCDirectCompute.h" />
+    <CLInclude Include="directx_tex\DirectXTex\DDS.h" />
+    <ClInclude Include="directx_tex\DirectXTex\filters.h" />
+    <CLInclude Include="directx_tex\DirectXTex\scoped.h" />
+    <CLInclude Include="directx_tex\DirectXTex\DirectXTex.h" />
+    <CLInclude Include="directx_tex\DirectXTex\DirectXTexP.h" />
+    <CLInclude Include="directx_tex\DirectXTex\DirectXTex.inl" />
+    <ClCompile Include="directx_tex\DirectXTex\BCDirectCompute.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexCompress.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexCompressGPU.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexConvert.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexD3D11.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexDDS.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexFlipRotate.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexHDR.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexImage.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexMipMaps.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexMisc.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexNormalMaps.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexPMAlpha.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexResize.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexTGA.cpp" />
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexUtil.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="directx_tex\DirectXTex\DirectXTexWIC.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="directx_tex\DirectXTex\Shaders\BC6HEncode.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="directx_tex\DirectXTex\Shaders\BC7Encode.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="directx_tex\DirectXTex\Shaders\CompileShaders.cmd" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <Target Name="ATGEnsureShaders" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <_ATGFXCPath>$(WindowsSDK_ExecutablePath_x64.Split(';')[0])</_ATGFXCPath>
+      <_ATGFXCPath>$(_ATGFXCPath.Replace("x64",""))</_ATGFXCPath>
+      <_ATGFXCPath Condition="'$(_ATGFXCPath)' != '' and !HasTrailingSlash('$(_ATGFXCPath)')">$(_ATGFXCPath)\</_ATGFXCPath>
+    </PropertyGroup>
+    <Exec Condition="!Exists('Shaders/Compiled/BC6HEncode_EncodeBlockCS.inc')" WorkingDirectory="directx_tex\DirectXTex\Shaders" Command="CompileShaders" EnvironmentVariables="WindowsSdkVerBinPath=$(_ATGFXCPath)" />
+    <PropertyGroup>
+      <_ATGFXCPath />
+    </PropertyGroup>
+  </Target>
+  <Target Name="ATGDeleteShaders" AfterTargets="Clean">
+    <ItemGroup>
+      <_ATGShaderHeaders Include="directx_tex\DirectXTex\Shaders/Compiled/*.inc" />
+      <_ATGShaderSymbols Include="directx_tex\DirectXTex\Shaders/Compiled/*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(_ATGShaderHeaders)" />
+    <Delete Files="@(_ATGShaderSymbols)" />
+  </Target>
+</Project>

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{632AEEB6-DC06-4E15-9551-B2B09A4B73C5}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>lua_jit</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(SolutionDir)xray.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <NMakeOutput>lua_jit\bin\$(PlatformShortName)\LuaJIT.dll</NMakeOutput>
+    <NMakeUseOemCodePage>true</NMakeUseOemCodePage>
+    <NMakeBuildCommandLine>
+      cd lua_jit\src
+      if not exist "lua_jit\bin\$(PlatformShortName)\LuaJIT.dll" (
+        call msvcbuild.bat $(PlatformShortName)
+      )
+      
+      set OUTDIR=$(ProjectDir)lua_jit\bin\$(PlatformShortName)
+      set LIBDIR=$(XrLibraries)
+      set SDKDIR=$(XrSdk)
+      
+      move /Y %OUTDIR%\Lua_JIT.exe %SDKDIR%\Lua_JIT.exe
+      move /Y %OUTDIR%\LuaJIT.dll %SDKDIR%\LuaJIT.dll 
+      move /Y %OUTDIR%\LuaJIT.pdb %LIBDIR%\LuaJIT.pdb
+      move /Y %OUTDIR%\LuaJIT.lib %LIBDIR%\LuaJIT.lib
+      move /Y %OUTDIR%\LuaJIT.exp %LIBDIR%\LuaJIT.exp
+      move /Y %OUTDIR%\LuaJIT.ilk %LIBDIR%\LuaJIT.ilk
+      
+      RD /Q /S %OUTDIR%
+    </NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>RD /S/Q lua_jit\bin</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(XrInterm)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(XrInterm)\</OutDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

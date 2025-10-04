@@ -1,0 +1,18 @@
+#pragma once
+
+#include "ThunderboltRender.h"
+
+class dxThunderboltRender : public IThunderboltRender
+{
+public:
+    dxThunderboltRender();
+    virtual ~dxThunderboltRender();
+
+    virtual void Copy(IThunderboltRender& _in);
+
+    virtual void Render(CEffect_Thunderbolt& owner);
+
+private:
+    ref_geom hGeom_model;
+    ref_geom hGeom_gradient;
+};
