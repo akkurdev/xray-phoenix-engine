@@ -66,7 +66,7 @@ private:
     CSound_params p_source{};
     int iPaused;
     BOOL bMoved;
-    BOOL b2D;
+    bool m_is2D;
     BOOL bStopping;
     bool m_isRewind;
     float m_startTime;

@@ -38,7 +38,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_current_state = EmitterState::Stopped;
     set_cursor(0);
     bMoved = TRUE;
-    b2D = FALSE;
+    m_is2D = FALSE;
     bStopping = FALSE;
     m_isRewind = false;
     iPaused = 0;
@@ -121,7 +121,7 @@ void CSoundRender_Emitter::set_volume(float vol)
     p_source.volume = vol;
 }
 
-bool CSoundRender_Emitter::Is2D() { return b2D; }
+bool CSoundRender_Emitter::Is2D() { return m_is2D; }
 
 CSound_params* CSoundRender_Emitter::get_params() { return &p_source; }
 
@@ -165,11 +165,11 @@ void CSoundRender_Emitter::Event_Propagade()
 
 void CSoundRender_Emitter::switch_to_2D()
 {
-    b2D = TRUE;
+    m_is2D = true;
     set_priority(100.f);
 }
 
-void CSoundRender_Emitter::switch_to_3D() { b2D = FALSE; }
+void CSoundRender_Emitter::switch_to_3D() { m_is2D = false; }
 
 u32 CSoundRender_Emitter::play_time()
 {

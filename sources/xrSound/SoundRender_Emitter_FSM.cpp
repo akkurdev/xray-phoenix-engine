@@ -52,7 +52,7 @@ void CSoundRender_Emitter::update(float dt)
         m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
-        smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
+        smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
 
         if (update_culling(dt))
         {
@@ -78,7 +78,7 @@ void CSoundRender_Emitter::update(float dt)
         m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
-        smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
+        smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
         
         if (update_culling(dt))
         {
@@ -273,7 +273,7 @@ IC void volume_lerp(float& c, float t, float s, float dt)
 
 BOOL CSoundRender_Emitter::update_culling(float dt)
 {
-    if (b2D)
+    if (m_is2D)
     {
         occluder_volume = 1.f;
         fade_volume += dt * 10.f * (bStopping ? -1.f : 1.f);
