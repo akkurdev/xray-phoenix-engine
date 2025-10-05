@@ -67,7 +67,7 @@ private:
     int iPaused;
     BOOL bMoved;
     bool m_is2D;
-    BOOL bStopping;
+    bool m_isStopped;
     bool m_isRewind;
     float m_startTime;
     float m_stopTime;

@@ -38,8 +38,8 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_current_state = EmitterState::Stopped;
     set_cursor(0);
     bMoved = TRUE;
-    m_is2D = FALSE;
-    bStopping = FALSE;
+    m_is2D = false;
+    m_isStopped = false;
     m_isRewind = false;
     iPaused = 0;
     m_startTime = 0.0f;

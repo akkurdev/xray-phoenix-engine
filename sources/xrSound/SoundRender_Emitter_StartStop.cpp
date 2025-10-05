@@ -28,7 +28,7 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
         m_current_state = _loop ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
         m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
-    bStopping = FALSE;
+    m_isStopped = false;
     m_isRewind = false;
 }
 
@@ -50,14 +50,14 @@ void CSoundRender_Emitter::i_stop()
 void CSoundRender_Emitter::stop(BOOL bDeffered)
 {
     if (bDeffered)
-        bStopping = TRUE;
+        m_isStopped = true;
     else
         i_stop();
 }
 
 void CSoundRender_Emitter::rewind()
 {
-    bStopping = FALSE;
+    m_isStopped = false;
 
     float fTime = SoundRender->Timer.GetElapsed_sec();
     float fDiff = fTime - m_startTime;

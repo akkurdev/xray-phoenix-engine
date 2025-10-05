@@ -237,7 +237,7 @@ void CSoundRender_Emitter::update(float dt)
     }
 
     // if deffered stop active and volume==0 -> physically stop sound
-    if (bStopping && fis_zero(fade_volume))
+    if (m_isStopped && fis_zero(fade_volume))
         i_stop();
 
     VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)), "owner");
@@ -276,7 +276,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
     if (m_is2D)
     {
         occluder_volume = 1.f;
-        fade_volume += dt * 10.f * (bStopping ? -1.f : 1.f);
+        fade_volume += dt * 10.f * (m_isStopped ? -1.f : 1.f);
     }
     else
     {
@@ -290,7 +290,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
 
         // Calc attenuated volume
         float fade_scale =
-            bStopping || (att() * p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
+            m_isStopped || (att() * p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
             -1.f :
             1.f;
         fade_volume += dt * 10.f * fade_scale;
