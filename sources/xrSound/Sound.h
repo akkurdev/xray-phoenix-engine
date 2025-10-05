@@ -200,7 +200,7 @@ public:
 class XRSOUND_API CSound_emitter
 {
 public:
-    virtual BOOL is_2D() = 0;
+    virtual bool Is2D() = 0;
     virtual void switch_to_2D() = 0;
     virtual void switch_to_3D() = 0;
     virtual void set_position(const Fvector& pos) = 0;

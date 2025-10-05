@@ -30,7 +30,7 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range)
 
     const CSound_params* p = S->feedback->get_params();
     Fvector snd_position = p->position;
-    if (S->feedback->is_2D())
+    if (S->feedback->Is2D())
     {
         snd_position.add(Sound->listener_position());
     }
@@ -91,7 +91,7 @@ void IGame_Level::SoundEvent_Dispatch()
         if (D.source->feedback)
         {
             D.dest->feel_sound_new(D.source->g_object, D.source->g_type, D.source->g_userdata,
-                                   D.source->feedback->is_2D() ? Device.vCameraPosition : D.source->feedback->get_params()->position, D.power);
+                                   D.source->feedback->Is2D() ? Device.vCameraPosition : D.source->feedback->get_params()->position, D.power);
         }
         snd_Events.pop_back();
     }
