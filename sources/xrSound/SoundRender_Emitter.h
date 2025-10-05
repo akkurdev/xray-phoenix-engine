@@ -12,9 +12,9 @@ public:
     void FillBlock(void* ptr, uint32_t size);
     float Priority();
     void Start(ref_sound* sound, bool isLooped, float delay);
+    void Cancel();
 
 public:    
-    void cancel(); 
     void update(float dt);
     BOOL update_culling(float dt);
     void update_environment(float dt);

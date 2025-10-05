@@ -25,7 +25,7 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
 
     // Stop currently playing
     if (T->Emitter())
-        T->Emitter()->cancel();
+        T->Emitter()->Cancel();
 
     // Associate
     E->SetRenderTarget(T);
