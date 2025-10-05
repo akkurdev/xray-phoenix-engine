@@ -244,7 +244,7 @@ void CSoundRender_Emitter::update(float dt)
     VERIFY2(owner_data ? *(int*)(owner_data->feedback) : 1, "owner");
 
     // footer
-    bMoved = FALSE;
+    m_isMoved = false;
     if (m_current_state != EmitterState::Stopped)
     {
         if (fTime >= m_propagadeTime)

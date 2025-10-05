@@ -65,7 +65,7 @@ private:
     u32 m_cur_handle_cursor;
     CSound_params p_source{};
     int iPaused;
-    BOOL bMoved;
+    bool m_isMoved;
     bool m_is2D;
     bool m_isStopped;
     bool m_isRewind;
