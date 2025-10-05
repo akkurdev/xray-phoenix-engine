@@ -29,7 +29,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
 {
     m_target = NULL;
     owner_data = NULL;
-    smooth_volume = 1.f;
+    m_smoothVolume = 1.f;
     m_occluderVolume = 1.f;
     m_fadeVolume = 1.f;
     m_occluder[0].set(0, 0, 0);
@@ -96,7 +96,7 @@ ref_sound_data_ptr CSoundRender_Emitter::OwnerData()
 
 float CSoundRender_Emitter::SmoothVolume() const
 {
-    return smooth_volume;
+    return m_smoothVolume;
 }
 
 void CSoundRender_Emitter::SetRenderTarget(ISoundRenderTarget* target)
