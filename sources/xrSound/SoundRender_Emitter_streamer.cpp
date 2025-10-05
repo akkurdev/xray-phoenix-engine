@@ -47,7 +47,7 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
         // We are reaching the end of data, what to do?
         switch (m_current_state)
         {
-        case stPlaying: { // Fill as much data as we can, zeroing remainder
+        case EmitterState::Playing: { // Fill as much data as we can, zeroing remainder
             if (get_cursor(true) >= dwBytesTotal)
             {
                 // ??? We requested the block after remainder - just zero
@@ -65,7 +65,7 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
             move_cursor(size);
         }
         break;
-        case stPlayingLooped: {
+        case EmitterState::PlayingLooped: {
             u32 hw_position = 0;
             do
             {

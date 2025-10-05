@@ -40,7 +40,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     occluder[0].set(0, 0, 0);
     occluder[1].set(0, 0, 0);
     occluder[2].set(0, 0, 0);
-    m_current_state = stStopped;
+    m_current_state = EmitterState::Stopped;
     set_cursor(0);
     bMoved = TRUE;
     b2D = FALSE;
@@ -112,7 +112,10 @@ void CSoundRender_Emitter::switch_to_3D() { b2D = FALSE; }
 
 u32 CSoundRender_Emitter::play_time()
 {
-    if (m_current_state == stPlaying || m_current_state == stPlayingLooped || m_current_state == stSimulating || m_current_state == stSimulatingLooped)
+    if (m_current_state == EmitterState::Playing || 
+        m_current_state == EmitterState::PlayingLooped || 
+        m_current_state == EmitterState::Simulating || 
+        m_current_state == EmitterState::SimulatingLooped)
         return iFloor((SoundRender->fTimer_Value - fTimeStarted) * 1000.0f);
     else
         return 0;

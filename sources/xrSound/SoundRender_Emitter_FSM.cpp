@@ -36,15 +36,15 @@ void CSoundRender_Emitter::update(float dt)
 
     switch (m_current_state)
     {
-    case stStopped: break;
-    case stStartingDelayed:
+    case EmitterState::Stopped: break;
+    case EmitterState::StartingDelayed:
         if (iPaused)
             break;
         starting_delay -= dt;
         if (starting_delay <= 0)
-            m_current_state = stStarting;
+            m_current_state = EmitterState::Starting;
         break;
-    case stStarting:
+    case EmitterState::Starting:
         if (iPaused)
             break;
         fTimeStarted = fTime;
@@ -56,21 +56,21 @@ void CSoundRender_Emitter::update(float dt)
 
         if (update_culling(dt))
         {
-            m_current_state = stPlaying;
+            m_current_state = EmitterState::Playing;
             set_cursor(0);
             SoundRender->i_start(this);
         }
         else
-            m_current_state = stSimulating;
+            m_current_state = EmitterState::Simulating;
         break;
-    case stStartingLoopedDelayed:
+    case EmitterState::StartingLoopedDelayed:
         if (iPaused)
             break;
         starting_delay -= dt;
         if (starting_delay <= 0)
-            m_current_state = stStartingLooped;
+            m_current_state = EmitterState::StartingLooped;
         break;
-    case stStartingLooped:
+    case EmitterState::StartingLooped:
         if (iPaused)
             break;
         fTimeStarted = fTime;
@@ -82,20 +82,20 @@ void CSoundRender_Emitter::update(float dt)
         
         if (update_culling(dt))
         {
-            m_current_state = stPlayingLooped;
+            m_current_state = EmitterState::PlayingLooped;
             set_cursor(0);
             SoundRender->i_start(this);
         }
         else
-            m_current_state = stSimulatingLooped;
+            m_current_state = EmitterState::SimulatingLooped;
         break;
-    case stPlaying:
+    case EmitterState::Playing:
         if (iPaused)
         {
             if (target)
             {
                 SoundRender->i_stop(this);
-                m_current_state = stSimulating;
+                m_current_state = EmitterState::Simulating;
             }
             fTimeStarted += fDeltaTime;
             fTimeToStop += fDeltaTime;
@@ -105,7 +105,7 @@ void CSoundRender_Emitter::update(float dt)
         if (fTime >= fTimeToStop)
         {
             // STOP
-            m_current_state = stStopped;
+            m_current_state = EmitterState::Stopped;
             SoundRender->i_stop(this);
         }
         else
@@ -113,7 +113,7 @@ void CSoundRender_Emitter::update(float dt)
             if (!update_culling(dt))
             {
                 // switch to: SIMULATE
-                m_current_state = stSimulating; // switch state
+                m_current_state = EmitterState::Simulating; // switch state
                 SoundRender->i_stop(this);
             }
             else
@@ -123,7 +123,7 @@ void CSoundRender_Emitter::update(float dt)
             }
         }
         break;
-    case stSimulating:
+    case EmitterState::Simulating:
         if (iPaused)
         {
             fTimeStarted += fDeltaTime;
@@ -134,7 +134,7 @@ void CSoundRender_Emitter::update(float dt)
         if (fTime >= fTimeToStop)
         {
             // STOP
-            m_current_state = stStopped;
+            m_current_state = EmitterState::Stopped;
         }
         else
         {
@@ -144,18 +144,18 @@ void CSoundRender_Emitter::update(float dt)
             if (update_culling(dt))
             {
                 // switch to: PLAY
-                m_current_state = stPlaying;
+                m_current_state = EmitterState::Playing;
                 SoundRender->i_start(this);
             }
         }
         break;
-    case stPlayingLooped:
+    case EmitterState::PlayingLooped:
         if (iPaused)
         {
             if (target)
             {
                 SoundRender->i_stop(this);
-                m_current_state = stSimulatingLooped;
+                m_current_state = EmitterState::SimulatingLooped;
             }
             fTimeStarted += fDeltaTime;
             fTimeToPropagade += fDeltaTime;
@@ -164,7 +164,7 @@ void CSoundRender_Emitter::update(float dt)
         if (!update_culling(dt))
         {
             // switch to: SIMULATE
-            m_current_state = stSimulatingLooped; // switch state
+            m_current_state = EmitterState::SimulatingLooped; // switch state
             SoundRender->i_stop(this);
         }
         else
@@ -173,7 +173,7 @@ void CSoundRender_Emitter::update(float dt)
             update_environment(dt);
         }
         break;
-    case stSimulatingLooped:
+    case EmitterState::SimulatingLooped:
         if (iPaused)
         {
             fTimeStarted += fDeltaTime;
@@ -183,7 +183,7 @@ void CSoundRender_Emitter::update(float dt)
         if (update_culling(dt))
         {
             // switch to: PLAY
-            m_current_state = stPlayingLooped; // switch state
+            m_current_state = EmitterState::PlayingLooped; // switch state
             u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, source()->Format()); //--#SM+#--
             set_cursor(ptr);
 
@@ -195,12 +195,12 @@ void CSoundRender_Emitter::update(float dt)
     // hard rewind
     switch (m_current_state)
     {
-    case stStarting:
-    case stStartingLooped:
-    case stPlaying:
-    case stSimulating:
-    case stPlayingLooped:
-    case stSimulatingLooped:
+    case EmitterState::Starting:
+    case EmitterState::StartingLooped:
+    case EmitterState::Playing:
+    case EmitterState::Simulating:
+    case EmitterState::PlayingLooped:
+    case EmitterState::SimulatingLooped:
         if (fTimeToRewind > 0.0f)
         {
             float fLength = get_length_sec();
@@ -245,7 +245,7 @@ void CSoundRender_Emitter::update(float dt)
 
     // footer
     bMoved = FALSE;
-    if (m_current_state != stStopped)
+    if (m_current_state != EmitterState::Stopped)
     {
         if (fTime >= fTimeToPropagade)
             Event_Propagade();

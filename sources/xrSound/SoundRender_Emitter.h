@@ -1,30 +1,11 @@
 #pragma once
 #include "soundrender.h"
 #include <ISoundRenderTarget.h>
+#include <EmitterState.h>
 
 class CSoundRender_Emitter : public CSound_emitter
 {
     float starting_delay;
-
-public:
-    enum State
-    {
-        stStopped = 0,
-
-        stStartingDelayed,
-        stStartingLoopedDelayed,
-
-        stStarting,
-        stStartingLooped,
-
-        stPlaying,
-        stPlayingLooped,
-
-        stSimulating,
-        stSimulatingLooped,
-
-        stFORCEDWORD = u32(-1)
-    };
 
 public:
 #ifdef DEBUG
@@ -44,7 +25,7 @@ public:
     float fade_volume;
     Fvector occluder[3]{};
 
-    State m_current_state;
+    EmitterState m_current_state;
     u32 m_stream_cursor;
     u32 m_cur_handle_cursor;
     CSound_params p_source{};
@@ -69,7 +50,7 @@ public:
 public:
     void Event_Propagade();
     void Event_ReleaseOwner();
-    BOOL isPlaying(void) { return m_current_state != stStopped; }
+    BOOL isPlaying(void) { return m_current_state != EmitterState::Stopped; }
 
     virtual BOOL is_2D() { return b2D; }
     virtual void switch_to_2D();
