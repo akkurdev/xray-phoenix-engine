@@ -19,7 +19,7 @@ inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTi
     return curr_sample_num * (wfx.wBitsPerSample / 8) * wfx.nChannels;
 }
 
-void CSoundRender_Emitter::update(float dt)
+void CSoundRender_Emitter::Update(float deltaTime)
 {
     float fTime = SoundRender->fTimer_Value;
     float fDeltaTime = SoundRender->fTimer_Delta;
@@ -40,7 +40,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::StartingDelayed:
         if (m_paused)
             break;
-        m_startDelay -= dt;
+        m_startDelay -= deltaTime;
         if (m_startDelay <= 0)
             m_state = EmitterState::Starting;
         break;
@@ -54,7 +54,7 @@ void CSoundRender_Emitter::update(float dt)
         m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
 
-        if (update_culling(dt))
+        if (update_culling(deltaTime))
         {
             m_state = EmitterState::Playing;
             set_cursor(0);
@@ -66,7 +66,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::StartingLoopedDelayed:
         if (m_paused)
             break;
-        m_startDelay -= dt;
+        m_startDelay -= deltaTime;
         if (m_startDelay <= 0)
             m_state = EmitterState::StartingLooped;
         break;
@@ -80,7 +80,7 @@ void CSoundRender_Emitter::update(float dt)
         m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
         
-        if (update_culling(dt))
+        if (update_culling(deltaTime))
         {
             m_state = EmitterState::PlayingLooped;
             set_cursor(0);
@@ -110,7 +110,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         else
         {
-            if (!update_culling(dt))
+            if (!update_culling(deltaTime))
             {
                 // switch to: SIMULATE
                 m_state = EmitterState::Simulating; // switch state
@@ -119,7 +119,7 @@ void CSoundRender_Emitter::update(float dt)
             else
             {
                 // We are still playing
-                update_environment(dt);
+                update_environment(deltaTime);
             }
         }
         break;
@@ -141,7 +141,7 @@ void CSoundRender_Emitter::update(float dt)
             u32 ptr = calc_cursor(m_startTime, fTime, get_length_sec(), m_params.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
-            if (update_culling(dt))
+            if (update_culling(deltaTime))
             {
                 // switch to: PLAY
                 m_state = EmitterState::Playing;
@@ -161,7 +161,7 @@ void CSoundRender_Emitter::update(float dt)
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (!update_culling(dt))
+        if (!update_culling(deltaTime))
         {
             // switch to: SIMULATE
             m_state = EmitterState::SimulatingLooped; // switch state
@@ -170,7 +170,7 @@ void CSoundRender_Emitter::update(float dt)
         else
         {
             // We are still playing
-            update_environment(dt);
+            update_environment(deltaTime);
         }
         break;
     case EmitterState::SimulatingLooped:
@@ -180,7 +180,7 @@ void CSoundRender_Emitter::update(float dt)
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (update_culling(dt))
+        if (update_culling(deltaTime))
         {
             // switch to: PLAY
             m_state = EmitterState::PlayingLooped; // switch state

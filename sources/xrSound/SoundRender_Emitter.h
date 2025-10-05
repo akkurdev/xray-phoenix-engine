@@ -13,9 +13,10 @@ public:
     float Priority();
     void Start(ref_sound* sound, bool isLooped, float delay);
     void Cancel();
+    void Update(float deltaTime);
+
 
 public:    
-    void update(float dt);
     BOOL update_culling(float dt);
     void update_environment(float dt);
     void rewind();

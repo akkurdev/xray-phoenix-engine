@@ -39,7 +39,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         CSoundRender_Emitter* E = T->Emitter();
         if (E)
         {
-            E->update(dt_sec);
+            E->Update(dt_sec);
             E->SetMarker(s_emitters_u);
             E = T->Emitter(); // update can stop itself
             if (E)
@@ -60,7 +60,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         CSoundRender_Emitter* pEmitter = s_emitters[it];
         if (pEmitter->Marker() != s_emitters_u)
         {
-            pEmitter->update(dt_sec);
+            pEmitter->Update(dt_sec);
             pEmitter->SetMarker(s_emitters_u);
         }
         if (!pEmitter->isPlaying())
