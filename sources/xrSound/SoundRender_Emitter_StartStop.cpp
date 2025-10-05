@@ -68,16 +68,16 @@ void CSoundRender_Emitter::Rewind()
     m_isRewind = true;
 }
 
-void CSoundRender_Emitter::pause(BOOL bVal, int id)
+void CSoundRender_Emitter::Pause(bool hasValue, int32_t pausedId)
 {
-    if (bVal)
+    if (hasValue)
     {
         if (0 == m_paused)
-            m_paused = id;
+            m_paused = pausedId;
     }
     else
     {
-        if (id == m_paused)
+        if (pausedId == m_paused)
             m_paused = 0;
     }
 }

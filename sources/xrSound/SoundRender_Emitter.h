@@ -15,12 +15,10 @@ public:
     void Cancel();
     void Update(float deltaTime);
     void Rewind();
-
-
+    virtual void Stop(bool isDeffered);
+    void Pause(bool hasValue, int32_t pausedId);
 
 public:    
-    virtual void Stop(bool isDeffered);
-    void pause(BOOL bVal, int id);
     virtual u32 play_time();
     virtual void set_priority(float p);
     virtual void set_time(float t); 

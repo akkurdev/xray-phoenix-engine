@@ -130,7 +130,7 @@ int CSoundRender_Core::pause_emitters(bool val)
     VERIFY(m_iPauseCounter >= 0);
 
     for (u32 it = 0; it < s_emitters.size(); it++)
-        ((CSoundRender_Emitter*)s_emitters[it])->pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
+        ((CSoundRender_Emitter*)s_emitters[it])->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
 
     return m_iPauseCounter;
 }
