@@ -132,7 +132,7 @@ void CSoundRender_Emitter::set_range(float min, float max)
     m_params.max_distance = max;
 }
 
-void CSoundRender_Emitter::set_priority(float p) { m_priorityScale = p; }
+void CSoundRender_Emitter::SetPriority(float priority) { m_priorityScale = priority; }
 
 void CSoundRender_Emitter::set_frequency(float scale)
 {
@@ -166,7 +166,7 @@ void CSoundRender_Emitter::Event_Propagade()
 void CSoundRender_Emitter::switch_to_2D()
 {
     m_is2D = true;
-    set_priority(100.f);
+    SetPriority(100.f);
 }
 
 void CSoundRender_Emitter::switch_to_3D() { m_is2D = false; }
@@ -203,4 +203,7 @@ u32 CSoundRender_Emitter::get_cursor(bool b_absolute) const
     }
 }
 
-void CSoundRender_Emitter::move_cursor(int offset) { set_cursor(get_cursor(true) + offset); }
+void CSoundRender_Emitter::move_cursor(int offset) 
+{ 
+    set_cursor(get_cursor(true) + offset); 
+}

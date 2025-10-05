@@ -82,6 +82,17 @@ void CSoundRender_Emitter::Pause(bool hasValue, int32_t pausedId)
     }
 }
 
+uint32_t CSoundRender_Emitter::PlayTime()
+{
+    if (m_state == EmitterState::Playing || 
+        m_state == EmitterState::PlayingLooped ||
+        m_state == EmitterState::Simulating ||
+        m_state == EmitterState::SimulatingLooped)
+        return iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f);
+    else
+        return 0;
+}
+
 void CSoundRender_Emitter::Cancel()
 {
     // Msg		("- %10s : %3d[%1.4f] : %s","cancel",dbg_ID,priority(),source->fname);

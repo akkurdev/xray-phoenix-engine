@@ -109,7 +109,7 @@ void CUISequenceVideoItem::Update()
     else
         return;
 
-    u32 sync_tm = (0 == m_sound[0]._handle()) ? Device.dwTimeContinual : (m_sound[0]._feedback() ? m_sound[0]._feedback()->play_time() : m_sync_time);
+    u32 sync_tm = (0 == m_sound[0]._handle()) ? Device.dwTimeContinual : (m_sound[0]._feedback() ? m_sound[0]._feedback()->PlayTime() : m_sync_time);
     m_sync_time = sync_tm;
     // processing A&V
     if (m_texture->HasTexture())

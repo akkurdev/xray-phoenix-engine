@@ -17,9 +17,10 @@ public:
     void Rewind();
     virtual void Stop(bool isDeffered);
     void Pause(bool hasValue, int32_t pausedId);
+    virtual uint32_t PlayTime();
 
 public:
-    virtual void set_priority(float p);
+    virtual void SetPriority(float priority);
     virtual void set_time(float t); 
     virtual CSound_params* get_params();    
     ISoundRenderSource* RenderSource();
