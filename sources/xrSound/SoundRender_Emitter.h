@@ -58,7 +58,7 @@ private:
     float priority_scale;
     float smooth_volume;
     float occluder_volume;
-    float fade_volume;
+    float m_fadeVolume;
     Fvector m_occluder[3]{};
     EmitterState m_state;
     uint32_t m_streamCursor;

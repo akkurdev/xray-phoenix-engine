@@ -31,7 +31,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     owner_data = NULL;
     smooth_volume = 1.f;
     occluder_volume = 1.f;
-    fade_volume = 1.f;
+    m_fadeVolume = 1.f;
     m_occluder[0].set(0, 0, 0);
     m_occluder[1].set(0, 0, 0);
     m_occluder[2].set(0, 0, 0);
