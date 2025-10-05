@@ -315,7 +315,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         return SoundRender->i_allow_play(this);
 }
 
-float CSoundRender_Emitter::priority() { return m_smoothVolume * att() * m_priorityScale; }
+float CSoundRender_Emitter::Priority() { return m_smoothVolume * att() * m_priorityScale; }
 
 float CSoundRender_Emitter::att()
 {
