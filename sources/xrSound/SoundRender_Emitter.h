@@ -12,7 +12,7 @@ public:
     void fill_block(void* ptr, u32 size);
     void fill_data(u8* ptr, u32 offset, u32 size);
     float Priority();
-    float att();
+    
     void start(ref_sound* _owner, BOOL _loop, float delay);
     void cancel(); 
     void update(float dt);
@@ -50,6 +50,9 @@ public:
     void SetRenderTarget(ISoundRenderTarget* target);
     float StopTime() const;
     void SetStopTime(float stopTime);
+
+private:
+    float Attitude();
 
 private:
     float m_startDelay;

@@ -290,7 +290,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
 
         // Calc attenuated volume
         float fade_scale =
-            m_isStopped || (att() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
+            m_isStopped || (Attitude() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
             -1.f :
             1.f;
         m_fadeVolume += dt * 10.f * fade_scale;
@@ -315,9 +315,9 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         return SoundRender->i_allow_play(this);
 }
 
-float CSoundRender_Emitter::Priority() { return m_smoothVolume * att() * m_priorityScale; }
+float CSoundRender_Emitter::Priority() { return m_smoothVolume * Attitude() * m_priorityScale; }
 
-float CSoundRender_Emitter::att()
+float CSoundRender_Emitter::Attitude()
 {
     float dist = SoundRender->listener_position().distance_to(m_params.position);
     float rolloff_dist = psSoundRolloff * dist;
