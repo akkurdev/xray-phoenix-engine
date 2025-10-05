@@ -83,10 +83,10 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
     }
     else
     {
-        u32 bt_handle = owner_data->handle->BytesCount();
+        u32 bt_handle = m_ownerData->handle->BytesCount();
         if (get_cursor(true) + size > m_handleCursor + bt_handle)
         {
-            R_ASSERT(owner_data->fn_attached[0].size());
+            R_ASSERT(m_ownerData->fn_attached[0].size());
 
             u32 rem = 0;
             if ((m_handleCursor + bt_handle) > get_cursor(true))
@@ -115,7 +115,7 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
 
 ISoundRenderSource* CSoundRender_Emitter::RenderSource()
 {
-    return owner_data->handle;
+    return m_ownerData->handle;
 }
 
 ISoundRenderTarget* CSoundRender_Emitter::RenderTarget()
@@ -125,12 +125,10 @@ ISoundRenderTarget* CSoundRender_Emitter::RenderTarget()
 
 u32 CSoundRender_Emitter::get_bytes_total() const
 {
-    u32 res = owner_data->dwBytesTotal;
-    return res;
+    return m_ownerData->dwBytesTotal;
 }
 
 float CSoundRender_Emitter::get_length_sec() const
 {
-    float res = owner_data->get_length_sec();
-    return res;
+    return m_ownerData->get_length_sec();
 }

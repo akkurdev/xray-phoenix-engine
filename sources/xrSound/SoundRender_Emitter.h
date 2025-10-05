@@ -54,7 +54,7 @@ public:
 private:
     float starting_delay;
     ISoundRenderTarget* m_target;
-    ref_sound_data_ptr owner_data;
+    ref_sound_data_ptr m_ownerData;
     float m_priorityScale;
     float m_smoothVolume;
     float m_occluderVolume;
