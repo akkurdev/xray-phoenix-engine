@@ -71,7 +71,7 @@ private:
     BOOL bRewind;
     float fTimeStarted;
     float fTimeToStop;
-    float fTimeToPropagade;
+    float m_propagadeTime;
     float m_rewindTime;
     u32 m_marker;
 };

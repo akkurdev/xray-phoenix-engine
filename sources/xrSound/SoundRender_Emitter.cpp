@@ -44,7 +44,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     iPaused = 0;
     fTimeStarted = 0.0f;
     fTimeToStop = 0.0f;
-    fTimeToPropagade = 0.0f;
+    m_propagadeTime = 0.0f;
     m_rewindTime = 0.0f;
     m_marker = 0xabababab;
     starting_delay = 0.f;
@@ -142,7 +142,7 @@ void CSoundRender_Emitter::set_frequency(float scale)
 
 void CSoundRender_Emitter::Event_Propagade()
 {
-    fTimeToPropagade += ::Random.randF(s_f_def_event_pulse - 0.030f, s_f_def_event_pulse + 0.030f);
+    m_propagadeTime += ::Random.randF(s_f_def_event_pulse - 0.030f, s_f_def_event_pulse + 0.030f);
     if (!(owner_data))
         return;
     if (0 == owner_data->g_type)

@@ -49,7 +49,7 @@ void CSoundRender_Emitter::update(float dt)
             break;
         fTimeStarted = fTime;
         fTimeToStop = fTime + (get_length_sec() / p_source.freq); //--#SM+#--
-        fTimeToPropagade = fTime;
+        m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
         smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
@@ -75,7 +75,7 @@ void CSoundRender_Emitter::update(float dt)
             break;
         fTimeStarted = fTime;
         fTimeToStop = TIME_TO_STOP_INFINITE;
-        fTimeToPropagade = fTime;
+        m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
         smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
@@ -99,7 +99,7 @@ void CSoundRender_Emitter::update(float dt)
             }
             fTimeStarted += fDeltaTime;
             fTimeToStop += fDeltaTime;
-            fTimeToPropagade += fDeltaTime;
+            m_propagadeTime += fDeltaTime;
             break;
         }
         if (fTime >= fTimeToStop)
@@ -128,7 +128,7 @@ void CSoundRender_Emitter::update(float dt)
         {
             fTimeStarted += fDeltaTime;
             fTimeToStop += fDeltaTime;
-            fTimeToPropagade += fDeltaTime;
+            m_propagadeTime += fDeltaTime;
             break;
         }
         if (fTime >= fTimeToStop)
@@ -158,7 +158,7 @@ void CSoundRender_Emitter::update(float dt)
                 m_current_state = EmitterState::SimulatingLooped;
             }
             fTimeStarted += fDeltaTime;
-            fTimeToPropagade += fDeltaTime;
+            m_propagadeTime += fDeltaTime;
             break;
         }
         if (!update_culling(dt))
@@ -177,7 +177,7 @@ void CSoundRender_Emitter::update(float dt)
         if (iPaused)
         {
             fTimeStarted += fDeltaTime;
-            fTimeToPropagade += fDeltaTime;
+            m_propagadeTime += fDeltaTime;
             break;
         }
         if (update_culling(dt))
@@ -212,14 +212,14 @@ void CSoundRender_Emitter::update(float dt)
             float fPastTime = m_rewindTime / p_source.freq;
 
             fTimeStarted = SoundRender->fTimer_Value - fPastTime;
-            fTimeToPropagade = fTimeStarted; //--> For AI events
+            m_propagadeTime = fTimeStarted; //--> For AI events
 
             if (fTimeStarted < 0.0f)
             {
                 R_ASSERT2(fTimeStarted >= 0.0f, "Possible error in sound rewind logic! See log.");
 
                 fTimeStarted = SoundRender->fTimer_Value;
-                fTimeToPropagade = fTimeStarted;
+                m_propagadeTime = fTimeStarted;
             }
 
             if (!bLooped)
@@ -247,7 +247,7 @@ void CSoundRender_Emitter::update(float dt)
     bMoved = FALSE;
     if (m_current_state != EmitterState::Stopped)
     {
-        if (fTime >= fTimeToPropagade)
+        if (fTime >= m_propagadeTime)
             Event_Propagade();
     }
     else if (owner_data)

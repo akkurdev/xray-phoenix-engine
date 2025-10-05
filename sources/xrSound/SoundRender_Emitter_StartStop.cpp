@@ -26,7 +26,7 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
     else
     {
         m_current_state = _loop ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
-        fTimeToPropagade = SoundRender->Timer.GetElapsed_sec();
+        m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
     bStopping = FALSE;
     bRewind = FALSE;
@@ -63,7 +63,7 @@ void CSoundRender_Emitter::rewind()
     float fDiff = fTime - fTimeStarted;
     fTimeStarted += fDiff;
     fTimeToStop += fDiff;
-    fTimeToPropagade = fTime;
+    m_propagadeTime = fTime;
 
     set_cursor(0);
     bRewind = TRUE;
