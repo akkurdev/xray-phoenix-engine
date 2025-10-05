@@ -8,7 +8,7 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
     m_startDelay = delay;
 
     VERIFY(_owner);
-    m_ownerData = _owner->_p;
+    m_soundData = _owner->_p;
     VERIFY(owner_data);
     m_params.position.set(0, 0, 0);
     m_params.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
@@ -36,12 +36,12 @@ void CSoundRender_Emitter::i_stop()
     m_isRewind = false;
     if (m_renderTarget)
         SoundRender->i_stop(this);
-    if (m_ownerData)
+    if (m_soundData)
     {
         Event_ReleaseOwner();
-        VERIFY(this == m_ownerData->feedback);
-        m_ownerData->feedback = NULL;
-        m_ownerData = NULL;
+        VERIFY(this == m_soundData->feedback);
+        m_soundData->feedback = NULL;
+        m_soundData = NULL;
     }
     m_state = EmitterState::Stopped;
 }

@@ -54,7 +54,7 @@ public:
 private:
     float m_startDelay;
     ISoundRenderTarget* m_renderTarget;
-    ref_sound_data_ptr m_ownerData;
+    ref_sound_data_ptr m_soundData;
     float m_priorityScale;
     float m_smoothVolume;
     float m_occluderVolume;
@@ -73,5 +73,5 @@ private:
     float m_stopTime;
     float m_propagadeTime;
     float m_rewindTime;
-    u32 m_marker;
+    uint32_t m_marker;
 };

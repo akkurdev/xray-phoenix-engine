@@ -28,7 +28,7 @@ void CSoundRender_Emitter::set_time(float t)
 CSoundRender_Emitter::CSoundRender_Emitter(void)
 {
     m_renderTarget = nullptr;
-    m_ownerData = nullptr;
+    m_soundData = nullptr;
     m_smoothVolume = 1.f;
     m_occluderVolume = 1.f;
     m_fadeVolume = 1.f;
@@ -61,12 +61,12 @@ CSoundRender_Emitter::~CSoundRender_Emitter(void)
 //////////////////////////////////////////////////////////////////////
 void CSoundRender_Emitter::Event_ReleaseOwner()
 {
-    if (!(m_ownerData))
+    if (!(m_soundData))
         return;
 
     for (u32 it = 0; it < SoundRender->s_events.size(); it++)
     {
-        if (m_ownerData == SoundRender->s_events[it].first)
+        if (m_soundData == SoundRender->s_events[it].first)
         {
             SoundRender->s_events.erase(SoundRender->s_events.begin() + it);
             it--;
@@ -91,7 +91,7 @@ void CSoundRender_Emitter::SetMarker(u32 marker)
 
 ref_sound_data_ptr CSoundRender_Emitter::OwnerData()
 {
-    return m_ownerData;
+    return m_soundData;
 }
 
 float CSoundRender_Emitter::SmoothVolume() const
@@ -143,11 +143,11 @@ void CSoundRender_Emitter::set_frequency(float scale)
 void CSoundRender_Emitter::Event_Propagade()
 {
     m_propagadeTime += ::Random.randF(s_f_def_event_pulse - 0.030f, s_f_def_event_pulse + 0.030f);
-    if (!(m_ownerData))
+    if (!(m_soundData))
         return;
-    if (0 == m_ownerData->g_type)
+    if (0 == m_soundData->g_type)
         return;
-    if (0 == m_ownerData->g_object)
+    if (0 == m_soundData->g_object)
         return;
     if (0 == SoundRender->Handler)
         return;
@@ -160,7 +160,7 @@ void CSoundRender_Emitter::Event_Propagade()
         return;
 
     // Inform objects
-    SoundRender->s_events.push_back(mk_pair(m_ownerData, range));
+    SoundRender->s_events.push_back(mk_pair(m_soundData, range));
 }
 
 void CSoundRender_Emitter::switch_to_2D()
@@ -187,15 +187,15 @@ void CSoundRender_Emitter::set_cursor(u32 p)
 {
     m_streamCursor = p;
 
-    if (m_ownerData._get() && m_ownerData->fn_attached[0].size())
+    if (m_soundData._get() && m_soundData->fn_attached[0].size())
     {
-        u32 bt = (m_ownerData->handle)->BytesCount();
+        u32 bt = (m_soundData->handle)->BytesCount();
         if (m_streamCursor >= m_handleCursor + bt)
         {
-            SoundRender->i_destroy_source(m_ownerData->handle);
-            m_ownerData->handle = SoundRender->i_create_source(m_ownerData->fn_attached[0].c_str());
-            m_ownerData->fn_attached[0] = m_ownerData->fn_attached[1];
-            m_ownerData->fn_attached[1] = "";
+            SoundRender->i_destroy_source(m_soundData->handle);
+            m_soundData->handle = SoundRender->i_create_source(m_soundData->fn_attached[0].c_str());
+            m_soundData->fn_attached[0] = m_soundData->fn_attached[1];
+            m_soundData->fn_attached[1] = "";
             m_handleCursor = get_cursor(true);
 
             if (m_renderTarget)
