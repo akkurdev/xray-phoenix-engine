@@ -32,9 +32,9 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     smooth_volume = 1.f;
     occluder_volume = 1.f;
     fade_volume = 1.f;
-    occluder[0].set(0, 0, 0);
-    occluder[1].set(0, 0, 0);
-    occluder[2].set(0, 0, 0);
+    m_occluder[0].set(0, 0, 0);
+    m_occluder[1].set(0, 0, 0);
+    m_occluder[2].set(0, 0, 0);
     m_state = EmitterState::Stopped;
     set_cursor(0);
     m_isMoved = true;

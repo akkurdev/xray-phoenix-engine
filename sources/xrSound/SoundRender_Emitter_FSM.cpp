@@ -51,7 +51,7 @@ void CSoundRender_Emitter::update(float dt)
         m_stopTime = fTime + (get_length_sec() / m_params.freq); //--#SM+#--
         m_propagadeTime = fTime;
         fade_volume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, occluder);
+        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
 
         if (update_culling(dt))
@@ -77,7 +77,7 @@ void CSoundRender_Emitter::update(float dt)
         m_stopTime = TIME_TO_STOP_INFINITE;
         m_propagadeTime = fTime;
         fade_volume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, occluder);
+        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
         
         if (update_culling(dt))
@@ -296,7 +296,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         fade_volume += dt * 10.f * fade_scale;
 
         // Update occlusion
-        float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, occluder);
+        float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         volume_lerp(occluder_volume, occ, 1.f, dt);
         clamp(occluder_volume, 0.f, 1.f);
     }
