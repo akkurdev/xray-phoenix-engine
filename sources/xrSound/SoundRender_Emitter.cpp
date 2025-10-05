@@ -47,7 +47,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_propagadeTime = 0.0f;
     m_rewindTime = 0.0f;
     m_marker = 0xabababab;
-    starting_delay = 0.f;
+    m_startDelay = 0.f;
     m_priorityScale = 1.f;
     m_handleCursor = 0;
 }

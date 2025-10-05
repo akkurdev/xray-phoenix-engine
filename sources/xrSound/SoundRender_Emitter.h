@@ -52,7 +52,7 @@ public:
     void SetStopTime(float stopTime);
 
 private:
-    float starting_delay;
+    float m_startDelay;
     ISoundRenderTarget* m_renderTarget;
     ref_sound_data_ptr m_ownerData;
     float m_priorityScale;

@@ -40,8 +40,8 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::StartingDelayed:
         if (m_paused)
             break;
-        starting_delay -= dt;
-        if (starting_delay <= 0)
+        m_startDelay -= dt;
+        if (m_startDelay <= 0)
             m_state = EmitterState::Starting;
         break;
     case EmitterState::Starting:
@@ -66,8 +66,8 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::StartingLoopedDelayed:
         if (m_paused)
             break;
-        starting_delay -= dt;
-        if (starting_delay <= 0)
+        m_startDelay -= dt;
+        if (m_startDelay <= 0)
             m_state = EmitterState::StartingLooped;
         break;
     case EmitterState::StartingLooped:
