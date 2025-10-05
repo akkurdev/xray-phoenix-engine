@@ -54,7 +54,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
         m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
 
-        if (update_culling(deltaTime))
+        if (UpdateCulling(deltaTime))
         {
             m_state = EmitterState::Playing;
             set_cursor(0);
@@ -80,7 +80,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
         m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
         m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
         
-        if (update_culling(deltaTime))
+        if (UpdateCulling(deltaTime))
         {
             m_state = EmitterState::PlayingLooped;
             set_cursor(0);
@@ -110,7 +110,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
         }
         else
         {
-            if (!update_culling(deltaTime))
+            if (!UpdateCulling(deltaTime))
             {
                 // switch to: SIMULATE
                 m_state = EmitterState::Simulating; // switch state
@@ -141,7 +141,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
             u32 ptr = calc_cursor(m_startTime, fTime, get_length_sec(), m_params.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
-            if (update_culling(deltaTime))
+            if (UpdateCulling(deltaTime))
             {
                 // switch to: PLAY
                 m_state = EmitterState::Playing;
@@ -161,7 +161,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (!update_culling(deltaTime))
+        if (!UpdateCulling(deltaTime))
         {
             // switch to: SIMULATE
             m_state = EmitterState::SimulatingLooped; // switch state
@@ -180,7 +180,7 @@ void CSoundRender_Emitter::Update(float deltaTime)
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (update_culling(deltaTime))
+        if (UpdateCulling(deltaTime))
         {
             // switch to: PLAY
             m_state = EmitterState::PlayingLooped; // switch state
@@ -271,12 +271,12 @@ IC void volume_lerp(float& c, float t, float s, float dt)
 }
 #include "ai_sounds.h"
 
-BOOL CSoundRender_Emitter::update_culling(float dt)
+bool CSoundRender_Emitter::UpdateCulling(float deltaTime)
 {
     if (m_is2D)
     {
         m_occluderVolume = 1.f;
-        m_fadeVolume += dt * 10.f * (m_isStopped ? -1.f : 1.f);
+        m_fadeVolume += deltaTime * 10.f * (m_isStopped ? -1.f : 1.f);
     }
     else
     {
@@ -293,11 +293,11 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
             m_isStopped || (Attitude() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
             -1.f :
             1.f;
-        m_fadeVolume += dt * 10.f * fade_scale;
+        m_fadeVolume += deltaTime * 10.f * fade_scale;
 
         // Update occlusion
         float occ = (m_soundData->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        volume_lerp(m_occluderVolume, occ, 1.f, dt);
+        volume_lerp(m_occluderVolume, occ, 1.f, deltaTime);
         clamp(m_occluderVolume, 0.f, 1.f);
     }
     clamp(m_fadeVolume, 0.f, 1.f);

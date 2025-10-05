@@ -16,8 +16,7 @@ public:
     void Update(float deltaTime);
 
 
-public:    
-    BOOL update_culling(float dt);
+public:
     void update_environment(float dt);
     void rewind();
     virtual void stop(BOOL bDeffered);
@@ -55,6 +54,7 @@ public:
 private:
     float Attitude();
     void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
+    bool UpdateCulling(float deltaTime);
 
 private:
     float m_startDelay;
