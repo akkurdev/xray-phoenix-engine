@@ -48,7 +48,7 @@ void CSoundRender_Emitter::update(float dt)
         if (iPaused)
             break;
         fTimeStarted = fTime;
-        fTimeToStop = fTime + (get_length_sec() / p_source.freq); //--#SM+#--
+        m_stopTime = fTime + (get_length_sec() / p_source.freq); //--#SM+#--
         m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
@@ -74,7 +74,7 @@ void CSoundRender_Emitter::update(float dt)
         if (iPaused)
             break;
         fTimeStarted = fTime;
-        fTimeToStop = TIME_TO_STOP_INFINITE;
+        m_stopTime = TIME_TO_STOP_INFINITE;
         m_propagadeTime = fTime;
         fade_volume = 1.f;
         occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
@@ -98,11 +98,11 @@ void CSoundRender_Emitter::update(float dt)
                 m_current_state = EmitterState::Simulating;
             }
             fTimeStarted += fDeltaTime;
-            fTimeToStop += fDeltaTime;
+            m_stopTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (fTime >= fTimeToStop)
+        if (fTime >= m_stopTime)
         {
             // STOP
             m_current_state = EmitterState::Stopped;
@@ -127,11 +127,11 @@ void CSoundRender_Emitter::update(float dt)
         if (iPaused)
         {
             fTimeStarted += fDeltaTime;
-            fTimeToStop += fDeltaTime;
+            m_stopTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
         }
-        if (fTime >= fTimeToStop)
+        if (fTime >= m_stopTime)
         {
             // STOP
             m_current_state = EmitterState::Stopped;
@@ -204,7 +204,7 @@ void CSoundRender_Emitter::update(float dt)
         if (m_rewindTime > 0.0f)
         {
             float fLength = get_length_sec();
-            bool bLooped = (fTimeToStop == 0xffffffff);
+            bool bLooped = (m_stopTime == 0xffffffff);
 
             R_ASSERT2(fLength >= m_rewindTime, "set_time: target time is bigger than length of sound");
 
@@ -225,7 +225,7 @@ void CSoundRender_Emitter::update(float dt)
             if (!bLooped)
             {
                 //--> Пересчитываем время, когда звук должен остановиться [recalculate stop time]
-                fTimeToStop = SoundRender->fTimer_Value + fRemainingTime;
+                m_stopTime = SoundRender->fTimer_Value + fRemainingTime;
             }
 
             u32 ptr = calc_cursor(fTimeStarted, fTime, fLength, p_source.freq, RenderSource()->Format());

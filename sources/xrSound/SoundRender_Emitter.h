@@ -70,7 +70,7 @@ private:
     BOOL bStopping;
     BOOL bRewind;
     float fTimeStarted;
-    float fTimeToStop;
+    float m_stopTime;
     float m_propagadeTime;
     float m_rewindTime;
     u32 m_marker;

@@ -43,7 +43,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     bRewind = FALSE;
     iPaused = 0;
     fTimeStarted = 0.0f;
-    fTimeToStop = 0.0f;
+    m_stopTime = 0.0f;
     m_propagadeTime = 0.0f;
     m_rewindTime = 0.0f;
     m_marker = 0xabababab;
@@ -106,12 +106,12 @@ void CSoundRender_Emitter::SetRenderTarget(ISoundRenderTarget* target)
 
 float CSoundRender_Emitter::StopTime() const
 {
-    return fTimeToStop;
+    return m_stopTime;
 }
 
 void CSoundRender_Emitter::SetStopTime(float stopTime)
 {
-    fTimeToStop = stopTime;
+    m_stopTime = stopTime;
 }
 
 void CSoundRender_Emitter::set_volume(float vol)
