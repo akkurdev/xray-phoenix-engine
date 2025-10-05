@@ -60,7 +60,7 @@ private:
     float occluder_volume;
     float fade_volume;
     Fvector occluder[3]{};
-    EmitterState m_current_state;
+    EmitterState m_state;
     uint32_t m_streamCursor;
     uint32_t m_handleCursor;
     CSound_params m_params;

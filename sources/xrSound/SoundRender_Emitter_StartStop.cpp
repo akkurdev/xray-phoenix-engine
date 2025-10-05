@@ -21,11 +21,11 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
 
     if (fis_zero(delay, EPS_L))
     {
-        m_current_state = _loop ? EmitterState::StartingLooped : EmitterState::Starting;
+        m_state = _loop ? EmitterState::StartingLooped : EmitterState::Starting;
     }
     else
     {
-        m_current_state = _loop ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
+        m_state = _loop ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
         m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
     m_isStopped = false;
@@ -44,7 +44,7 @@ void CSoundRender_Emitter::i_stop()
         owner_data->feedback = NULL;
         owner_data = NULL;
     }
-    m_current_state = EmitterState::Stopped;
+    m_state = EmitterState::Stopped;
 }
 
 void CSoundRender_Emitter::stop(BOOL bDeffered)
@@ -86,16 +86,16 @@ void CSoundRender_Emitter::pause(BOOL bVal, int id)
 void CSoundRender_Emitter::cancel()
 {
     // Msg		("- %10s : %3d[%1.4f] : %s","cancel",dbg_ID,priority(),source->fname);
-    switch (m_current_state)
+    switch (m_state)
     {
     case EmitterState::Playing:
         // switch to: SIMULATE
-        m_current_state = EmitterState::Simulating; // switch state
+        m_state = EmitterState::Simulating; // switch state
         SoundRender->i_stop(this);
         break;
     case EmitterState::PlayingLooped:
         // switch to: SIMULATE
-        m_current_state = EmitterState::SimulatingLooped; // switch state
+        m_state = EmitterState::SimulatingLooped; // switch state
         SoundRender->i_stop(this);
         break;
     default: FATAL("Non playing ref_sound forced out of render queue"); break;

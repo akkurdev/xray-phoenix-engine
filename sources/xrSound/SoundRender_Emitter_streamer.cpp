@@ -45,7 +45,7 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
     if ((get_cursor(true) + size) > dwBytesTotal)
     {
         // We are reaching the end of data, what to do?
-        switch (m_current_state)
+        switch (m_state)
         {
         case EmitterState::Playing: { // Fill as much data as we can, zeroing remainder
             if (get_cursor(true) >= dwBytesTotal)
