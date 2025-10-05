@@ -84,14 +84,14 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
     else
     {
         u32 bt_handle = owner_data->handle->BytesCount();
-        if (get_cursor(true) + size > m_cur_handle_cursor + bt_handle)
+        if (get_cursor(true) + size > m_handleCursor + bt_handle)
         {
             R_ASSERT(owner_data->fn_attached[0].size());
 
             u32 rem = 0;
-            if ((m_cur_handle_cursor + bt_handle) > get_cursor(true))
+            if ((m_handleCursor + bt_handle) > get_cursor(true))
             {
-                rem = (m_cur_handle_cursor + bt_handle) - get_cursor(true);
+                rem = (m_handleCursor + bt_handle) - get_cursor(true);
 
 #ifdef DEBUG
                 Msg("reminder from prev source %d", rem);

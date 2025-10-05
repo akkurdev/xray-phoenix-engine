@@ -62,7 +62,7 @@ private:
     Fvector occluder[3]{};
     EmitterState m_current_state;
     uint32_t m_streamCursor;
-    u32 m_cur_handle_cursor;
+    uint32_t m_handleCursor;
     CSound_params m_params;
     int iPaused;
     bool m_isMoved;
