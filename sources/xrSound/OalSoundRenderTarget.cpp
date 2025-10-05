@@ -286,7 +286,7 @@ void DefaultSoundRenderTarget::OnSourceChanged()
 void DefaultSoundRenderTarget::FillBlock(ALuint bufferId)
 {
     R_ASSERT(m_emitter);
-    m_emitter->fill_block(&g_target_temp_data.front(), m_bufferBlock);
+    m_emitter->FillBlock(&g_target_temp_data.front(), m_bufferBlock);
 
     ALuint format = (m_emitter->RenderSource()->Format().nChannels == 1)
         ? AL_FORMAT_MONO16 

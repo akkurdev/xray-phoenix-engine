@@ -36,7 +36,7 @@ void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
     }
 }
 
-void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
+void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
 {
     // Msg			("stream: %10s - [%X]:%d, p=%d, t=%d",*source->fname,ptr,size,position,source->dwBytesTotal);
     LPBYTE dest = LPBYTE(ptr);
@@ -102,7 +102,7 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
 #ifdef DEBUG
             Msg("recurce from next source %d", size - rem);
 #endif // #ifdef DEBUG
-            fill_block(dest + rem, size - rem);
+            FillBlock(dest + rem, size - rem);
         }
         else
         {

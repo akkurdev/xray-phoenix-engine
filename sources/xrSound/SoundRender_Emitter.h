@@ -9,10 +9,12 @@ public:
     CSoundRender_Emitter();
     ~CSoundRender_Emitter();
 
-    void fill_block(void* ptr, u32 size);
-    void fill_data(u8* ptr, u32 offset, u32 size);
+    void FillBlock(void* ptr, uint32_t size);
     float Priority();
-    
+
+
+public:    
+    void fill_data(u8* ptr, u32 offset, u32 size);    
     void start(ref_sound* _owner, BOOL _loop, float delay);
     void cancel(); 
     void update(float dt);
