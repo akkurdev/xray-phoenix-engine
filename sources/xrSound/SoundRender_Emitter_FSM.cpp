@@ -38,14 +38,14 @@ void CSoundRender_Emitter::update(float dt)
     {
     case EmitterState::Stopped: break;
     case EmitterState::StartingDelayed:
-        if (iPaused)
+        if (m_paused)
             break;
         starting_delay -= dt;
         if (starting_delay <= 0)
             m_current_state = EmitterState::Starting;
         break;
     case EmitterState::Starting:
-        if (iPaused)
+        if (m_paused)
             break;
         m_startTime = fTime;
         m_stopTime = fTime + (get_length_sec() / m_params.freq); //--#SM+#--
@@ -64,14 +64,14 @@ void CSoundRender_Emitter::update(float dt)
             m_current_state = EmitterState::Simulating;
         break;
     case EmitterState::StartingLoopedDelayed:
-        if (iPaused)
+        if (m_paused)
             break;
         starting_delay -= dt;
         if (starting_delay <= 0)
             m_current_state = EmitterState::StartingLooped;
         break;
     case EmitterState::StartingLooped:
-        if (iPaused)
+        if (m_paused)
             break;
         m_startTime = fTime;
         m_stopTime = TIME_TO_STOP_INFINITE;
@@ -90,7 +90,7 @@ void CSoundRender_Emitter::update(float dt)
             m_current_state = EmitterState::SimulatingLooped;
         break;
     case EmitterState::Playing:
-        if (iPaused)
+        if (m_paused)
         {
             if (m_target)
             {
@@ -124,7 +124,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         break;
     case EmitterState::Simulating:
-        if (iPaused)
+        if (m_paused)
         {
             m_startTime += fDeltaTime;
             m_stopTime += fDeltaTime;
@@ -150,7 +150,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         break;
     case EmitterState::PlayingLooped:
-        if (iPaused)
+        if (m_paused)
         {
             if (m_target)
             {
@@ -174,7 +174,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         break;
     case EmitterState::SimulatingLooped:
-        if (iPaused)
+        if (m_paused)
         {
             m_startTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;

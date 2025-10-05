@@ -41,7 +41,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_is2D = false;
     m_isStopped = false;
     m_isRewind = false;
-    iPaused = 0;
+    m_paused = 0;
     m_startTime = 0.0f;
     m_stopTime = 0.0f;
     m_propagadeTime = 0.0f;

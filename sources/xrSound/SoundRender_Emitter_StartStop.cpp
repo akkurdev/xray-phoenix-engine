@@ -73,13 +73,13 @@ void CSoundRender_Emitter::pause(BOOL bVal, int id)
 {
     if (bVal)
     {
-        if (0 == iPaused)
-            iPaused = id;
+        if (0 == m_paused)
+            m_paused = id;
     }
     else
     {
-        if (id == iPaused)
-            iPaused = 0;
+        if (id == m_paused)
+            m_paused = 0;
     }
 }
 

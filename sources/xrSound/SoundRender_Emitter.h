@@ -64,7 +64,7 @@ private:
     uint32_t m_streamCursor;
     uint32_t m_handleCursor;
     CSound_params m_params;
-    int iPaused;
+    int32_t m_paused;
     bool m_isMoved;
     bool m_is2D;
     bool m_isStopped;
