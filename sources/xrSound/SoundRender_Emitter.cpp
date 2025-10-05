@@ -185,12 +185,12 @@ u32 CSoundRender_Emitter::play_time()
 
 void CSoundRender_Emitter::set_cursor(u32 p)
 {
-    m_stream_cursor = p;
+    m_streamCursor = p;
 
     if (owner_data._get() && owner_data->fn_attached[0].size())
     {
         u32 bt = (owner_data->handle)->BytesCount();
-        if (m_stream_cursor >= m_cur_handle_cursor + bt)
+        if (m_streamCursor >= m_cur_handle_cursor + bt)
         {
             SoundRender->i_destroy_source(owner_data->handle);
             owner_data->handle = SoundRender->i_create_source(owner_data->fn_attached[0].c_str());
@@ -207,11 +207,11 @@ void CSoundRender_Emitter::set_cursor(u32 p)
 u32 CSoundRender_Emitter::get_cursor(bool b_absolute) const
 {
     if (b_absolute)
-        return m_stream_cursor;
+        return m_streamCursor;
     else
     {
-        VERIFY(m_stream_cursor - m_cur_handle_cursor >= 0);
-        return m_stream_cursor - m_cur_handle_cursor;
+        VERIFY(m_streamCursor - m_cur_handle_cursor >= 0);
+        return m_streamCursor - m_cur_handle_cursor;
     }
 }
 

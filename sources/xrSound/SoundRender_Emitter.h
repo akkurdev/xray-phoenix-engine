@@ -61,7 +61,7 @@ private:
     float fade_volume;
     Fvector occluder[3]{};
     EmitterState m_current_state;
-    u32 m_stream_cursor;
+    uint32_t m_streamCursor;
     u32 m_cur_handle_cursor;
     CSound_params m_params;
     int iPaused;
