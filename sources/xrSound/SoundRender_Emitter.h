@@ -18,20 +18,20 @@ public:
     virtual void Stop(bool isDeffered);
     void Pause(bool hasValue, int32_t pausedId);
     virtual uint32_t PlayTime();
-
-public:
+    virtual bool Is2D();
     virtual void SetPriority(float priority);
-    virtual void set_time(float t); 
-    virtual CSound_params* get_params();    
     ISoundRenderSource* RenderSource();
     ISoundRenderTarget* RenderTarget();
+
+public:    
+    virtual void SetTime(float time); 
+    virtual CSound_params* get_params();       
     virtual void switch_to_2D();
     virtual void switch_to_3D();
     virtual void set_position(const Fvector& pos);
     virtual void set_frequency(float scale);
     u32 get_bytes_total() const;
-    float get_length_sec() const;
-    virtual bool Is2D();
+    float get_length_sec() const;    
     virtual void set_range(float min, float max);
     virtual void set_volume(float vol);     
     void i_stop();

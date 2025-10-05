@@ -208,7 +208,7 @@ public:
     virtual void set_range(float min, float max) = 0;
     virtual void set_volume(float vol) = 0;
     virtual void SetPriority(float priority) = 0;
-    virtual void set_time(float t) = 0; //--#SM+#--
+    virtual void SetTime(float time) = 0;
     virtual void Stop(bool isDeffered) = 0;
     virtual uint32_t PlayTime() = 0;
     virtual const CSound_params* get_params() = 0;
@@ -392,7 +392,7 @@ IC void ref_sound::set_time(float t)
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->set_time(t);
+        _feedback()->SetTime(t);
 }
 IC void ref_sound::stop()
 {
