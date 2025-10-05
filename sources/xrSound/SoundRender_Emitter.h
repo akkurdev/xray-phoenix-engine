@@ -22,10 +22,11 @@ public:
     virtual void SetPriority(float priority);
     ISoundRenderSource* RenderSource();
     ISoundRenderTarget* RenderTarget();
+    virtual void SetTime(float time);
+    virtual CSound_params* Params();
 
-public:    
-    virtual void SetTime(float time); 
-    virtual CSound_params* get_params();       
+
+public:           
     virtual void switch_to_2D();
     virtual void switch_to_3D();
     virtual void set_position(const Fvector& pos);

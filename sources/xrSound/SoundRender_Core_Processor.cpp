@@ -187,7 +187,7 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
             CSound_stats_ext::SItem _I;
             _I._3D = !_E->Is2D();
             _I._rendered = !!_E->RenderTarget();
-            _I.params = *_E->get_params();
+            _I.params = *_E->Params();
             _I.volume = _E->SmoothVolume();
             if (_E->OwnerData())
             {

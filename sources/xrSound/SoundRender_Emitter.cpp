@@ -125,7 +125,7 @@ void CSoundRender_Emitter::set_volume(float vol)
 
 bool CSoundRender_Emitter::Is2D() { return m_is2D; }
 
-CSound_params* CSoundRender_Emitter::get_params() { return &m_params; }
+CSound_params* CSoundRender_Emitter::Params() { return &m_params; }
 
 void CSoundRender_Emitter::set_range(float min, float max)
 {

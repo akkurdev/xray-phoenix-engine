@@ -211,7 +211,7 @@ public:
     virtual void SetTime(float time) = 0;
     virtual void Stop(bool isDeffered) = 0;
     virtual uint32_t PlayTime() = 0;
-    virtual const CSound_params* get_params() = 0;
+    virtual CSound_params* Params() = 0;
 };
 
 /// definition (Sound Stream Interface)
@@ -410,7 +410,7 @@ IC const CSound_params* ref_sound::get_params()
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        return _feedback()->get_params();
+        return _feedback()->Params();
     else
         return NULL;
 }
