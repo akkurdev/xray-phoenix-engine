@@ -19,7 +19,7 @@ public:
 
 
 public:    
-    virtual void stop(BOOL bDeffered);
+    virtual void Stop(bool isDeffered);
     void pause(BOOL bVal, int id);
     virtual u32 play_time();
     virtual void set_priority(float p);

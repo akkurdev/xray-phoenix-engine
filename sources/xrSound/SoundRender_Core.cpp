@@ -121,7 +121,7 @@ void CSoundRender_Core::_clear()
 void CSoundRender_Core::stop_emitters()
 {
     for (u32 eit = 0; eit < s_emitters.size(); eit++)
-        s_emitters[eit]->stop(FALSE);
+        s_emitters[eit]->Stop(false);
 }
 
 int CSoundRender_Core::pause_emitters(bool val)
@@ -385,7 +385,7 @@ void CSoundRender_Core::destroy(ref_sound& S)
     if (S._feedback())
     {
         CSoundRender_Emitter* E = (CSoundRender_Emitter*)S._feedback();
-        E->stop(FALSE);
+        E->Stop(false);
     }
     S._p = 0;
 }
@@ -410,7 +410,7 @@ void CSoundRender_Core::_destroy_data(ref_sound_data& S)
     if (S.feedback)
     {
         CSoundRender_Emitter* E = (CSoundRender_Emitter*)S.feedback;
-        E->stop(FALSE);
+        E->Stop(false);
     }
     R_ASSERT(0 == S.feedback);
     SoundRender->i_destroy_source(S.handle);

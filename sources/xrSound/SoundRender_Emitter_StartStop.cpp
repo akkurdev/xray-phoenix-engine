@@ -46,9 +46,9 @@ void CSoundRender_Emitter::i_stop()
     m_state = EmitterState::Stopped;
 }
 
-void CSoundRender_Emitter::stop(BOOL bDeffered)
+void CSoundRender_Emitter::Stop(bool isDeffered)
 {
-    if (bDeffered)
+    if (isDeffered)
         m_isStopped = true;
     else
         i_stop();

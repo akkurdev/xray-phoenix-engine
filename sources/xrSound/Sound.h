@@ -209,7 +209,7 @@ public:
     virtual void set_volume(float vol) = 0;
     virtual void set_priority(float vol) = 0;
     virtual void set_time(float t) = 0; //--#SM+#--
-    virtual void stop(BOOL bDeffered) = 0;
+    virtual void Stop(bool isDeffered) = 0;
     virtual const CSound_params* get_params() = 0;
     virtual u32 play_time() = 0;
 };
@@ -398,13 +398,13 @@ IC void ref_sound::stop()
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->stop(FALSE);
+        _feedback()->Stop(false);
 }
 IC void ref_sound::stop_deffered()
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->stop(TRUE);
+        _feedback()->Stop(true);
 }
 IC const CSound_params* ref_sound::get_params()
 {
