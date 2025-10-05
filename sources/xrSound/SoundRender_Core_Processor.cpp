@@ -10,7 +10,7 @@ CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float 
     VERIFY(S->_p->feedback == 0);
     CSoundRender_Emitter* E = xr_new<CSoundRender_Emitter>();
     S->_p->feedback = E;
-    E->start(S, _loop, delay);
+    E->Start(S, _loop, delay);
     s_emitters.push_back(E);
     return E;
 }

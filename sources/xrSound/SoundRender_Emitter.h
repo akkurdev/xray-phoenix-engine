@@ -11,11 +11,9 @@ public:
 
     void FillBlock(void* ptr, uint32_t size);
     float Priority();
-
+    void Start(ref_sound* sound, bool isLooped, float delay);
 
 public:    
-    
-    void start(ref_sound* _owner, BOOL _loop, float delay);
     void cancel(); 
     void update(float dt);
     BOOL update_culling(float dt);

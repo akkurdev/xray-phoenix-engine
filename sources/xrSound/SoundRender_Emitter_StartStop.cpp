@@ -3,12 +3,12 @@
 #include "SoundRender_Emitter.h"
 #include "SoundRenderSource.h"
 
-void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
+void CSoundRender_Emitter::Start(ref_sound* sound, bool isLooped, float delay)
 {
     m_startDelay = delay;
 
     VERIFY(_owner);
-    m_soundData = _owner->_p;
+    m_soundData = sound->_p;
     VERIFY(owner_data);
     m_params.position.set(0, 0, 0);
     m_params.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
@@ -20,11 +20,11 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
 
     if (fis_zero(delay, EPS_L))
     {
-        m_state = _loop ? EmitterState::StartingLooped : EmitterState::Starting;
+        m_state = isLooped ? EmitterState::StartingLooped : EmitterState::Starting;
     }
     else
     {
-        m_state = _loop ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
+        m_state = isLooped ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
         m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
     m_isStopped = false;
