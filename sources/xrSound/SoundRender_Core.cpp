@@ -327,7 +327,7 @@ void CSoundRender_Core::play(ref_sound& S, CObject* O, u32 flags, float delay)
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->rewind();
+        ((CSoundRender_Emitter*)S._feedback())->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 
@@ -371,7 +371,7 @@ void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O, const Fvector& pos
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->rewind();
+        ((CSoundRender_Emitter*)S._feedback())->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 

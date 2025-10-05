@@ -14,10 +14,11 @@ public:
     void Start(ref_sound* sound, bool isLooped, float delay);
     void Cancel();
     void Update(float deltaTime);
+    void Rewind();
 
 
-public:
-    void rewind();
+
+public:    
     virtual void stop(BOOL bDeffered);
     void pause(BOOL bVal, int id);
     virtual u32 play_time();

@@ -54,7 +54,7 @@ void CSoundRender_Emitter::stop(BOOL bDeffered)
         i_stop();
 }
 
-void CSoundRender_Emitter::rewind()
+void CSoundRender_Emitter::Rewind()
 {
     m_isStopped = false;
 
