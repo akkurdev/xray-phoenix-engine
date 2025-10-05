@@ -22,7 +22,7 @@ void CSoundRender_Emitter::set_time(float t)
     if (t < 0.0f)
         t = 0.0f;
     R_ASSERT2(get_length_sec() >= t, "set_time: time is bigger than length of sound");
-    fTimeToRewind = t;
+    m_rewindTime = t;
 }
 
 CSoundRender_Emitter::CSoundRender_Emitter(void)
@@ -45,7 +45,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     fTimeStarted = 0.0f;
     fTimeToStop = 0.0f;
     fTimeToPropagade = 0.0f;
-    fTimeToRewind = 0.0f; 
+    m_rewindTime = 0.0f;
     m_marker = 0xabababab;
     starting_delay = 0.f;
     priority_scale = 1.f;

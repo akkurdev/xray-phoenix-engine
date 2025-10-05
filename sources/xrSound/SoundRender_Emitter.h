@@ -72,6 +72,6 @@ private:
     float fTimeStarted;
     float fTimeToStop;
     float fTimeToPropagade;
-    float fTimeToRewind;
+    float m_rewindTime;
     u32 m_marker;
 };

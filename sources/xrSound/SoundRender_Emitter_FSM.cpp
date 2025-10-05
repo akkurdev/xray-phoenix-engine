@@ -201,15 +201,15 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::Simulating:
     case EmitterState::PlayingLooped:
     case EmitterState::SimulatingLooped:
-        if (fTimeToRewind > 0.0f)
+        if (m_rewindTime > 0.0f)
         {
             float fLength = get_length_sec();
             bool bLooped = (fTimeToStop == 0xffffffff);
 
-            R_ASSERT2(fLength >= fTimeToRewind, "set_time: target time is bigger than length of sound");
+            R_ASSERT2(fLength >= m_rewindTime, "set_time: target time is bigger than length of sound");
 
-            float fRemainingTime = (fLength - fTimeToRewind) / p_source.freq;
-            float fPastTime = fTimeToRewind / p_source.freq;
+            float fRemainingTime = (fLength - m_rewindTime) / p_source.freq;
+            float fPastTime = m_rewindTime / p_source.freq;
 
             fTimeStarted = SoundRender->fTimer_Value - fPastTime;
             fTimeToPropagade = fTimeStarted; //--> For AI events
@@ -231,7 +231,7 @@ void CSoundRender_Emitter::update(float dt)
             u32 ptr = calc_cursor(fTimeStarted, fTime, fLength, p_source.freq, RenderSource()->Format());
             set_cursor(ptr);
 
-            fTimeToRewind = 0.0f;
+            m_rewindTime = 0.0f;
         }
     default: break;
     }
