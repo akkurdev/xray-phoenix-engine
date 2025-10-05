@@ -70,6 +70,12 @@
     <ClInclude Include="SoundEnvironmentLibrary.h">
       <Filter>Environment</Filter>
     </ClInclude>
+    <ClInclude Include="EmitterState.h">
+      <Filter>Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundRenderEmitter.h">
+      <Filter>Emitter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">

@@ -273,6 +273,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ai_sounds.h" />
+    <ClInclude Include="EmitterState.h" />
+    <ClInclude Include="ISoundRenderEmitter.h" />
     <ClInclude Include="ISoundRenderSource.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEnvironment.h" />
