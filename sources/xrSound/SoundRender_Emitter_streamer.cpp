@@ -4,7 +4,7 @@
 #include "SoundRender_Emitter.h"
 #include "OalSoundRenderTarget.h"
 
-void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
+void CSoundRender_Emitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
 {
     u32 line_size = SoundRender->cache.LineSize();
     u32 line = offset / line_size;
@@ -23,13 +23,13 @@ void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
 
         // fill block
         u32 blk_size = _min(size, line_amount);
-        u8* ptr = (u8*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
-        CopyMemory(_dest, ptr + line_offs, blk_size);
+        u8* cachePtr = (u8*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
+        CopyMemory(ptr, cachePtr + line_offs, blk_size);
 
         // advance
         line++;
         size -= blk_size;
-        _dest += blk_size;
+        ptr += blk_size;
         offset += blk_size;
         line_offs = 0;
         line_amount = line_size;
@@ -59,7 +59,7 @@ void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
                 u32 sz_data = dwBytesTotal - get_cursor(true);
                 u32 sz_zero = (get_cursor(true) + size) - dwBytesTotal;
                 VERIFY(size == (sz_data + sz_zero));
-                fill_data(dest, get_cursor(false), sz_data);
+                FillData(dest, get_cursor(false), sz_data);
                 Memory.mem_fill(dest + sz_data, 0, sz_zero);
             }
             move_cursor(size);
@@ -71,7 +71,7 @@ void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
             {
                 u32 sz_data = dwBytesTotal - get_cursor(true);
                 u32 sz_write = _min(size - hw_position, sz_data);
-                fill_data(dest + hw_position, get_cursor(true), sz_write);
+                FillData(dest + hw_position, get_cursor(true), sz_write);
                 hw_position += sz_write;
                 move_cursor(sz_write);
                 set_cursor(get_cursor(true) % dwBytesTotal);
@@ -92,22 +92,15 @@ void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
             if ((m_handleCursor + bt_handle) > get_cursor(true))
             {
                 rem = (m_handleCursor + bt_handle) - get_cursor(true);
-
-#ifdef DEBUG
-                Msg("reminder from prev source %d", rem);
-#endif // #ifdef DEBUG
-                fill_data(dest, get_cursor(false), rem);
+                FillData(dest, get_cursor(false), rem);
                 move_cursor(rem);
             }
-#ifdef DEBUG
-            Msg("recurce from next source %d", size - rem);
-#endif // #ifdef DEBUG
             FillBlock(dest + rem, size - rem);
         }
         else
         {
             // Everything OK, just stream
-            fill_data(dest, get_cursor(false), size);
+            FillData(dest, get_cursor(false), size);
             move_cursor(size);
         }
     }

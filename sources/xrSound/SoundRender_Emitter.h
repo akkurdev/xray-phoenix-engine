@@ -14,7 +14,7 @@ public:
 
 
 public:    
-    void fill_data(u8* ptr, u32 offset, u32 size);    
+    
     void start(ref_sound* _owner, BOOL _loop, float delay);
     void cancel(); 
     void update(float dt);
@@ -55,6 +55,7 @@ public:
 
 private:
     float Attitude();
+    void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
 
 private:
     float m_startDelay;
