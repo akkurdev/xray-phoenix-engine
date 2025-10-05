@@ -29,7 +29,7 @@ void CSoundRender_Emitter::update(float dt)
 
     if (bRewind)
     {
-        if (target)
+        if (m_target)
             SoundRender->i_rewind(this);
         bRewind = FALSE;
     }
@@ -92,7 +92,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::Playing:
         if (iPaused)
         {
-            if (target)
+            if (m_target)
             {
                 SoundRender->i_stop(this);
                 m_current_state = EmitterState::Simulating;
@@ -138,7 +138,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         else
         {
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, source()->Format()); //--#SM+#--
+            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
             if (update_culling(dt))
@@ -152,7 +152,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::PlayingLooped:
         if (iPaused)
         {
-            if (target)
+            if (m_target)
             {
                 SoundRender->i_stop(this);
                 m_current_state = EmitterState::SimulatingLooped;
@@ -184,7 +184,7 @@ void CSoundRender_Emitter::update(float dt)
         {
             // switch to: PLAY
             m_current_state = EmitterState::PlayingLooped; // switch state
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, source()->Format()); //--#SM+#--
+            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
             SoundRender->i_start(this);
@@ -228,7 +228,7 @@ void CSoundRender_Emitter::update(float dt)
                 fTimeToStop = SoundRender->fTimer_Value + fRemainingTime;
             }
 
-            u32 ptr = calc_cursor(fTimeStarted, fTime, fLength, p_source.freq, source()->Format());
+            u32 ptr = calc_cursor(fTimeStarted, fTime, fLength, p_source.freq, RenderSource()->Format());
             set_cursor(ptr);
 
             fTimeToRewind = 0.0f;
@@ -309,7 +309,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
     // Here we has enought "PRIORITY" to be soundable
     // If we are playing already, return OK
     // --- else check availability of resources
-    if (target)
+    if (m_target)
         return TRUE;
     else
         return SoundRender->i_allow_play(this);

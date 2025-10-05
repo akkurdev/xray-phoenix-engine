@@ -16,14 +16,14 @@ void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
     while (size)
     {
         // cache access
-        if (SoundRender->cache.Request(*source()->Cache(), line))
+        if (SoundRender->cache.Request(*RenderSource()->Cache(), line))
         {
-            source()->Decompress(line, target->OggFile());
+            RenderSource()->Decompress(line, m_target->OggFile());
         }
 
         // fill block
         u32 blk_size = _min(size, line_amount);
-        u8* ptr = (u8*)SoundRender->cache.GetDataById(*source()->Cache(), line);
+        u8* ptr = (u8*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
         CopyMemory(_dest, ptr + line_offs, blk_size);
 
         // advance
@@ -111,6 +111,16 @@ void CSoundRender_Emitter::fill_block(void* ptr, u32 size)
             move_cursor(size);
         }
     }
+}
+
+ISoundRenderSource* CSoundRender_Emitter::RenderSource()
+{
+    return owner_data->handle;
+}
+
+ISoundRenderTarget* CSoundRender_Emitter::RenderTarget()
+{
+    return m_target;
 }
 
 u32 CSoundRender_Emitter::get_bytes_total() const

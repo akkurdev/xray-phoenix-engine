@@ -35,7 +35,7 @@ struct HUD_SOUND
     {
         if (m_activeSnd)
         {
-            if (m_activeSnd->snd._feedback() && !m_activeSnd->snd._feedback()->is_2D())
+            if (m_activeSnd->snd._feedback() && !m_activeSnd->snd._feedback()->Is2D())
                 m_activeSnd->snd.set_position(pos);
             else
                 m_activeSnd = NULL;

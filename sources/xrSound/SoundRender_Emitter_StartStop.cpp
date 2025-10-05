@@ -12,12 +12,12 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
     VERIFY(owner_data);
     //	source					= (CSoundRender_Source*)owner_data->handle;
     p_source.position.set(0, 0, 0);
-    p_source.min_distance = source()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
-    p_source.max_distance = source()->MaxDistance(); // 300.f;
-    p_source.base_volume = source()->BaseVolume(); // 1.f
+    p_source.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
+    p_source.max_distance = RenderSource()->MaxDistance(); // 300.f;
+    p_source.base_volume = RenderSource()->BaseVolume(); // 1.f
     p_source.volume = 1.f; // 1.f
     p_source.freq = 1.f;
-    p_source.max_ai_distance = source()->MaxAiDistance(); // 300.f;
+    p_source.max_ai_distance = RenderSource()->MaxAiDistance(); // 300.f;
 
     if (fis_zero(delay, EPS_L))
     {
@@ -35,7 +35,7 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
 void CSoundRender_Emitter::i_stop()
 {
     bRewind = FALSE;
-    if (target)
+    if (m_target)
         SoundRender->i_stop(this);
     if (owner_data)
     {

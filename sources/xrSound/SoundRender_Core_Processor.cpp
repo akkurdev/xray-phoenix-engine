@@ -40,7 +40,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         if (E)
         {
             E->update(dt_sec);
-            E->marker = s_emitters_u;
+            E->SetMarker(s_emitters_u);
             E = T->Emitter(); // update can stop itself
             if (E)
                 T->SetPriority(E->priority());
@@ -58,10 +58,10 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     for (it = 0; it < s_emitters.size(); it++)
     {
         CSoundRender_Emitter* pEmitter = s_emitters[it];
-        if (pEmitter->marker != s_emitters_u)
+        if (pEmitter->Marker() != s_emitters_u)
         {
             pEmitter->update(dt_sec);
-            pEmitter->marker = s_emitters_u;
+            pEmitter->SetMarker(s_emitters_u);
         }
         if (!pEmitter->isPlaying())
         {
@@ -185,16 +185,16 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
         {
             CSoundRender_Emitter* _E = s_emitters[it];
             CSound_stats_ext::SItem _I;
-            _I._3D = !_E->b2D;
-            _I._rendered = !!_E->target;
-            _I.params = _E->p_source;
-            _I.volume = _E->smooth_volume;
-            if (_E->owner_data)
+            _I._3D = !_E->Is2D();
+            _I._rendered = !!_E->RenderTarget();
+            _I.params = *_E->get_params();
+            _I.volume = _E->SmoothVolume();
+            if (_E->OwnerData())
             {
-                _I.name = _E->source()->FileName();
-                _I.game_object = _E->owner_data->g_object;
-                _I.game_type = _E->owner_data->g_type;
-                _I.type = _E->owner_data->s_type;
+                _I.name = _E->RenderSource()->FileName();
+                _I.game_object = _E->OwnerData()->g_object;
+                _I.game_type = _E->OwnerData()->g_type;
+                _I.type = _E->OwnerData()->s_type;
             }
             else
             {

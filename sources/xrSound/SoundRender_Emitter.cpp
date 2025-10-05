@@ -9,7 +9,7 @@ extern float psSoundVEffects;
 
 void CSoundRender_Emitter::set_position(const Fvector& pos)
 {
-    if (source()->Format().nChannels == 1 && _valid(pos))
+    if (RenderSource()->Format().nChannels == 1 && _valid(pos))
         p_source.position = pos;
     else
         p_source.position.set(0, 0, 0);
@@ -27,12 +27,7 @@ void CSoundRender_Emitter::set_time(float t)
 
 CSoundRender_Emitter::CSoundRender_Emitter(void)
 {
-#ifdef DEBUG
-    static u32 incrementalID = 0;
-    dbg_ID = ++incrementalID;
-#endif
-    target = NULL;
-    //.	source						= NULL;
+    m_target = NULL;
     owner_data = NULL;
     smooth_volume = 1.f;
     occluder_volume = 1.f;
@@ -50,8 +45,8 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     fTimeStarted = 0.0f;
     fTimeToStop = 0.0f;
     fTimeToPropagade = 0.0f;
-    fTimeToRewind = 0.0f; //--#SM+#--
-    marker = 0xabababab;
+    fTimeToRewind = 0.0f; 
+    m_marker = 0xabababab;
     starting_delay = 0.f;
     priority_scale = 1.f;
     m_cur_handle_cursor = 0;
@@ -77,6 +72,72 @@ void CSoundRender_Emitter::Event_ReleaseOwner()
             it--;
         }
     }
+}
+
+BOOL CSoundRender_Emitter::isPlaying(void)
+{
+    return m_current_state != EmitterState::Stopped;
+}
+
+u32 CSoundRender_Emitter::Marker() const
+{
+    return m_marker;
+}
+
+void CSoundRender_Emitter::SetMarker(u32 marker)
+{
+    m_marker = marker;
+}
+
+ref_sound_data_ptr CSoundRender_Emitter::OwnerData()
+{
+    return owner_data;
+}
+
+float CSoundRender_Emitter::SmoothVolume() const
+{
+    return smooth_volume;
+}
+
+void CSoundRender_Emitter::SetRenderTarget(ISoundRenderTarget* target)
+{
+    m_target = target;
+}
+
+float CSoundRender_Emitter::StopTime() const
+{
+    return fTimeToStop;
+}
+
+void CSoundRender_Emitter::SetStopTime(float stopTime)
+{
+    fTimeToStop = stopTime;
+}
+
+void CSoundRender_Emitter::set_volume(float vol)
+{
+    if (!_valid(vol))
+        vol = 0.0f;
+    p_source.volume = vol;
+}
+
+bool CSoundRender_Emitter::Is2D() { return b2D; }
+
+CSound_params* CSoundRender_Emitter::get_params() { return &p_source; }
+
+void CSoundRender_Emitter::set_range(float min, float max)
+{
+    VERIFY(_valid(min) && _valid(max));
+    p_source.min_distance = min;
+    p_source.max_distance = max;
+}
+
+void CSoundRender_Emitter::set_priority(float p) { priority_scale = p; }
+
+void CSoundRender_Emitter::set_frequency(float scale)
+{
+    VERIFY(_valid(scale));
+    p_source.freq = scale;
 }
 
 void CSoundRender_Emitter::Event_Propagade()
@@ -137,8 +198,8 @@ void CSoundRender_Emitter::set_cursor(u32 p)
             owner_data->fn_attached[1] = "";
             m_cur_handle_cursor = get_cursor(true);
 
-            if (target)
-                target->OnSourceChanged();
+            if (m_target)
+                m_target->OnSourceChanged();
         }
     }
 }

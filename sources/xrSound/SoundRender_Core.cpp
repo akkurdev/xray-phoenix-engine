@@ -299,7 +299,10 @@ void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
     S._p->dwBytesTotal += s->BytesCount();
     S._p->fTimeTotal += s->Length();
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->fTimeToStop += s->Length();
+    {
+        auto emitter = (CSoundRender_Emitter*)S._feedback();
+        emitter->SetStopTime(emitter->StopTime() + s->Length());
+    }
 
     SoundRender->i_destroy_source(s);
 }
@@ -632,9 +635,9 @@ void CSoundRender_Core::object_relcase(CObject* obj)
         for (u32 eit = 0; eit < s_emitters.size(); eit++)
         {
             if (s_emitters[eit])
-                if (s_emitters[eit]->owner_data)
-                    if (obj == s_emitters[eit]->owner_data->g_object)
-                        s_emitters[eit]->owner_data->g_object = 0;
+                if (s_emitters[eit]->OwnerData())
+                    if (obj == s_emitters[eit]->OwnerData()->g_object)
+                        s_emitters[eit]->OwnerData()->g_object = 0;
         }
     }
 }

@@ -28,24 +28,24 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
         T->Emitter()->cancel();
 
     // Associate
-    E->target = T;
-    E->target->Start(E);
+    E->SetRenderTarget(T);
+    E->RenderTarget()->Start(E);
     T->SetPriority(Ptest);
 }
 
 void CSoundRender_Core::i_stop(CSoundRender_Emitter* E)
 {
     R_ASSERT(E);
-    R_ASSERT(E == E->target->Emitter());
-    E->target->Stop();
-    E->target = NULL;
+    R_ASSERT(E == E->RenderTarget()->Emitter());
+    E->RenderTarget()->Stop();
+    E->SetRenderTarget(nullptr);
 }
 
 void CSoundRender_Core::i_rewind(CSoundRender_Emitter* E)
 {
     R_ASSERT(E);
-    R_ASSERT(E == E->target->Emitter());
-    E->target->Rewind();
+    R_ASSERT(E == E->RenderTarget()->Emitter());
+    E->RenderTarget()->Rewind();
 }
 
 BOOL CSoundRender_Core::i_allow_play(CSoundRender_Emitter* E)

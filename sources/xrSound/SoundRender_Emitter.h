@@ -5,94 +5,73 @@
 
 class CSoundRender_Emitter : public CSound_emitter
 {
-    float starting_delay;
-
 public:
-#ifdef DEBUG
-    u32 dbg_ID;
-#endif
-
-    ISoundRenderTarget* target;
-    IC ISoundRenderSource* source() { return owner_data->handle; };
-    ref_sound_data_ptr owner_data;
-
-    u32 get_bytes_total() const;
-    float get_length_sec() const;
-
-    float priority_scale;
-    float smooth_volume;
-    float occluder_volume; // USER
-    float fade_volume;
-    Fvector occluder[3]{};
-
-    EmitterState m_current_state;
-    u32 m_stream_cursor;
-    u32 m_cur_handle_cursor;
-    CSound_params p_source{};
-
-    int iPaused;
-    BOOL bMoved;
-    BOOL b2D;
-    BOOL bStopping;
-    BOOL bRewind;
-    float fTimeStarted; // time of "Start"
-    float fTimeToStop; // time to "Stop"
-    float fTimeToPropagade;
-    float fTimeToRewind; // --#SM+#--
-
-    u32 marker;
-    void i_stop();
-
-    void set_cursor(u32 p);
-    u32 get_cursor(bool b_absolute) const;
-    void move_cursor(int offset);
-
-public:
-    void Event_Propagade();
-    void Event_ReleaseOwner();
-    BOOL isPlaying(void) { return m_current_state != EmitterState::Stopped; }
-
-    virtual BOOL is_2D() { return b2D; }
-    virtual void switch_to_2D();
-    virtual void switch_to_3D();
-    virtual void set_position(const Fvector& pos);
-    virtual void set_frequency(float scale)
-    {
-        VERIFY(_valid(scale));
-        p_source.freq = scale;
-    }
-    virtual void set_range(float min, float max)
-    {
-        VERIFY(_valid(min) && _valid(max));
-        p_source.min_distance = min;
-        p_source.max_distance = max;
-    }
-    virtual void set_volume(float vol)
-    {
-        if (!_valid(vol))
-            vol = 0.0f;
-        p_source.volume = vol;
-    }
-    virtual void set_priority(float p) { priority_scale = p; }
-    virtual void set_time(float t); //--#SM+#--
-    virtual const CSound_params* get_params() { return &p_source; }
+    CSoundRender_Emitter();
+    ~CSoundRender_Emitter();
 
     void fill_block(void* ptr, u32 size);
     void fill_data(u8* ptr, u32 offset, u32 size);
-
     float priority();
     float att();
     void start(ref_sound* _owner, BOOL _loop, float delay);
-    void cancel(); // manager forces out of rendering
+    void cancel(); 
     void update(float dt);
     BOOL update_culling(float dt);
     void update_environment(float dt);
     void rewind();
     virtual void stop(BOOL bDeffered);
     void pause(BOOL bVal, int id);
-
     virtual u32 play_time();
+    virtual void set_priority(float p);
+    virtual void set_time(float t); 
+    virtual CSound_params* get_params();    
+    ISoundRenderSource* RenderSource();
+    ISoundRenderTarget* RenderTarget();
+    virtual void switch_to_2D();
+    virtual void switch_to_3D();
+    virtual void set_position(const Fvector& pos);
+    virtual void set_frequency(float scale);
+    u32 get_bytes_total() const;
+    float get_length_sec() const;
+    virtual bool Is2D();
+    virtual void set_range(float min, float max);
+    virtual void set_volume(float vol);     
+    void i_stop();
+    void set_cursor(u32 p);
+    u32 get_cursor(bool b_absolute) const;
+    void move_cursor(int offset);
+    void Event_Propagade();
+    void Event_ReleaseOwner();
+    BOOL isPlaying(void);
+    u32 Marker() const;
+    void SetMarker(u32 marker);
+    ref_sound_data_ptr OwnerData();
+    float SmoothVolume() const;
+    void SetRenderTarget(ISoundRenderTarget* target);
+    float StopTime() const;
+    void SetStopTime(float stopTime);
 
-    CSoundRender_Emitter();
-    ~CSoundRender_Emitter();
+private:
+    float starting_delay;
+    ISoundRenderTarget* m_target;
+    ref_sound_data_ptr owner_data;
+    float priority_scale;
+    float smooth_volume;
+    float occluder_volume;
+    float fade_volume;
+    Fvector occluder[3]{};
+    EmitterState m_current_state;
+    u32 m_stream_cursor;
+    u32 m_cur_handle_cursor;
+    CSound_params p_source{};
+    int iPaused;
+    BOOL bMoved;
+    BOOL b2D;
+    BOOL bStopping;
+    BOOL bRewind;
+    float fTimeStarted;
+    float fTimeToStop;
+    float fTimeToPropagade;
+    float fTimeToRewind;
+    u32 m_marker;
 };
