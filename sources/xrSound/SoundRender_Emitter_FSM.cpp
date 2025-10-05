@@ -51,8 +51,8 @@ void CSoundRender_Emitter::update(float dt)
         m_stopTime = fTime + (get_length_sec() / m_params.freq); //--#SM+#--
         m_propagadeTime = fTime;
         m_fadeVolume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
+        m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
+        smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
 
         if (update_culling(dt))
         {
@@ -77,8 +77,8 @@ void CSoundRender_Emitter::update(float dt)
         m_stopTime = TIME_TO_STOP_INFINITE;
         m_propagadeTime = fTime;
         m_fadeVolume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : occluder_volume);
+        m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
+        smooth_volume = m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
         
         if (update_culling(dt))
         {
@@ -275,7 +275,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
 {
     if (m_is2D)
     {
-        occluder_volume = 1.f;
+        m_occluderVolume = 1.f;
         m_fadeVolume += dt * 10.f * (m_isStopped ? -1.f : 1.f);
     }
     else
@@ -297,13 +297,13 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
 
         // Update occlusion
         float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        volume_lerp(occluder_volume, occ, 1.f, dt);
-        clamp(occluder_volume, 0.f, 1.f);
+        volume_lerp(m_occluderVolume, occ, 1.f, dt);
+        clamp(m_occluderVolume, 0.f, 1.f);
     }
     clamp(m_fadeVolume, 0.f, 1.f);
     // Update smoothing
     smooth_volume = .9f * smooth_volume +
-        .1f * (m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * occluder_volume * m_fadeVolume);
+        .1f * (m_params.base_volume * m_params.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * m_occluderVolume * m_fadeVolume);
     if (smooth_volume < psSoundCull)
         return FALSE; // allow volume to go up
     // Here we has enought "PRIORITY" to be soundable
