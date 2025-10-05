@@ -18,7 +18,7 @@ void CSoundRender_Emitter::fill_data(u8* _dest, u32 offset, u32 size)
         // cache access
         if (SoundRender->cache.Request(*RenderSource()->Cache(), line))
         {
-            RenderSource()->Decompress(line, m_target->OggFile());
+            RenderSource()->Decompress(line, m_renderTarget->OggFile());
         }
 
         // fill block
@@ -120,7 +120,7 @@ ISoundRenderSource* CSoundRender_Emitter::RenderSource()
 
 ISoundRenderTarget* CSoundRender_Emitter::RenderTarget()
 {
-    return m_target;
+    return m_renderTarget;
 }
 
 u32 CSoundRender_Emitter::get_bytes_total() const

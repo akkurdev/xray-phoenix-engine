@@ -27,8 +27,8 @@ void CSoundRender_Emitter::set_time(float t)
 
 CSoundRender_Emitter::CSoundRender_Emitter(void)
 {
-    m_target = NULL;
-    m_ownerData = NULL;
+    m_renderTarget = nullptr;
+    m_ownerData = nullptr;
     m_smoothVolume = 1.f;
     m_occluderVolume = 1.f;
     m_fadeVolume = 1.f;
@@ -101,7 +101,7 @@ float CSoundRender_Emitter::SmoothVolume() const
 
 void CSoundRender_Emitter::SetRenderTarget(ISoundRenderTarget* target)
 {
-    m_target = target;
+    m_renderTarget = target;
 }
 
 float CSoundRender_Emitter::StopTime() const
@@ -198,8 +198,8 @@ void CSoundRender_Emitter::set_cursor(u32 p)
             m_ownerData->fn_attached[1] = "";
             m_handleCursor = get_cursor(true);
 
-            if (m_target)
-                m_target->OnSourceChanged();
+            if (m_renderTarget)
+                m_renderTarget->OnSourceChanged();
         }
     }
 }

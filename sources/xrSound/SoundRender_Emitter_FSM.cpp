@@ -29,7 +29,7 @@ void CSoundRender_Emitter::update(float dt)
 
     if (m_isRewind)
     {
-        if (m_target)
+        if (m_renderTarget)
             SoundRender->i_rewind(this);
         m_isRewind = false;
     }
@@ -92,7 +92,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::Playing:
         if (m_paused)
         {
-            if (m_target)
+            if (m_renderTarget)
             {
                 SoundRender->i_stop(this);
                 m_state = EmitterState::Simulating;
@@ -152,7 +152,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::PlayingLooped:
         if (m_paused)
         {
-            if (m_target)
+            if (m_renderTarget)
             {
                 SoundRender->i_stop(this);
                 m_state = EmitterState::SimulatingLooped;
@@ -309,7 +309,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
     // Here we has enought "PRIORITY" to be soundable
     // If we are playing already, return OK
     // --- else check availability of resources
-    if (m_target)
+    if (m_renderTarget)
         return TRUE;
     else
         return SoundRender->i_allow_play(this);
