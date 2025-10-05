@@ -171,18 +171,6 @@ void CSoundRender_Emitter::switch_to_2D()
 
 void CSoundRender_Emitter::switch_to_3D() { m_is2D = false; }
 
-u32 CSoundRender_Emitter::play_time()
-{
-    if (m_state == EmitterState::Playing ||
-        m_state == EmitterState::PlayingLooped ||
-        m_state == EmitterState::Simulating ||
-        m_state == EmitterState::SimulatingLooped)
-        return iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f);
-    else
-        return 0;
-}
-
-
 void CSoundRender_Emitter::set_cursor(u32 p)
 {
     m_streamCursor = p;

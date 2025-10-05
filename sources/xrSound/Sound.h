@@ -211,7 +211,6 @@ public:
     virtual void set_time(float t) = 0; //--#SM+#--
     virtual void Stop(bool isDeffered) = 0;
     virtual const CSound_params* get_params() = 0;
-    virtual u32 play_time() = 0;
 };
 
 /// definition (Sound Stream Interface)

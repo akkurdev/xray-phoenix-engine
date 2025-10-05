@@ -18,8 +18,7 @@ public:
     virtual void Stop(bool isDeffered);
     void Pause(bool hasValue, int32_t pausedId);
 
-public:    
-    virtual u32 play_time();
+public:
     virtual void set_priority(float p);
     virtual void set_time(float t); 
     virtual CSound_params* get_params();    
