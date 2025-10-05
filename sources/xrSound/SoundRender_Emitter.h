@@ -63,7 +63,7 @@ private:
     EmitterState m_current_state;
     u32 m_stream_cursor;
     u32 m_cur_handle_cursor;
-    CSound_params p_source{};
+    CSound_params m_params;
     int iPaused;
     bool m_isMoved;
     bool m_is2D;
