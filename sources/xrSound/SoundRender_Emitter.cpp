@@ -48,7 +48,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_rewindTime = 0.0f;
     m_marker = 0xabababab;
     starting_delay = 0.f;
-    priority_scale = 1.f;
+    m_priorityScale = 1.f;
     m_handleCursor = 0;
 }
 
@@ -132,7 +132,7 @@ void CSoundRender_Emitter::set_range(float min, float max)
     m_params.max_distance = max;
 }
 
-void CSoundRender_Emitter::set_priority(float p) { priority_scale = p; }
+void CSoundRender_Emitter::set_priority(float p) { m_priorityScale = p; }
 
 void CSoundRender_Emitter::set_frequency(float scale)
 {
