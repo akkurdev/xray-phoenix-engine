@@ -116,11 +116,6 @@ void CSoundRender_Emitter::Update(float deltaTime)
                 m_state = EmitterState::Simulating; // switch state
                 SoundRender->i_stop(this);
             }
-            else
-            {
-                // We are still playing
-                update_environment(deltaTime);
-            }
         }
         break;
     case EmitterState::Simulating:
@@ -166,11 +161,6 @@ void CSoundRender_Emitter::Update(float deltaTime)
             // switch to: SIMULATE
             m_state = EmitterState::SimulatingLooped; // switch state
             SoundRender->i_stop(this);
-        }
-        else
-        {
-            // We are still playing
-            update_environment(deltaTime);
         }
         break;
     case EmitterState::SimulatingLooped:
@@ -336,8 +326,4 @@ float CSoundRender_Emitter::Attitude()
     clamp(att, 0.f, 1.f);
 
     return att;
-}
-
-void CSoundRender_Emitter::update_environment(float dt)
-{
 }

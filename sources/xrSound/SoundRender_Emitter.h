@@ -17,7 +17,6 @@ public:
 
 
 public:
-    void update_environment(float dt);
     void rewind();
     virtual void stop(BOOL bDeffered);
     void pause(BOOL bVal, int id);
