@@ -69,7 +69,7 @@ private:
     BOOL b2D;
     BOOL bStopping;
     BOOL bRewind;
-    float fTimeStarted;
+    float m_startTime;
     float m_stopTime;
     float m_propagadeTime;
     float m_rewindTime;

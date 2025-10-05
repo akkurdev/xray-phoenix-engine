@@ -47,7 +47,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::Starting:
         if (iPaused)
             break;
-        fTimeStarted = fTime;
+        m_startTime = fTime;
         m_stopTime = fTime + (get_length_sec() / p_source.freq); //--#SM+#--
         m_propagadeTime = fTime;
         fade_volume = 1.f;
@@ -73,7 +73,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::StartingLooped:
         if (iPaused)
             break;
-        fTimeStarted = fTime;
+        m_startTime = fTime;
         m_stopTime = TIME_TO_STOP_INFINITE;
         m_propagadeTime = fTime;
         fade_volume = 1.f;
@@ -97,7 +97,7 @@ void CSoundRender_Emitter::update(float dt)
                 SoundRender->i_stop(this);
                 m_current_state = EmitterState::Simulating;
             }
-            fTimeStarted += fDeltaTime;
+            m_startTime += fDeltaTime;
             m_stopTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
@@ -126,7 +126,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::Simulating:
         if (iPaused)
         {
-            fTimeStarted += fDeltaTime;
+            m_startTime += fDeltaTime;
             m_stopTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
@@ -138,7 +138,7 @@ void CSoundRender_Emitter::update(float dt)
         }
         else
         {
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
+            u32 ptr = calc_cursor(m_startTime, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
             if (update_culling(dt))
@@ -157,7 +157,7 @@ void CSoundRender_Emitter::update(float dt)
                 SoundRender->i_stop(this);
                 m_current_state = EmitterState::SimulatingLooped;
             }
-            fTimeStarted += fDeltaTime;
+            m_startTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
         }
@@ -176,7 +176,7 @@ void CSoundRender_Emitter::update(float dt)
     case EmitterState::SimulatingLooped:
         if (iPaused)
         {
-            fTimeStarted += fDeltaTime;
+            m_startTime += fDeltaTime;
             m_propagadeTime += fDeltaTime;
             break;
         }
@@ -184,7 +184,7 @@ void CSoundRender_Emitter::update(float dt)
         {
             // switch to: PLAY
             m_current_state = EmitterState::PlayingLooped; // switch state
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
+            u32 ptr = calc_cursor(m_startTime, fTime, get_length_sec(), p_source.freq, RenderSource()->Format()); //--#SM+#--
             set_cursor(ptr);
 
             SoundRender->i_start(this);
@@ -211,15 +211,15 @@ void CSoundRender_Emitter::update(float dt)
             float fRemainingTime = (fLength - m_rewindTime) / p_source.freq;
             float fPastTime = m_rewindTime / p_source.freq;
 
-            fTimeStarted = SoundRender->fTimer_Value - fPastTime;
-            m_propagadeTime = fTimeStarted; //--> For AI events
+            m_startTime = SoundRender->fTimer_Value - fPastTime;
+            m_propagadeTime = m_startTime; //--> For AI events
 
-            if (fTimeStarted < 0.0f)
+            if (m_startTime < 0.0f)
             {
-                R_ASSERT2(fTimeStarted >= 0.0f, "Possible error in sound rewind logic! See log.");
+                R_ASSERT2(m_startTime >= 0.0f, "Possible error in sound rewind logic! See log.");
 
-                fTimeStarted = SoundRender->fTimer_Value;
-                m_propagadeTime = fTimeStarted;
+                m_startTime = SoundRender->fTimer_Value;
+                m_propagadeTime = m_startTime;
             }
 
             if (!bLooped)
@@ -228,7 +228,7 @@ void CSoundRender_Emitter::update(float dt)
                 m_stopTime = SoundRender->fTimer_Value + fRemainingTime;
             }
 
-            u32 ptr = calc_cursor(fTimeStarted, fTime, fLength, p_source.freq, RenderSource()->Format());
+            u32 ptr = calc_cursor(m_startTime, fTime, fLength, p_source.freq, RenderSource()->Format());
             set_cursor(ptr);
 
             m_rewindTime = 0.0f;

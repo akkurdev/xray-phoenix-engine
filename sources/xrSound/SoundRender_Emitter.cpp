@@ -42,7 +42,7 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     bStopping = FALSE;
     bRewind = FALSE;
     iPaused = 0;
-    fTimeStarted = 0.0f;
+    m_startTime = 0.0f;
     m_stopTime = 0.0f;
     m_propagadeTime = 0.0f;
     m_rewindTime = 0.0f;
@@ -177,7 +177,7 @@ u32 CSoundRender_Emitter::play_time()
         m_current_state == EmitterState::PlayingLooped || 
         m_current_state == EmitterState::Simulating || 
         m_current_state == EmitterState::SimulatingLooped)
-        return iFloor((SoundRender->fTimer_Value - fTimeStarted) * 1000.0f);
+        return iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f);
     else
         return 0;
 }
