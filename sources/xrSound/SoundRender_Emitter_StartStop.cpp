@@ -29,12 +29,12 @@ void CSoundRender_Emitter::start(ref_sound* _owner, BOOL _loop, float delay)
         m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
     bStopping = FALSE;
-    bRewind = FALSE;
+    m_isRewind = false;
 }
 
 void CSoundRender_Emitter::i_stop()
 {
-    bRewind = FALSE;
+    m_isRewind = false;
     if (m_target)
         SoundRender->i_stop(this);
     if (owner_data)
@@ -66,7 +66,7 @@ void CSoundRender_Emitter::rewind()
     m_propagadeTime = fTime;
 
     set_cursor(0);
-    bRewind = TRUE;
+    m_isRewind = true;
 }
 
 void CSoundRender_Emitter::pause(BOOL bVal, int id)

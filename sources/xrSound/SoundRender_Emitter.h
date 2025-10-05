@@ -68,7 +68,7 @@ private:
     BOOL bMoved;
     BOOL b2D;
     BOOL bStopping;
-    BOOL bRewind;
+    bool m_isRewind;
     float m_startTime;
     float m_stopTime;
     float m_propagadeTime;
