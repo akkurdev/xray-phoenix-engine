@@ -24,23 +24,12 @@ public:
     ISoundRenderTarget* RenderTarget();
     virtual void SetTime(float time);
     virtual CSound_params* Params();
-
-
-public:           
     virtual void switch_to_2D();
     virtual void switch_to_3D();
     virtual void set_position(const Fvector& pos);
     virtual void set_frequency(float scale);
-    u32 get_bytes_total() const;
-    float get_length_sec() const;    
     virtual void set_range(float min, float max);
-    virtual void set_volume(float vol);     
-    void i_stop();
-    void set_cursor(u32 p);
-    u32 get_cursor(bool b_absolute) const;
-    void move_cursor(int offset);
-    void Event_Propagade();
-    void Event_ReleaseOwner();
+    virtual void set_volume(float vol);
     BOOL isPlaying(void);
     u32 Marker() const;
     void SetMarker(u32 marker);
@@ -54,6 +43,14 @@ private:
     float Attitude();
     void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
     bool UpdateCulling(float deltaTime);
+    u32 get_bytes_total() const;
+    float get_length_sec() const;
+    void i_stop();
+    void set_cursor(u32 p);
+    u32 get_cursor(bool b_absolute) const;
+    void move_cursor(int offset);
+    void Event_Propagade();
+    void Event_ReleaseOwner();
 
 private:
     float m_startDelay;
