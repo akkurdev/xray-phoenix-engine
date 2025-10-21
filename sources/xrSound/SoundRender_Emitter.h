@@ -12,7 +12,7 @@ public:
     virtual bool Is2D() const;
     virtual float Priority() const;
     virtual uint32_t PlayTime() const;
-    virtual float SmoothVolume() const;
+    virtual float Volume() const;
     virtual float StopTime() const;
     virtual bool IsPlaying() const;
     virtual uint32_t Marker() const;

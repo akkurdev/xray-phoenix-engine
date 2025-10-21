@@ -250,7 +250,7 @@ void DefaultSoundRenderTarget::Fill()
     alSourcei(m_source, AL_SOURCE_RELATIVE, m_emitter->Is2D());
     alSourcef(m_source, AL_ROLLOFF_FACTOR, psSoundRolloff);
 
-    float _gain = m_emitter->SmoothVolume();
+    float _gain = m_emitter->Volume();
     clamp(_gain, EPS_S, 1.f);
 
     if (!fsimilar(_gain, m_cacheGain, 0.01f))

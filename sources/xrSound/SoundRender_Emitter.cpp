@@ -96,7 +96,7 @@ ref_sound_data_ptr CSoundRender_Emitter::OwnerData()
     return m_soundData;
 }
 
-float CSoundRender_Emitter::SmoothVolume() const
+float CSoundRender_Emitter::Volume() const
 {
     return m_smoothVolume;
 }
