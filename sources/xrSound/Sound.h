@@ -203,10 +203,10 @@ public:
     virtual bool Is2D() = 0;
     virtual void SwitchTo2D() = 0;
     virtual void SwitchTo3D() = 0;
-    virtual void set_position(const Fvector& pos) = 0;
-    virtual void set_frequency(float freq) = 0;
-    virtual void set_range(float min, float max) = 0;
-    virtual void set_volume(float vol) = 0;
+    virtual void SetPosition(const Fvector& position) = 0;
+    virtual void SetFrequency(float frequency) = 0;
+    virtual void SetRange(float minDistance, float maxDistance) = 0;
+    virtual void SetVolume(float volume) = 0;
     virtual void SetPriority(float priority) = 0;
     virtual void SetTime(float time) = 0;
     virtual void Stop(bool isDeffered) = 0;
@@ -362,25 +362,25 @@ IC void ref_sound::set_position(const Fvector& pos)
 {
     VERIFY(!::Sound->i_locked());
     VERIFY(_feedback());
-    _feedback()->set_position(pos);
+    _feedback()->SetPosition(pos);
 }
 IC void ref_sound::set_frequency(float freq)
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->set_frequency(freq);
+        _feedback()->SetFrequency(freq);
 }
 IC void ref_sound::set_range(float min, float max)
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->set_range(min, max);
+        _feedback()->SetRange(min, max);
 }
 IC void ref_sound::set_volume(float vol)
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
-        _feedback()->set_volume(vol);
+        _feedback()->SetVolume(vol);
 }
 IC void ref_sound::set_priority(float p)
 {
@@ -419,9 +419,9 @@ IC void ref_sound::set_params(CSound_params* p)
     VERIFY(!::Sound->i_locked());
     if (_feedback())
     {
-        _feedback()->set_position(p->position);
-        _feedback()->set_frequency(p->freq);
-        _feedback()->set_range(p->min_distance, p->max_distance);
-        _feedback()->set_volume(p->volume);
+        _feedback()->SetPosition(p->position);
+        _feedback()->SetFrequency(p->freq);
+        _feedback()->SetRange(p->min_distance, p->max_distance);
+        _feedback()->SetVolume(p->volume);
     }
 }

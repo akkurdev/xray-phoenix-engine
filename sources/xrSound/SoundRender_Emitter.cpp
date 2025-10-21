@@ -7,10 +7,10 @@
 extern u32 psSoundModel;
 extern float psSoundVEffects;
 
-void CSoundRender_Emitter::set_position(const Fvector& pos)
+void CSoundRender_Emitter::SetPosition(const Fvector& position)
 {
-    if (RenderSource()->Format().nChannels == 1 && _valid(pos))
-        m_params.position = pos;
+    if (RenderSource()->Format().nChannels == 1 && _valid(position))
+        m_params.position = position;
     else
         m_params.position.set(0, 0, 0);
 
@@ -116,30 +116,30 @@ void CSoundRender_Emitter::SetStopTime(float stopTime)
     m_stopTime = stopTime;
 }
 
-void CSoundRender_Emitter::set_volume(float vol)
+void CSoundRender_Emitter::SetVolume(float volume)
 {
-    if (!_valid(vol))
-        vol = 0.0f;
-    m_params.volume = vol;
+    if (!_valid(volume))
+        volume = 0.0f;
+    m_params.volume = volume;
 }
 
 bool CSoundRender_Emitter::Is2D() { return m_is2D; }
 
 CSound_params* CSoundRender_Emitter::Params() { return &m_params; }
 
-void CSoundRender_Emitter::set_range(float min, float max)
+void CSoundRender_Emitter::SetRange(float minDistance, float maxDistance)
 {
     VERIFY(_valid(min) && _valid(max));
-    m_params.min_distance = min;
-    m_params.max_distance = max;
+    m_params.min_distance = minDistance;
+    m_params.max_distance = maxDistance;
 }
 
 void CSoundRender_Emitter::SetPriority(float priority) { m_priorityScale = priority; }
 
-void CSoundRender_Emitter::set_frequency(float scale)
+void CSoundRender_Emitter::SetFrequency(float frequency)
 {
     VERIFY(_valid(scale));
-    m_params.freq = scale;
+    m_params.freq = frequency;
 }
 
 void CSoundRender_Emitter::Event_Propagade()

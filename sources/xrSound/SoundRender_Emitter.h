@@ -26,14 +26,13 @@ public:
     void SetMarker(uint32_t marker);
     void SetRenderTarget(ISoundRenderTarget* target);
     void SetStopTime(float stopTime);
-
     ISoundRenderSource* RenderSource();
     ISoundRenderTarget* RenderTarget();    
     virtual CSound_params* Params();    
-    virtual void set_position(const Fvector& pos);
-    virtual void set_frequency(float scale);
-    virtual void set_range(float min, float max);
-    virtual void set_volume(float vol);
+    virtual void SetPosition(const Fvector& position);
+    virtual void SetFrequency(float frequency);
+    virtual void SetRange(float minDistance, float maxDistance);
+    virtual void SetVolume(float volume);
     BOOL isPlaying(void);
     u32 Marker() const;    
     ref_sound_data_ptr OwnerData();
