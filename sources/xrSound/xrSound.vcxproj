@@ -274,7 +274,6 @@
   <ItemGroup>
     <ClInclude Include="ai_sounds.h" />
     <ClInclude Include="EmitterState.h" />
-    <ClInclude Include="ISoundRenderEmitter.h" />
     <ClInclude Include="ISoundRenderSource.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEnvironment.h" />
@@ -318,9 +317,6 @@
     <ClCompile Include="OpenALDeviceList.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />
     <ClCompile Include="SoundRender_Emitter.cpp" />
-    <ClCompile Include="SoundRender_Emitter_FSM.cpp" />
-    <ClCompile Include="SoundRender_Emitter_StartStop.cpp" />
-    <ClCompile Include="SoundRender_Emitter_streamer.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />
     <ClCompile Include="OalSoundRenderTarget.cpp" />
     <ClCompile Include="SoundRenderCache.cpp" />

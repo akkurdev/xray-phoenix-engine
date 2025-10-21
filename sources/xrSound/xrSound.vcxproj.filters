@@ -73,9 +73,6 @@
     <ClInclude Include="EmitterState.h">
       <Filter>Emitter</Filter>
     </ClInclude>
-    <ClInclude Include="ISoundRenderEmitter.h">
-      <Filter>Emitter</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
@@ -106,15 +103,6 @@
       <Filter>Core\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="SoundRender_Emitter.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_FSM.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_StartStop.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_streamer.cpp">
       <Filter>Emitter</Filter>
     </ClCompile>
     <ClCompile Include="SoundRenderSource.cpp">
