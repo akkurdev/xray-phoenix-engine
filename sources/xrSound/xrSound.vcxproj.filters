@@ -73,6 +73,9 @@
     <ClInclude Include="EmitterState.h">
       <Filter>Emitter</Filter>
     </ClInclude>
+    <ClInclude Include="ISoundEmitter.h">
+      <Filter>Emitter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
