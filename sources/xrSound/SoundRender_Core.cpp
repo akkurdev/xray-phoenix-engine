@@ -2,7 +2,7 @@
 #include "../xr_3da/xrLevel.h"
 #include "soundrender_core.h"
 #include "SoundRenderSource.h"
-#include "SoundRender_emitter.h"
+#include "SoundEmitter.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4995)
@@ -130,7 +130,7 @@ int CSoundRender_Core::pause_emitters(bool val)
     VERIFY(m_iPauseCounter >= 0);
 
     for (u32 it = 0; it < s_emitters.size(); it++)
-        ((CSoundRender_Emitter*)s_emitters[it])->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
+        s_emitters[it]->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
 
     return m_iPauseCounter;
 }
@@ -300,7 +300,7 @@ void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
     S._p->fTimeTotal += s->Length();
     if (S._feedback())
     {
-        auto emitter = (CSoundRender_Emitter*)S._feedback();
+        auto emitter = S._feedback();
         emitter->SetStopTime(emitter->StopTime() + s->Length());
     }
 
@@ -327,7 +327,7 @@ void CSoundRender_Core::play(ref_sound& S, CObject* O, u32 flags, float delay)
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->Rewind();
+        S._feedback()->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 
@@ -371,7 +371,7 @@ void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O, const Fvector& pos
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->Rewind();
+        S._feedback()->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 
@@ -384,7 +384,7 @@ void CSoundRender_Core::destroy(ref_sound& S)
 {
     if (S._feedback())
     {
-        CSoundRender_Emitter* E = (CSoundRender_Emitter*)S._feedback();
+        ISoundEmitter* E = S._feedback();
         E->Stop(false);
     }
     S._p = 0;
@@ -409,7 +409,7 @@ void CSoundRender_Core::_destroy_data(ref_sound_data& S)
 {
     if (S.feedback)
     {
-        CSoundRender_Emitter* E = (CSoundRender_Emitter*)S.feedback;
+        ISoundEmitter* E = S.feedback;
         E->Stop(false);
     }
     R_ASSERT(0 == S.feedback);

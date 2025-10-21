@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "xrSound/ISoundEmitter.h"
 #include "sound_player.h"
 #include "script_engine.h"
 #include "ai_stalker_space.h"

@@ -4,7 +4,6 @@
 //
 
 #pragma once
-
 #include "../xrCore/xrCore.h"
 
 // mmsystem.h

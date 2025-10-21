@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "../xrcdb/cl_intersect.h"
 #include "SoundRender_Core.h"
-#include "SoundRender_Emitter.h"
+#include "SoundEmitter.h"
 #include "OalSoundRenderTarget.h"
 #include "SoundRenderSource.h"
 
-CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
+ISoundEmitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
 {
     VERIFY(S->_p->feedback == 0);
-    CSoundRender_Emitter* E = xr_new<CSoundRender_Emitter>();
+    ISoundEmitter* E = xr_new<SoundEmitter>();
     S->_p->feedback = E;
     E->Start(S, _loop, delay);
     s_emitters.push_back(E);
@@ -36,7 +36,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     for (it = 0; it < s_targets.size(); it++)
     {
         ISoundRenderTarget* T = s_targets[it];
-        CSoundRender_Emitter* E = T->Emitter();
+        ISoundEmitter* E = T->Emitter();
         if (E)
         {
             E->Update(dt_sec);
@@ -57,7 +57,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     // Msg	("! update: emitters");
     for (it = 0; it < s_emitters.size(); it++)
     {
-        CSoundRender_Emitter* pEmitter = s_emitters[it];
+        ISoundEmitter* pEmitter = s_emitters[it];
         if (pEmitter->Marker() != s_emitters_u)
         {
             pEmitter->Update(dt_sec);
@@ -183,7 +183,7 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
     {
         for (u32 it = 0; it < s_emitters.size(); it++)
         {
-            CSoundRender_Emitter* _E = s_emitters[it];
+            ISoundEmitter* _E = s_emitters[it];
             CSound_stats_ext::SItem _I;
             _I._3D = !_E->Is2D();
             _I._rendered = !!_E->RenderTarget();

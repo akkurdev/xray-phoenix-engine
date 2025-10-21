@@ -1,13 +1,14 @@
 #pragma once
-#include "soundrender.h"
-#include <ISoundRenderTarget.h>
-#include <EmitterState.h>
+#include "SoundRender.h"
+#include "ISoundEmitter.h"
+#include "ISoundRenderTarget.h"
+#include "EmitterState.h"
 
-class CSoundRender_Emitter final : public CSound_emitter
+class SoundEmitter final : public ISoundEmitter
 {
 public:
-    CSoundRender_Emitter();
-    virtual ~CSoundRender_Emitter();
+    SoundEmitter();
+    virtual ~SoundEmitter();
 
     virtual bool Is2D() const;
     virtual float Priority() const;
@@ -45,11 +46,11 @@ private:
     float Attitude() const;
     void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
     bool UpdateCulling(float deltaTime);
-    u32 get_bytes_total() const;
+    uint32_t get_bytes_total() const;
     float get_length_sec() const;
     void i_stop();
-    void set_cursor(u32 p);
-    u32 get_cursor(bool b_absolute) const;
+    void set_cursor(uint32_t p);
+    uint32_t get_cursor(bool b_absolute) const;
     void move_cursor(int offset);
     void Event_Propagade();
     void Event_ReleaseOwner();

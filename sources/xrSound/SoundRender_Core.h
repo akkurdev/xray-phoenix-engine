@@ -45,7 +45,7 @@ protected:
 
     // Containers
     xr_vector<ISoundRenderSource*> s_sources;
-    xr_vector<CSoundRender_Emitter*> s_emitters;
+    xr_vector<ISoundEmitter*> s_emitters;
     u32 s_emitters_u; // emitter update marker
     xr_vector<ISoundRenderTarget*> s_targets;
     xr_vector<ISoundRenderTarget*> s_targets_defer;
@@ -110,11 +110,11 @@ public:
 public:
     ISoundRenderSource* i_create_source(LPCSTR name);
     void i_destroy_source(ISoundRenderSource* S);
-    CSoundRender_Emitter* i_play(ref_sound* S, BOOL _loop, float delay);
-    void i_start(CSoundRender_Emitter* E);
-    void i_stop(CSoundRender_Emitter* E);
-    void i_rewind(CSoundRender_Emitter* E);
-    BOOL i_allow_play(CSoundRender_Emitter* E);
+    ISoundEmitter* i_play(ref_sound* S, BOOL _loop, float delay);
+    void i_start(ISoundEmitter* E);
+    void i_stop(ISoundEmitter* E);
+    void i_rewind(ISoundEmitter* E);
+    BOOL i_allow_play(ISoundEmitter* E);
     virtual BOOL i_locked() { return bLocked; }
 
     virtual void object_relcase(CObject* obj);

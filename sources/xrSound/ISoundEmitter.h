@@ -1,11 +1,12 @@
 #pragma once
 #include <stdint.h>
-#include "Sound.h"
-#include <ISoundRenderTarget.h>
+#include "SoundParams.h"
+#include "ref_sound_data.h"
 
-class Fvector;
+__interface ISoundRenderSource;
+__interface ISoundRenderTarget;
 
-__interface XRSOUND_API ISoundEmitter
+__interface ISoundEmitter
 {
     bool Is2D() const;
     float Priority() const;    

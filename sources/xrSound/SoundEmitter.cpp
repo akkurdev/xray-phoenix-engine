@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "soundrender_emitter.h"
+#include "SoundEmitter.h"
 #include "soundrender_core.h"
 #include "SoundRenderSource.h"
 #include "OalSoundRenderTarget.h"
@@ -7,7 +7,7 @@
 extern u32 psSoundModel;
 extern float psSoundVEffects;
 
-void CSoundRender_Emitter::SetPosition(const Fvector& position)
+void SoundEmitter::SetPosition(const Fvector& position)
 {
     if (RenderSource()->Format().nChannels == 1 && _valid(position))
         m_params.position = position;
@@ -18,7 +18,7 @@ void CSoundRender_Emitter::SetPosition(const Fvector& position)
 }
 
 // Перемотка звука на заданную секунду [rewind snd to target time] --#SM+#--
-void CSoundRender_Emitter::SetTime(float time)
+void SoundEmitter::SetTime(float time)
 {
     m_rewindTime = time >= 0.f 
         ? time 
@@ -27,7 +27,7 @@ void CSoundRender_Emitter::SetTime(float time)
     R_ASSERT2(get_length_sec() >= m_rewindTime, "set_time: time is bigger than length of sound");
 }
 
-CSoundRender_Emitter::CSoundRender_Emitter(void)
+SoundEmitter::SoundEmitter(void)
 {
     m_renderTarget = nullptr;
     m_soundData = nullptr;
@@ -54,14 +54,14 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     m_handleCursor = 0;
 }
 
-CSoundRender_Emitter::~CSoundRender_Emitter(void)
+SoundEmitter::~SoundEmitter(void)
 {
     // try to release dependencies, events, for example
     Event_ReleaseOwner();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CSoundRender_Emitter::Event_ReleaseOwner()
+void SoundEmitter::Event_ReleaseOwner()
 {
     if (!(m_soundData))
         return;
@@ -76,79 +76,79 @@ void CSoundRender_Emitter::Event_ReleaseOwner()
     }
 }
 
-bool CSoundRender_Emitter::IsPlaying() const
+bool SoundEmitter::IsPlaying() const
 {
     return m_state != EmitterState::Stopped;
 }
 
-uint32_t CSoundRender_Emitter::Marker() const
+uint32_t SoundEmitter::Marker() const
 {
     return m_marker;
 }
 
-void CSoundRender_Emitter::SetMarker(uint32_t marker)
+void SoundEmitter::SetMarker(uint32_t marker)
 {
     m_marker = marker;
 }
 
-ref_sound_data_ptr CSoundRender_Emitter::SoundData()
+ref_sound_data_ptr SoundEmitter::SoundData()
 {
     return m_soundData;
 }
 
-float CSoundRender_Emitter::Volume() const
+float SoundEmitter::Volume() const
 {
     return m_smoothVolume;
 }
 
-void CSoundRender_Emitter::SetRenderTarget(ISoundRenderTarget* target)
+void SoundEmitter::SetRenderTarget(ISoundRenderTarget* target)
 {
     m_renderTarget = target;
 }
 
-float CSoundRender_Emitter::StopTime() const
+float SoundEmitter::StopTime() const
 {
     return m_stopTime;
 }
 
-void CSoundRender_Emitter::SetStopTime(float stopTime)
+void SoundEmitter::SetStopTime(float stopTime)
 {
     m_stopTime = stopTime;
 }
 
-void CSoundRender_Emitter::SetVolume(float volume)
+void SoundEmitter::SetVolume(float volume)
 {
     if (!_valid(volume))
         volume = 0.0f;
     m_params.volume = volume;
 }
 
-bool CSoundRender_Emitter::Is2D() const
+bool SoundEmitter::Is2D() const
 { 
     return m_is2D; 
 }
 
-CSound_params* CSoundRender_Emitter::Params() 
+CSound_params* SoundEmitter::Params()
 { 
     return &m_params; 
 }
 
-void CSoundRender_Emitter::SetRange(float minDistance, float maxDistance)
+void SoundEmitter::SetRange(float minDistance, float maxDistance)
 {
     VERIFY(_valid(min) && _valid(max));
     m_params.min_distance = minDistance;
     m_params.max_distance = maxDistance;
 }
 
-void CSoundRender_Emitter::SetPriority(float priority) { m_priorityScale = priority; }
+void SoundEmitter::SetPriority(float priority) { m_priorityScale = priority; }
 
-void CSoundRender_Emitter::SetFrequency(float frequency)
+void SoundEmitter::SetFrequency(float frequency)
 {
     VERIFY(_valid(scale));
     m_params.freq = frequency;
 }
 
-void CSoundRender_Emitter::Event_Propagade()
+void SoundEmitter::Event_Propagade()
 {
     m_propagadeTime += ::Random.randF(s_f_def_event_pulse - 0.030f, s_f_def_event_pulse + 0.030f);
     if (!(m_soundData))
@@ -171,15 +171,15 @@ void CSoundRender_Emitter::Event_Propagade()
     SoundRender->s_events.push_back(mk_pair(m_soundData, range));
 }
 
-void CSoundRender_Emitter::SwitchTo2D()
+void SoundEmitter::SwitchTo2D()
 {
     m_is2D = true;
     SetPriority(100.f);
 }
 
-void CSoundRender_Emitter::SwitchTo3D() { m_is2D = false; }
+void SoundEmitter::SwitchTo3D() { m_is2D = false; }
 
-void CSoundRender_Emitter::set_cursor(u32 p)
+void SoundEmitter::set_cursor(u32 p)
 {
     m_streamCursor = p;
 
@@ -200,7 +200,7 @@ void CSoundRender_Emitter::set_cursor(u32 p)
     }
 }
 
-u32 CSoundRender_Emitter::get_cursor(bool b_absolute) const
+u32 SoundEmitter::get_cursor(bool b_absolute) const
 {
     if (b_absolute)
         return m_streamCursor;
@@ -211,7 +211,7 @@ u32 CSoundRender_Emitter::get_cursor(bool b_absolute) const
     }
 }
 
-void CSoundRender_Emitter::move_cursor(int offset) 
+void SoundEmitter::move_cursor(int offset)
 { 
     set_cursor(get_cursor(true) + offset); 
 }
@@ -233,7 +233,7 @@ inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTi
     return curr_sample_num * (wfx.wBitsPerSample / 8) * wfx.nChannels;
 }
 
-void CSoundRender_Emitter::Update(float deltaTime)
+void SoundEmitter::Update(float deltaTime)
 {
     float fTime = SoundRender->fTimer_Value;
     float fDeltaTime = SoundRender->fTimer_Delta;
@@ -475,7 +475,7 @@ IC void volume_lerp(float& c, float t, float s, float dt)
 }
 #include "ai_sounds.h"
 
-bool CSoundRender_Emitter::UpdateCulling(float deltaTime)
+bool SoundEmitter::UpdateCulling(float deltaTime)
 {
     if (m_is2D)
     {
@@ -519,12 +519,12 @@ bool CSoundRender_Emitter::UpdateCulling(float deltaTime)
         return SoundRender->i_allow_play(this);
 }
 
-float CSoundRender_Emitter::Priority() const
+float SoundEmitter::Priority() const
 {
     return m_smoothVolume * Attitude() * m_priorityScale;
 }
 
-float CSoundRender_Emitter::Attitude() const
+float SoundEmitter::Attitude() const
 {
     float dist = SoundRender->listener_position().distance_to(m_params.position);
     float rolloff_dist = psSoundRolloff * dist;
@@ -546,7 +546,7 @@ float CSoundRender_Emitter::Attitude() const
 }
 
 
-void CSoundRender_Emitter::Start(ref_sound* sound, bool isLooped, float delay)
+void SoundEmitter::Start(ref_sound* sound, bool isLooped, float delay)
 {
     m_startDelay = delay;
 
@@ -574,7 +574,7 @@ void CSoundRender_Emitter::Start(ref_sound* sound, bool isLooped, float delay)
     m_isRewind = false;
 }
 
-void CSoundRender_Emitter::i_stop()
+void SoundEmitter::i_stop()
 {
     m_isRewind = false;
     if (m_renderTarget)
@@ -589,7 +589,7 @@ void CSoundRender_Emitter::i_stop()
     m_state = EmitterState::Stopped;
 }
 
-void CSoundRender_Emitter::Stop(bool isDeffered)
+void SoundEmitter::Stop(bool isDeffered)
 {
     if (isDeffered)
         m_isStopped = true;
@@ -597,7 +597,7 @@ void CSoundRender_Emitter::Stop(bool isDeffered)
         i_stop();
 }
 
-void CSoundRender_Emitter::Rewind()
+void SoundEmitter::Rewind()
 {
     m_isStopped = false;
 
@@ -611,7 +611,7 @@ void CSoundRender_Emitter::Rewind()
     m_isRewind = true;
 }
 
-void CSoundRender_Emitter::Pause(bool hasValue, int32_t pausedId)
+void SoundEmitter::Pause(bool hasValue, int32_t pausedId)
 {
     if (hasValue)
     {
@@ -625,7 +625,7 @@ void CSoundRender_Emitter::Pause(bool hasValue, int32_t pausedId)
     }
 }
 
-uint32_t CSoundRender_Emitter::PlayTime() const
+uint32_t SoundEmitter::PlayTime() const
 {
     if (m_state == EmitterState::Playing ||
         m_state == EmitterState::PlayingLooped ||
@@ -636,7 +636,7 @@ uint32_t CSoundRender_Emitter::PlayTime() const
         return 0;
 }
 
-void CSoundRender_Emitter::Cancel()
+void SoundEmitter::Cancel()
 {
     // Msg		("- %10s : %3d[%1.4f] : %s","cancel",dbg_ID,priority(),source->fname);
     switch (m_state)
@@ -656,7 +656,7 @@ void CSoundRender_Emitter::Cancel()
 }
 
 
-void CSoundRender_Emitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
+void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
 {
     u32 line_size = SoundRender->cache.LineSize();
     u32 line = offset / line_size;
@@ -688,7 +688,7 @@ void CSoundRender_Emitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size
     }
 }
 
-void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
+void SoundEmitter::FillBlock(void* ptr, uint32_t size)
 {
     // Msg			("stream: %10s - [%X]:%d, p=%d, t=%d",*source->fname,ptr,size,position,source->dwBytesTotal);
     LPBYTE dest = LPBYTE(ptr);
@@ -758,22 +758,22 @@ void CSoundRender_Emitter::FillBlock(void* ptr, uint32_t size)
     }
 }
 
-ISoundRenderSource* CSoundRender_Emitter::RenderSource()
+ISoundRenderSource* SoundEmitter::RenderSource()
 {
     return m_soundData->handle;
 }
 
-ISoundRenderTarget* CSoundRender_Emitter::RenderTarget()
+ISoundRenderTarget* SoundEmitter::RenderTarget()
 {
     return m_renderTarget;
 }
 
-u32 CSoundRender_Emitter::get_bytes_total() const
+u32 SoundEmitter::get_bytes_total() const
 {
     return m_soundData->dwBytesTotal;
 }
 
-float CSoundRender_Emitter::get_length_sec() const
+float SoundEmitter::get_length_sec() const
 {
     return m_soundData->get_length_sec();
 }

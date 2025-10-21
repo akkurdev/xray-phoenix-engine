@@ -2,10 +2,12 @@
 #include <al.h>
 #include "SoundRender.h"
 
+__interface ISoundEmitter;
+
 __interface ISoundRenderTarget
 {    
     OggVorbis_File* OggFile();
-    CSoundRender_Emitter* Emitter();
+    ISoundEmitter* Emitter();
 
     bool IsRendering() const;
     float CacheGain();
@@ -23,7 +25,7 @@ __interface ISoundRenderTarget
     void Destroy();
     void Restart();
 
-    void Start(CSoundRender_Emitter* emitter);
+    void Start(ISoundEmitter* emitter);
     void Render();
     void Rewind();
     void Stop();

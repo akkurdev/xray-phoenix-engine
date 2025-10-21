@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include "xrSound/ISoundEmitter.h"
 #include "PHSoundPlayer.h"
 #include "PhysicsShellHolder.h"
 

@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "SoundRender_Core.h"
-#include "SoundRender_Emitter.h"
+#include "SoundEmitter.h"
 #include "OalSoundRenderTarget.h"
 #include "SoundRenderSource.h"
 
-void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
+void CSoundRender_Core::i_start(ISoundEmitter* E)
 {
     R_ASSERT(E);
 
@@ -33,7 +33,7 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
     T->SetPriority(Ptest);
 }
 
-void CSoundRender_Core::i_stop(CSoundRender_Emitter* E)
+void CSoundRender_Core::i_stop(ISoundEmitter* E)
 {
     R_ASSERT(E);
     R_ASSERT(E == E->RenderTarget()->Emitter());
@@ -41,14 +41,14 @@ void CSoundRender_Core::i_stop(CSoundRender_Emitter* E)
     E->SetRenderTarget(nullptr);
 }
 
-void CSoundRender_Core::i_rewind(CSoundRender_Emitter* E)
+void CSoundRender_Core::i_rewind(ISoundEmitter* E)
 {
     R_ASSERT(E);
     R_ASSERT(E == E->RenderTarget()->Emitter());
     E->RenderTarget()->Rewind();
 }
 
-BOOL CSoundRender_Core::i_allow_play(CSoundRender_Emitter* E)
+BOOL CSoundRender_Core::i_allow_play(ISoundEmitter* E)
 {
     // Search available target
     float Ptest = E->Priority();

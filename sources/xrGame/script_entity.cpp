@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "script_entity.h"
 #include "CustomMonster.h"
+#include "xrSound/ISoundEmitter.h"
 #include "..\xr_3da\feel_vision.h"
 #include "../xrRender/Kinematics.h"
 #include "../xrRender/KinematicsAnimated.h"

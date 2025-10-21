@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "OalSoundRenderTarget.h"
-#include "soundrender_emitter.h"
+#include "SoundEmitter.h"
 #include "SoundRenderSource.h"
 #include "soundrender_core.h"
 #include <efx.h>
@@ -41,7 +41,7 @@ OggVorbis_File* DefaultSoundRenderTarget::OggFile()
     return m_oggFile;
 }
 
-CSoundRender_Emitter* DefaultSoundRenderTarget::Emitter()
+ISoundEmitter* DefaultSoundRenderTarget::Emitter()
 {
     return m_emitter;
 }
@@ -140,7 +140,7 @@ void DefaultSoundRenderTarget::Restart()
     Initialize();
 }
 
-void DefaultSoundRenderTarget::Start(CSoundRender_Emitter* emitter)
+void DefaultSoundRenderTarget::Start(ISoundEmitter* emitter)
 {
     R_ASSERT(emitter);
 

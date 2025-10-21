@@ -273,18 +273,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ai_sounds.h" />
+    <ClInclude Include="dllexp.h" />
     <ClInclude Include="EmitterState.h" />
     <ClInclude Include="ISoundEmitter.h" />
     <ClInclude Include="ISoundRenderSource.h" />
+    <ClInclude Include="ref_sound.h" />
+    <ClInclude Include="ref_sound_data.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEnvironment.h" />
     <ClInclude Include="SoundEnvironmentLibrary.h" />
+    <ClInclude Include="SoundParams.h" />
     <ClInclude Include="SoundRender.h" />
+    <ClInclude Include="SoundType.h" />
+    <ClInclude Include="sound_user_data.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
     <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="SoundRender_CoreA.h" />
-    <ClInclude Include="SoundRender_Emitter.h" />
+    <ClInclude Include="SoundEmitter.h" />
     <ClInclude Include="SoundRenderSource.h" />
     <ClInclude Include="ISoundRenderTarget.h" />
     <ClInclude Include="OalSoundRenderTarget.h" />
@@ -302,9 +308,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ref_sound.cpp" />
+    <ClCompile Include="ref_sound_data.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="SoundEnvironment.cpp" />
     <ClCompile Include="SoundEnvironmentLibrary.cpp" />
+    <ClCompile Include="sound_user_data.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -317,7 +326,7 @@
     <ClCompile Include="SoundRender_Core_StartStop.cpp" />
     <ClCompile Include="OpenALDeviceList.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />
-    <ClCompile Include="SoundRender_Emitter.cpp" />
+    <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />
     <ClCompile Include="OalSoundRenderTarget.cpp" />
     <ClCompile Include="SoundRenderCache.cpp" />

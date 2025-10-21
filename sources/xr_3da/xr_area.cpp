@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "igame_level.h"
-
+#include "xrSound/ISoundEmitter.h"
 #include "xr_area.h"
 #include "xr_object.h"
 #include "xrLevel.h"

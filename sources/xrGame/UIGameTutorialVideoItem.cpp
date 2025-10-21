@@ -6,6 +6,7 @@
 #include "object_broker.h"
 #include "../xr_3da/xr_input.h"
 #include "xr_level_controller.h"
+#include "xrSound/ISoundEmitter.h"
 #include "../xrRender/UISequenceVideoItem.h"
 
 extern ENGINE_API BOOL bShowPauseString;
