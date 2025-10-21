@@ -18,7 +18,6 @@ public:
     virtual bool IsPlaying() const;
     virtual uint32_t Marker() const;
     virtual CSound_params* Params();
-
     virtual ref_sound_data_ptr SoundData();
     virtual ISoundRenderSource* RenderSource();
     virtual ISoundRenderTarget* RenderTarget();
@@ -52,8 +51,8 @@ private:
     void set_cursor(uint32_t p);
     uint32_t get_cursor(bool b_absolute) const;
     void move_cursor(int offset);
-    void Event_Propagade();
-    void Event_ReleaseOwner();
+    void OnPropagade();
+    void OnRelease();
 
 private:
     float m_startDelay;

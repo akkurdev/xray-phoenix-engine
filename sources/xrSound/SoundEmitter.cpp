@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "ai_sounds.h"
 #include "SoundEmitter.h"
 #include "soundrender_core.h"
 #include "SoundRenderSource.h"
@@ -7,24 +8,32 @@
 extern u32 psSoundModel;
 extern float psSoundVEffects;
 
-void SoundEmitter::SetPosition(const Fvector& position)
-{
-    if (RenderSource()->Format().nChannels == 1 && _valid(position))
-        m_params.position = position;
-    else
-        m_params.position.set(0, 0, 0);
+XRSOUND_API extern float psSoundCull;
+constexpr float TIME_TO_STOP_INFINITE = static_cast<float>(0xffffffff);
 
-    m_isMoved = true;
+inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTimeTotal, const float& fFreq, const WAVEFORMATEX& wfx)
+{
+    if (fTime < fTimeStarted)
+        fTime = fTimeStarted; // Андрюха посоветовал, ассерт что ниже вылетел из за паузы как то хитро
+    R_ASSERT((fTime - fTimeStarted) >= 0.0f);
+    while ((fTime - fTimeStarted) > fTimeTotal / fFreq) // looped
+    {
+        fTime -= fTimeTotal / fFreq;
+    }
+    u32 curr_sample_num = iFloor((fTime - fTimeStarted) * fFreq * wfx.nSamplesPerSec);
+    return curr_sample_num * (wfx.wBitsPerSample / 8) * wfx.nChannels;
 }
 
-// Перемотка звука на заданную секунду [rewind snd to target time] --#SM+#--
-void SoundEmitter::SetTime(float time)
+IC void volume_lerp(float& c, float t, float s, float dt)
 {
-    m_rewindTime = time >= 0.f 
-        ? time 
-        : 0.f;
-
-    R_ASSERT2(get_length_sec() >= m_rewindTime, "set_time: time is bigger than length of sound");
+    float diff = t - c;
+    float diff_a = _abs(diff);
+    if (diff_a < EPS_S)
+        return;
+    float mot = s * dt;
+    if (mot > diff_a)
+        mot = diff_a;
+    c += (diff / diff_a) * mot;
 }
 
 SoundEmitter::SoundEmitter(void)
@@ -54,26 +63,42 @@ SoundEmitter::SoundEmitter(void)
     m_handleCursor = 0;
 }
 
-SoundEmitter::~SoundEmitter(void)
+SoundEmitter::~SoundEmitter()
 {
-    // try to release dependencies, events, for example
-    Event_ReleaseOwner();
+    OnRelease();
 }
 
-//////////////////////////////////////////////////////////////////////
-void SoundEmitter::Event_ReleaseOwner()
+bool SoundEmitter::Is2D() const
 {
-    if (!(m_soundData))
-        return;
+    return m_is2D;
+}
 
-    for (u32 it = 0; it < SoundRender->s_events.size(); it++)
-    {
-        if (m_soundData == SoundRender->s_events[it].first)
-        {
-            SoundRender->s_events.erase(SoundRender->s_events.begin() + it);
-            it--;
-        }
-    }
+float SoundEmitter::Priority() const
+{
+    return m_smoothVolume * Attitude() * m_priorityScale;
+}
+
+uint32_t SoundEmitter::PlayTime() const
+{
+    auto isPlayed = 
+        m_state == EmitterState::Playing ||
+        m_state == EmitterState::PlayingLooped ||
+        m_state == EmitterState::Simulating ||
+        m_state == EmitterState::SimulatingLooped;
+    
+    return isPlayed
+        ? iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f)
+        : 0;
+}
+
+float SoundEmitter::Volume() const
+{
+    return m_smoothVolume;
+}
+
+float SoundEmitter::StopTime() const
+{
+    return m_stopTime;
 }
 
 bool SoundEmitter::IsPlaying() const
@@ -86,9 +111,9 @@ uint32_t SoundEmitter::Marker() const
     return m_marker;
 }
 
-void SoundEmitter::SetMarker(uint32_t marker)
+CSound_params* SoundEmitter::Params()
 {
-    m_marker = marker;
+    return &m_params;
 }
 
 ref_sound_data_ptr SoundEmitter::SoundData()
@@ -96,141 +121,58 @@ ref_sound_data_ptr SoundEmitter::SoundData()
     return m_soundData;
 }
 
-float SoundEmitter::Volume() const
+ISoundRenderSource* SoundEmitter::RenderSource()
 {
-    return m_smoothVolume;
+    return m_soundData->handle;
 }
 
-void SoundEmitter::SetRenderTarget(ISoundRenderTarget* target)
+ISoundRenderTarget* SoundEmitter::RenderTarget()
 {
-    m_renderTarget = target;
+    return m_renderTarget;
 }
 
-float SoundEmitter::StopTime() const
+void SoundEmitter::Start(ref_sound* sound, bool isLooped, float delay)
 {
-    return m_stopTime;
-}
+    m_startDelay = delay;
 
-void SoundEmitter::SetStopTime(float stopTime)
-{
-    m_stopTime = stopTime;
-}
+    VERIFY(_owner);
+    m_soundData = sound->_p;
+    VERIFY(owner_data);
+    m_params.position.set(0, 0, 0);
+    m_params.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
+    m_params.max_distance = RenderSource()->MaxDistance(); // 300.f;
+    m_params.base_volume = RenderSource()->BaseVolume(); // 1.f
+    m_params.volume = 1.f; // 1.f
+    m_params.freq = 1.f;
+    m_params.max_ai_distance = RenderSource()->MaxAiDistance(); // 300.f;
 
-void SoundEmitter::SetVolume(float volume)
-{
-    if (!_valid(volume))
-        volume = 0.0f;
-    m_params.volume = volume;
-}
-
-bool SoundEmitter::Is2D() const
-{ 
-    return m_is2D; 
-}
-
-CSound_params* SoundEmitter::Params()
-{ 
-    return &m_params; 
-}
-
-void SoundEmitter::SetRange(float minDistance, float maxDistance)
-{
-    VERIFY(_valid(min) && _valid(max));
-    m_params.min_distance = minDistance;
-    m_params.max_distance = maxDistance;
-}
-
-void SoundEmitter::SetPriority(float priority) { m_priorityScale = priority; }
-
-void SoundEmitter::SetFrequency(float frequency)
-{
-    VERIFY(_valid(scale));
-    m_params.freq = frequency;
-}
-
-void SoundEmitter::Event_Propagade()
-{
-    m_propagadeTime += ::Random.randF(s_f_def_event_pulse - 0.030f, s_f_def_event_pulse + 0.030f);
-    if (!(m_soundData))
-        return;
-    if (0 == m_soundData->g_type)
-        return;
-    if (0 == m_soundData->g_object)
-        return;
-    if (0 == SoundRender->Handler)
-        return;
-
-    VERIFY(_valid(m_params.volume));
-    // Calculate range
-    float clip = m_params.max_ai_distance * m_params.volume;
-    float range = _min(m_params.max_ai_distance, clip);
-    if (range < 0.1f)
-        return;
-
-    // Inform objects
-    SoundRender->s_events.push_back(mk_pair(m_soundData, range));
-}
-
-void SoundEmitter::SwitchTo2D()
-{
-    m_is2D = true;
-    SetPriority(100.f);
-}
-
-void SoundEmitter::SwitchTo3D() { m_is2D = false; }
-
-void SoundEmitter::set_cursor(u32 p)
-{
-    m_streamCursor = p;
-
-    if (m_soundData._get() && m_soundData->fn_attached[0].size())
+    if (fis_zero(delay, EPS_L))
     {
-        u32 bt = (m_soundData->handle)->BytesCount();
-        if (m_streamCursor >= m_handleCursor + bt)
-        {
-            SoundRender->i_destroy_source(m_soundData->handle);
-            m_soundData->handle = SoundRender->i_create_source(m_soundData->fn_attached[0].c_str());
-            m_soundData->fn_attached[0] = m_soundData->fn_attached[1];
-            m_soundData->fn_attached[1] = "";
-            m_handleCursor = get_cursor(true);
-
-            if (m_renderTarget)
-                m_renderTarget->OnSourceChanged();
-        }
+        m_state = isLooped ? EmitterState::StartingLooped : EmitterState::Starting;
     }
-}
-
-u32 SoundEmitter::get_cursor(bool b_absolute) const
-{
-    if (b_absolute)
-        return m_streamCursor;
     else
     {
-        VERIFY(m_streamCursor - m_handleCursor >= 0);
-        return m_streamCursor - m_handleCursor;
+        m_state = isLooped ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
+        m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
     }
+    m_isStopped = false;
+    m_isRewind = false;
 }
 
-void SoundEmitter::move_cursor(int offset)
-{ 
-    set_cursor(get_cursor(true) + offset); 
-}
-
-
-XRSOUND_API extern float psSoundCull;
-constexpr float TIME_TO_STOP_INFINITE = static_cast<float>(0xffffffff);
-
-inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTimeTotal, const float& fFreq, const WAVEFORMATEX& wfx)
+void SoundEmitter::Cancel()
 {
-    if (fTime < fTimeStarted)
-        fTime = fTimeStarted; // Андрюха посоветовал, ассерт что ниже вылетел из за паузы как то хитро
-    R_ASSERT((fTime - fTimeStarted) >= 0.0f);
-    while ((fTime - fTimeStarted) > fTimeTotal / fFreq) // looped
+    switch (m_state)
     {
-        fTime -= fTimeTotal / fFreq;
+    case EmitterState::Playing:
+        m_state = EmitterState::Simulating; // switch state
+        SoundRender->i_stop(this);
+        break;
+    case EmitterState::PlayingLooped:
+        m_state = EmitterState::SimulatingLooped; // switch state
+        SoundRender->i_stop(this);
+        break;
+    default: FATAL("Non playing ref_sound forced out of render queue"); break;
     }
-    u32 curr_sample_num = iFloor((fTime - fTimeStarted) * fFreq * wfx.nSamplesPerSec);
-    return curr_sample_num * (wfx.wBitsPerSample / 8) * wfx.nChannels;
 }
 
 void SoundEmitter::Update(float deltaTime)
@@ -452,7 +394,7 @@ void SoundEmitter::Update(float deltaTime)
     if (m_state != EmitterState::Stopped)
     {
         if (fTime >= m_propagadeTime)
-            Event_Propagade();
+            OnPropagade();
     }
     else if (m_soundData)
     {
@@ -460,141 +402,6 @@ void SoundEmitter::Update(float deltaTime)
         m_soundData->feedback = 0;
         m_soundData = nullptr;
     }
-}
-
-IC void volume_lerp(float& c, float t, float s, float dt)
-{
-    float diff = t - c;
-    float diff_a = _abs(diff);
-    if (diff_a < EPS_S)
-        return;
-    float mot = s * dt;
-    if (mot > diff_a)
-        mot = diff_a;
-    c += (diff / diff_a) * mot;
-}
-#include "ai_sounds.h"
-
-bool SoundEmitter::UpdateCulling(float deltaTime)
-{
-    if (m_is2D)
-    {
-        m_occluderVolume = 1.f;
-        m_fadeVolume += deltaTime * 10.f * (m_isStopped ? -1.f : 1.f);
-    }
-    else
-    {
-        // Check range
-        float dist = SoundRender->listener_position().distance_to(m_params.position);
-        if (dist > m_params.max_distance)
-        {
-            m_smoothVolume = 0;
-            return FALSE;
-        }
-
-        // Calc attenuated volume
-        float fade_scale =
-            m_isStopped || (Attitude() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
-            -1.f :
-            1.f;
-        m_fadeVolume += deltaTime * 10.f * fade_scale;
-
-        // Update occlusion
-        float occ = (m_soundData->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        volume_lerp(m_occluderVolume, occ, 1.f, deltaTime);
-        clamp(m_occluderVolume, 0.f, 1.f);
-    }
-    clamp(m_fadeVolume, 0.f, 1.f);
-    // Update smoothing
-    m_smoothVolume = .9f * m_smoothVolume +
-        .1f * (m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * m_occluderVolume * m_fadeVolume);
-    if (m_smoothVolume < psSoundCull)
-        return FALSE; // allow volume to go up
-    // Here we has enought "PRIORITY" to be soundable
-    // If we are playing already, return OK
-    // --- else check availability of resources
-    if (m_renderTarget)
-        return TRUE;
-    else
-        return SoundRender->i_allow_play(this);
-}
-
-float SoundEmitter::Priority() const
-{
-    return m_smoothVolume * Attitude() * m_priorityScale;
-}
-
-float SoundEmitter::Attitude() const
-{
-    float dist = SoundRender->listener_position().distance_to(m_params.position);
-    float rolloff_dist = psSoundRolloff * dist;
-
-    // Calc linear fade --#SM+#--
-    // https://www.desmos.com/calculator/lojovfugle
-    const float fMinDistDiff = rolloff_dist - m_params.min_distance;
-    float att;
-    if (fMinDistDiff > 0.f)
-    {
-        const float fMaxDistDiff = m_params.max_distance - m_params.min_distance;
-        att = pow(1.f - (fMinDistDiff / fMaxDistDiff), psSoundLinearFadeFactor);
-    }
-    else
-        att = 1.f;
-    clamp(att, 0.f, 1.f);
-
-    return att;
-}
-
-
-void SoundEmitter::Start(ref_sound* sound, bool isLooped, float delay)
-{
-    m_startDelay = delay;
-
-    VERIFY(_owner);
-    m_soundData = sound->_p;
-    VERIFY(owner_data);
-    m_params.position.set(0, 0, 0);
-    m_params.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
-    m_params.max_distance = RenderSource()->MaxDistance(); // 300.f;
-    m_params.base_volume = RenderSource()->BaseVolume(); // 1.f
-    m_params.volume = 1.f; // 1.f
-    m_params.freq = 1.f;
-    m_params.max_ai_distance = RenderSource()->MaxAiDistance(); // 300.f;
-
-    if (fis_zero(delay, EPS_L))
-    {
-        m_state = isLooped ? EmitterState::StartingLooped : EmitterState::Starting;
-    }
-    else
-    {
-        m_state = isLooped ? EmitterState::StartingLoopedDelayed : EmitterState::StartingDelayed;
-        m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
-    }
-    m_isStopped = false;
-    m_isRewind = false;
-}
-
-void SoundEmitter::i_stop()
-{
-    m_isRewind = false;
-    if (m_renderTarget)
-        SoundRender->i_stop(this);
-    if (m_soundData)
-    {
-        Event_ReleaseOwner();
-        VERIFY(this == m_soundData->feedback);
-        m_soundData->feedback = NULL;
-        m_soundData = NULL;
-    }
-    m_state = EmitterState::Stopped;
-}
-
-void SoundEmitter::Stop(bool isDeffered)
-{
-    if (isDeffered)
-        m_isStopped = true;
-    else
-        i_stop();
 }
 
 void SoundEmitter::Rewind()
@@ -611,6 +418,14 @@ void SoundEmitter::Rewind()
     m_isRewind = true;
 }
 
+void SoundEmitter::Stop(bool isDeffered)
+{
+    if (isDeffered)
+        m_isStopped = true;
+    else
+        i_stop();
+}
+
 void SoundEmitter::Pause(bool hasValue, int32_t pausedId)
 {
     if (hasValue)
@@ -625,72 +440,79 @@ void SoundEmitter::Pause(bool hasValue, int32_t pausedId)
     }
 }
 
-uint32_t SoundEmitter::PlayTime() const
+void SoundEmitter::SwitchTo2D()
 {
-    if (m_state == EmitterState::Playing ||
-        m_state == EmitterState::PlayingLooped ||
-        m_state == EmitterState::Simulating ||
-        m_state == EmitterState::SimulatingLooped)
-        return iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f);
+    m_is2D = true;
+    SetPriority(100.f);
+}
+
+void SoundEmitter::SwitchTo3D()
+{
+    m_is2D = false;
+}
+
+void SoundEmitter::SetPriority(float priority)
+{
+    m_priorityScale = priority;
+}
+
+// Перемотка звука на заданную секунду [rewind snd to target time] --#SM+#--
+void SoundEmitter::SetTime(float time)
+{
+    m_rewindTime = time >= 0.f
+        ? time
+        : 0.f;
+
+    R_ASSERT2(get_length_sec() >= m_rewindTime, "set_time: time is bigger than length of sound");
+}
+
+void SoundEmitter::SetMarker(uint32_t marker)
+{
+    m_marker = marker;
+}
+
+void SoundEmitter::SetRenderTarget(ISoundRenderTarget* target)
+{
+    m_renderTarget = target;
+}
+
+void SoundEmitter::SetStopTime(float stopTime)
+{
+    m_stopTime = stopTime;
+}
+
+void SoundEmitter::SetPosition(const Fvector& position)
+{
+    if (RenderSource()->Format().nChannels == 1 && _valid(position))
+        m_params.position = position;
     else
-        return 0;
+        m_params.position.set(0, 0, 0);
+
+    m_isMoved = true;
 }
 
-void SoundEmitter::Cancel()
+void SoundEmitter::SetFrequency(float frequency)
 {
-    // Msg		("- %10s : %3d[%1.4f] : %s","cancel",dbg_ID,priority(),source->fname);
-    switch (m_state)
-    {
-    case EmitterState::Playing:
-        // switch to: SIMULATE
-        m_state = EmitterState::Simulating; // switch state
-        SoundRender->i_stop(this);
-        break;
-    case EmitterState::PlayingLooped:
-        // switch to: SIMULATE
-        m_state = EmitterState::SimulatingLooped; // switch state
-        SoundRender->i_stop(this);
-        break;
-    default: FATAL("Non playing ref_sound forced out of render queue"); break;
-    }
+    VERIFY(_valid(scale));
+    m_params.freq = frequency;
 }
 
-
-void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
+void SoundEmitter::SetRange(float minDistance, float maxDistance)
 {
-    u32 line_size = SoundRender->cache.LineSize();
-    u32 line = offset / line_size;
+    VERIFY(_valid(min) && _valid(max));
+    m_params.min_distance = minDistance;
+    m_params.max_distance = maxDistance;
+}
 
-    // prepare for first line (it can be unaligned)
-    u32 line_offs = offset - line * line_size;
-    u32 line_amount = line_size - line_offs;
-
-    while (size)
-    {
-        // cache access
-        if (SoundRender->cache.Request(*RenderSource()->Cache(), line))
-        {
-            RenderSource()->Decompress(line, m_renderTarget->OggFile());
-        }
-
-        // fill block
-        u32 blk_size = _min(size, line_amount);
-        u8* cachePtr = (u8*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
-        CopyMemory(ptr, cachePtr + line_offs, blk_size);
-
-        // advance
-        line++;
-        size -= blk_size;
-        ptr += blk_size;
-        offset += blk_size;
-        line_offs = 0;
-        line_amount = line_size;
-    }
+void SoundEmitter::SetVolume(float volume)
+{
+    m_params.volume = _valid(volume)
+        ? volume
+        : 0.f;
 }
 
 void SoundEmitter::FillBlock(void* ptr, uint32_t size)
 {
-    // Msg			("stream: %10s - [%X]:%d, p=%d, t=%d",*source->fname,ptr,size,position,source->dwBytesTotal);
     LPBYTE dest = LPBYTE(ptr);
     u32 dwBytesTotal = get_bytes_total();
 
@@ -758,14 +580,101 @@ void SoundEmitter::FillBlock(void* ptr, uint32_t size)
     }
 }
 
-ISoundRenderSource* SoundEmitter::RenderSource()
+float SoundEmitter::Attitude() const
 {
-    return m_soundData->handle;
+    float dist = SoundRender->listener_position().distance_to(m_params.position);
+    float rolloff_dist = psSoundRolloff * dist;
+
+    // Calc linear fade --#SM+#--
+    // https://www.desmos.com/calculator/lojovfugle
+    const float fMinDistDiff = rolloff_dist - m_params.min_distance;
+    float att;
+    if (fMinDistDiff > 0.f)
+    {
+        const float fMaxDistDiff = m_params.max_distance - m_params.min_distance;
+        att = pow(1.f - (fMinDistDiff / fMaxDistDiff), psSoundLinearFadeFactor);
+    }
+    else
+        att = 1.f;
+    clamp(att, 0.f, 1.f);
+
+    return att;
 }
 
-ISoundRenderTarget* SoundEmitter::RenderTarget()
+void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
 {
-    return m_renderTarget;
+    u32 line_size = SoundRender->cache.LineSize();
+    u32 line = offset / line_size;
+
+    // prepare for first line (it can be unaligned)
+    u32 line_offs = offset - line * line_size;
+    u32 line_amount = line_size - line_offs;
+
+    while (size)
+    {
+        // cache access
+        if (SoundRender->cache.Request(*RenderSource()->Cache(), line))
+        {
+            RenderSource()->Decompress(line, m_renderTarget->OggFile());
+        }
+
+        // fill block
+        u32 blk_size = _min(size, line_amount);
+        u8* cachePtr = (u8*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
+        CopyMemory(ptr, cachePtr + line_offs, blk_size);
+
+        // advance
+        line++;
+        size -= blk_size;
+        ptr += blk_size;
+        offset += blk_size;
+        line_offs = 0;
+        line_amount = line_size;
+    }
+}
+
+bool SoundEmitter::UpdateCulling(float deltaTime)
+{
+    if (m_is2D)
+    {
+        m_occluderVolume = 1.f;
+        m_fadeVolume += deltaTime * 10.f * (m_isStopped ? -1.f : 1.f);
+    }
+    else
+    {
+        // Check range
+        float dist = SoundRender->listener_position().distance_to(m_params.position);
+        if (dist > m_params.max_distance)
+        {
+            m_smoothVolume = 0;
+            return FALSE;
+        }
+
+        // Calc attenuated volume
+        float fade_scale =
+            m_isStopped || (Attitude() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
+            -1.f :
+            1.f;
+        m_fadeVolume += deltaTime * 10.f * fade_scale;
+
+        // Update occlusion
+        float occ = (m_soundData->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
+        volume_lerp(m_occluderVolume, occ, 1.f, deltaTime);
+        clamp(m_occluderVolume, 0.f, 1.f);
+    }
+    clamp(m_fadeVolume, 0.f, 1.f);
+    // Update smoothing
+    m_smoothVolume = .9f * m_smoothVolume +
+        .1f * (m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * m_occluderVolume * m_fadeVolume);
+    if (m_smoothVolume < psSoundCull)
+        return FALSE; // allow volume to go up
+    // Here we has enought "PRIORITY" to be soundable
+    // If we are playing already, return OK
+    // --- else check availability of resources
+    if (m_renderTarget)
+        return TRUE;
+    else
+        return SoundRender->i_allow_play(this);
 }
 
 u32 SoundEmitter::get_bytes_total() const
@@ -776,4 +685,96 @@ u32 SoundEmitter::get_bytes_total() const
 float SoundEmitter::get_length_sec() const
 {
     return m_soundData->get_length_sec();
+}
+
+void SoundEmitter::i_stop()
+{
+    m_isRewind = false;
+    if (m_renderTarget)
+        SoundRender->i_stop(this);
+    if (m_soundData)
+    {
+        OnRelease();
+        VERIFY(this == m_soundData->feedback);
+        m_soundData->feedback = NULL;
+        m_soundData = NULL;
+    }
+    m_state = EmitterState::Stopped;
+}
+
+void SoundEmitter::set_cursor(u32 p)
+{
+    m_streamCursor = p;
+
+    if (m_soundData._get() && m_soundData->fn_attached[0].size())
+    {
+        u32 bt = (m_soundData->handle)->BytesCount();
+        if (m_streamCursor >= m_handleCursor + bt)
+        {
+            SoundRender->i_destroy_source(m_soundData->handle);
+            m_soundData->handle = SoundRender->i_create_source(m_soundData->fn_attached[0].c_str());
+            m_soundData->fn_attached[0] = m_soundData->fn_attached[1];
+            m_soundData->fn_attached[1] = "";
+            m_handleCursor = get_cursor(true);
+
+            if (m_renderTarget)
+                m_renderTarget->OnSourceChanged();
+        }
+    }
+}
+
+u32 SoundEmitter::get_cursor(bool b_absolute) const
+{
+    if (b_absolute)
+        return m_streamCursor;
+    else
+    {
+        VERIFY(m_streamCursor - m_handleCursor >= 0);
+        return m_streamCursor - m_handleCursor;
+    }
+}
+
+void SoundEmitter::move_cursor(int offset)
+{
+    set_cursor(get_cursor(true) + offset);
+}
+
+void SoundEmitter::OnPropagade()
+{
+    m_propagadeTime += ::Random.randF(
+        s_f_def_event_pulse - 0.030f, 
+        s_f_def_event_pulse + 0.030f);
+
+    if (!m_soundData || !m_soundData->g_object || !SoundRender->Handler || m_soundData->g_type == 0)
+    {
+        return;
+    }
+
+    VERIFY(_valid(m_params.volume));
+
+    float clip = m_params.max_ai_distance * m_params.volume;
+    float range = _min(m_params.max_ai_distance, clip);
+
+    if (range < 0.1f)
+    {
+        return;
+    }
+    SoundRender->s_events.push_back(mk_pair(m_soundData, range));
+}
+
+void SoundEmitter::OnRelease()
+{
+    if (!m_soundData)
+    {
+        return;
+    }
+
+    for (auto it = 0; it < SoundRender->s_events.size(); it++)
+    {
+        if (m_soundData == SoundRender->s_events[it].first)
+        {
+            SoundRender->s_events.erase(SoundRender->s_events.begin() + it);
+            it--;
+        }
+    }
 }
