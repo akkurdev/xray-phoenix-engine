@@ -3,11 +3,11 @@
 #include <ISoundRenderTarget.h>
 #include <EmitterState.h>
 
-class CSoundRender_Emitter : public CSound_emitter
+class CSoundRender_Emitter final : public CSound_emitter
 {
 public:
     CSoundRender_Emitter();
-    ~CSoundRender_Emitter();
+    virtual ~CSoundRender_Emitter();
 
     virtual bool Is2D() const;
     virtual float Priority() const;
@@ -18,28 +18,28 @@ public:
     virtual uint32_t Marker() const;
     virtual CSound_params* Params();
 
-    ref_sound_data_ptr OwnerData();
-    ISoundRenderSource* RenderSource();
-    ISoundRenderTarget* RenderTarget();    
+    virtual ref_sound_data_ptr OwnerData();
+    virtual ISoundRenderSource* RenderSource();
+    virtual ISoundRenderTarget* RenderTarget();
     
-    void Start(ref_sound* sound, bool isLooped, float delay);
-    void Cancel();
-    void Update(float deltaTime);
-    void Rewind();
+    virtual void Start(ref_sound* sound, bool isLooped, float delay);
+    virtual void Cancel();
+    virtual void Update(float deltaTime);
+    virtual void Rewind();
     virtual void Stop(bool isDeffered);
-    void Pause(bool hasValue, int32_t pausedId);
+    virtual void Pause(bool hasValue, int32_t pausedId);
     virtual void SwitchTo2D();
     virtual void SwitchTo3D();
     virtual void SetPriority(float priority);    
     virtual void SetTime(float time);
-    void SetMarker(uint32_t marker);
-    void SetRenderTarget(ISoundRenderTarget* target);
-    void SetStopTime(float stopTime);       
+    virtual void SetMarker(uint32_t marker);
+    virtual void SetRenderTarget(ISoundRenderTarget* target);
+    virtual void SetStopTime(float stopTime);
     virtual void SetPosition(const Fvector& position);
     virtual void SetFrequency(float frequency);
     virtual void SetRange(float minDistance, float maxDistance);
     virtual void SetVolume(float volume);
-    void FillBlock(void* ptr, uint32_t size);
+    virtual void FillBlock(void* ptr, uint32_t size);
 
 private:
     float Attitude() const;
