@@ -189,12 +189,12 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
             _I._rendered = !!_E->RenderTarget();
             _I.params = *_E->Params();
             _I.volume = _E->Volume();
-            if (_E->OwnerData())
+            if (_E->SoundData())
             {
                 _I.name = _E->RenderSource()->FileName();
-                _I.game_object = _E->OwnerData()->g_object;
-                _I.game_type = _E->OwnerData()->g_type;
-                _I.type = _E->OwnerData()->s_type;
+                _I.game_object = _E->SoundData()->g_object;
+                _I.game_type = _E->SoundData()->g_type;
+                _I.type = _E->SoundData()->s_type;
             }
             else
             {

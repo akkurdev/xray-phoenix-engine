@@ -18,7 +18,7 @@ public:
     virtual uint32_t Marker() const;
     virtual CSound_params* Params();
 
-    virtual ref_sound_data_ptr OwnerData();
+    virtual ref_sound_data_ptr SoundData();
     virtual ISoundRenderSource* RenderSource();
     virtual ISoundRenderTarget* RenderTarget();
     

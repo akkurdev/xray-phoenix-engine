@@ -635,9 +635,9 @@ void CSoundRender_Core::object_relcase(CObject* obj)
         for (u32 eit = 0; eit < s_emitters.size(); eit++)
         {
             if (s_emitters[eit])
-                if (s_emitters[eit]->OwnerData())
-                    if (obj == s_emitters[eit]->OwnerData()->g_object)
-                        s_emitters[eit]->OwnerData()->g_object = 0;
+                if (s_emitters[eit]->SoundData())
+                    if (obj == s_emitters[eit]->SoundData()->g_object)
+                        s_emitters[eit]->SoundData()->g_object = 0;
         }
     }
 }

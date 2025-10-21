@@ -91,7 +91,7 @@ void CSoundRender_Emitter::SetMarker(uint32_t marker)
     m_marker = marker;
 }
 
-ref_sound_data_ptr CSoundRender_Emitter::OwnerData()
+ref_sound_data_ptr CSoundRender_Emitter::SoundData()
 {
     return m_soundData;
 }
