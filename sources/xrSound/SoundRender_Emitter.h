@@ -22,24 +22,24 @@ public:
     virtual void SetPriority(float priority);
     virtual void SwitchTo2D();
     virtual void SwitchTo3D();
+    virtual void SetTime(float time);
+    void SetMarker(uint32_t marker);
+    void SetRenderTarget(ISoundRenderTarget* target);
+    void SetStopTime(float stopTime);
 
     ISoundRenderSource* RenderSource();
-    ISoundRenderTarget* RenderTarget();
-    virtual void SetTime(float time);
-    virtual CSound_params* Params();
-    
+    ISoundRenderTarget* RenderTarget();    
+    virtual CSound_params* Params();    
     virtual void set_position(const Fvector& pos);
     virtual void set_frequency(float scale);
     virtual void set_range(float min, float max);
     virtual void set_volume(float vol);
     BOOL isPlaying(void);
-    u32 Marker() const;
-    void SetMarker(u32 marker);
+    u32 Marker() const;    
     ref_sound_data_ptr OwnerData();
-    float SmoothVolume() const;
-    void SetRenderTarget(ISoundRenderTarget* target);
+    float SmoothVolume() const;    
     float StopTime() const;
-    void SetStopTime(float stopTime);
+    
 
 private:
     float Attitude();

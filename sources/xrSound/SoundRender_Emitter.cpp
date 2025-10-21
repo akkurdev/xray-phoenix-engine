@@ -86,7 +86,7 @@ u32 CSoundRender_Emitter::Marker() const
     return m_marker;
 }
 
-void CSoundRender_Emitter::SetMarker(u32 marker)
+void CSoundRender_Emitter::SetMarker(uint32_t marker)
 {
     m_marker = marker;
 }
