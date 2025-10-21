@@ -165,13 +165,13 @@ void CSoundRender_Emitter::Event_Propagade()
     SoundRender->s_events.push_back(mk_pair(m_soundData, range));
 }
 
-void CSoundRender_Emitter::switch_to_2D()
+void CSoundRender_Emitter::SwitchTo2D()
 {
     m_is2D = true;
     SetPriority(100.f);
 }
 
-void CSoundRender_Emitter::switch_to_3D() { m_is2D = false; }
+void CSoundRender_Emitter::SwitchTo3D() { m_is2D = false; }
 
 void CSoundRender_Emitter::set_cursor(u32 p)
 {

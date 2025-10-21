@@ -20,12 +20,14 @@ public:
     virtual uint32_t PlayTime();
     virtual bool Is2D();
     virtual void SetPriority(float priority);
+    virtual void SwitchTo2D();
+    virtual void SwitchTo3D();
+
     ISoundRenderSource* RenderSource();
     ISoundRenderTarget* RenderTarget();
     virtual void SetTime(float time);
     virtual CSound_params* Params();
-    virtual void switch_to_2D();
-    virtual void switch_to_3D();
+    
     virtual void set_position(const Fvector& pos);
     virtual void set_frequency(float scale);
     virtual void set_range(float min, float max);
