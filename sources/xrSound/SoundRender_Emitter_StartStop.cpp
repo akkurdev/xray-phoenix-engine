@@ -82,7 +82,7 @@ void CSoundRender_Emitter::Pause(bool hasValue, int32_t pausedId)
     }
 }
 
-uint32_t CSoundRender_Emitter::PlayTime()
+uint32_t CSoundRender_Emitter::PlayTime() const
 {
     if (m_state == EmitterState::Playing || 
         m_state == EmitterState::PlayingLooped ||

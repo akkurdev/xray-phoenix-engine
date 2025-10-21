@@ -200,7 +200,7 @@ public:
 class XRSOUND_API CSound_emitter
 {
 public:
-    virtual bool Is2D() = 0;
+    virtual bool Is2D() const = 0;
     virtual void SwitchTo2D() = 0;
     virtual void SwitchTo3D() = 0;
     virtual void SetPosition(const Fvector& position) = 0;
@@ -210,7 +210,7 @@ public:
     virtual void SetPriority(float priority) = 0;
     virtual void SetTime(float time) = 0;
     virtual void Stop(bool isDeffered) = 0;
-    virtual uint32_t PlayTime() = 0;
+    virtual uint32_t PlayTime() const = 0;
     virtual CSound_params* Params() = 0;
 };
 

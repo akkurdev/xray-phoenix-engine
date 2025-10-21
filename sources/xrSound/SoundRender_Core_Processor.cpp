@@ -63,7 +63,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
             pEmitter->Update(dt_sec);
             pEmitter->SetMarker(s_emitters_u);
         }
-        if (!pEmitter->isPlaying())
+        if (!pEmitter->IsPlaying())
         {
             // Stopped
             xr_delete(pEmitter);

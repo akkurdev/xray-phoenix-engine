@@ -76,12 +76,12 @@ void CSoundRender_Emitter::Event_ReleaseOwner()
     }
 }
 
-BOOL CSoundRender_Emitter::isPlaying(void)
+bool CSoundRender_Emitter::IsPlaying() const
 {
     return m_state != EmitterState::Stopped;
 }
 
-u32 CSoundRender_Emitter::Marker() const
+uint32_t CSoundRender_Emitter::Marker() const
 {
     return m_marker;
 }
@@ -123,9 +123,15 @@ void CSoundRender_Emitter::SetVolume(float volume)
     m_params.volume = volume;
 }
 
-bool CSoundRender_Emitter::Is2D() { return m_is2D; }
+bool CSoundRender_Emitter::Is2D() const
+{ 
+    return m_is2D; 
+}
 
-CSound_params* CSoundRender_Emitter::Params() { return &m_params; }
+CSound_params* CSoundRender_Emitter::Params() 
+{ 
+    return &m_params; 
+}
 
 void CSoundRender_Emitter::SetRange(float minDistance, float maxDistance)
 {

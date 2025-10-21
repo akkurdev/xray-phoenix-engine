@@ -305,9 +305,12 @@ bool CSoundRender_Emitter::UpdateCulling(float deltaTime)
         return SoundRender->i_allow_play(this);
 }
 
-float CSoundRender_Emitter::Priority() { return m_smoothVolume * Attitude() * m_priorityScale; }
+float CSoundRender_Emitter::Priority() const
+{ 
+    return m_smoothVolume * Attitude() * m_priorityScale; 
+}
 
-float CSoundRender_Emitter::Attitude()
+float CSoundRender_Emitter::Attitude() const
 {
     float dist = SoundRender->listener_position().distance_to(m_params.position);
     float rolloff_dist = psSoundRolloff * dist;

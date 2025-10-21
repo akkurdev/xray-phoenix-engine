@@ -9,39 +9,40 @@ public:
     CSoundRender_Emitter();
     ~CSoundRender_Emitter();
 
-    void FillBlock(void* ptr, uint32_t size);
-    float Priority();
+    virtual bool Is2D() const;
+    virtual float Priority() const;
+    virtual uint32_t PlayTime() const;
+    virtual float SmoothVolume() const;
+    virtual float StopTime() const;
+    virtual bool IsPlaying() const;
+    virtual uint32_t Marker() const;
+    virtual CSound_params* Params();
+
+    ref_sound_data_ptr OwnerData();
+    ISoundRenderSource* RenderSource();
+    ISoundRenderTarget* RenderTarget();    
+    
     void Start(ref_sound* sound, bool isLooped, float delay);
     void Cancel();
     void Update(float deltaTime);
     void Rewind();
     virtual void Stop(bool isDeffered);
     void Pause(bool hasValue, int32_t pausedId);
-    virtual uint32_t PlayTime();
-    virtual bool Is2D();
-    virtual void SetPriority(float priority);
     virtual void SwitchTo2D();
     virtual void SwitchTo3D();
+    virtual void SetPriority(float priority);    
     virtual void SetTime(float time);
     void SetMarker(uint32_t marker);
     void SetRenderTarget(ISoundRenderTarget* target);
-    void SetStopTime(float stopTime);
-    ISoundRenderSource* RenderSource();
-    ISoundRenderTarget* RenderTarget();    
-    virtual CSound_params* Params();    
+    void SetStopTime(float stopTime);       
     virtual void SetPosition(const Fvector& position);
     virtual void SetFrequency(float frequency);
     virtual void SetRange(float minDistance, float maxDistance);
     virtual void SetVolume(float volume);
-    BOOL isPlaying(void);
-    u32 Marker() const;    
-    ref_sound_data_ptr OwnerData();
-    float SmoothVolume() const;    
-    float StopTime() const;
-    
+    void FillBlock(void* ptr, uint32_t size);
 
 private:
-    float Attitude();
+    float Attitude() const;
     void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
     bool UpdateCulling(float deltaTime);
     u32 get_bytes_total() const;
