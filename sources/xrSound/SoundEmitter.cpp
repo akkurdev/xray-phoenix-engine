@@ -203,21 +203,13 @@ void SoundEmitter::Update(float deltaTime)
     switch (m_state)
     {
     case EmitterState::StartingDelayed:
-        if (m_paused)
-            break;
-        m_startDelay -= deltaTime;
-        if (m_startDelay <= 0)
-            m_state = EmitterState::Starting;
+        OnDelayedStart(deltaTime, false);
         break;
     case EmitterState::Starting:
         OnStart(deltaTime, false);
         break;
     case EmitterState::StartingLoopedDelayed:
-        if (m_paused)
-            break;
-        m_startDelay -= deltaTime;
-        if (m_startDelay <= 0)
-            m_state = EmitterState::StartingLooped;
+        OnDelayedStart(deltaTime, true);
         break;
     case EmitterState::StartingLooped:
         OnStart(deltaTime, true);
@@ -226,50 +218,13 @@ void SoundEmitter::Update(float deltaTime)
         OnPlay(deltaTime, false);
         break;
     case EmitterState::Simulating:
-        if (m_paused)
-        {
-            m_startTime += fDeltaTime;
-            m_stopTime += fDeltaTime;
-            m_propagadeTime += fDeltaTime;
-            break;
-        }
-        if (time >= m_stopTime)
-        {
-            // STOP
-            m_state = EmitterState::Stopped;
-        }
-        else
-        {
-            u32 ptr = calc_cursor(m_startTime, time, m_soundData->get_length_sec(), m_params.freq, RenderSource()->Format());
-            SetCursor(ptr);
-
-            if (UpdateCulling(deltaTime))
-            {
-                // switch to: PLAY
-                m_state = EmitterState::Playing;
-                SoundRender->i_start(this);
-            }
-        }
+        OnSimulate(deltaTime);
         break;
     case EmitterState::PlayingLooped:
         OnPlay(deltaTime, true);
         break;
     case EmitterState::SimulatingLooped:
-        if (m_paused)
-        {
-            m_startTime += fDeltaTime;
-            m_propagadeTime += fDeltaTime;
-            break;
-        }
-        if (UpdateCulling(deltaTime))
-        {
-            // switch to: PLAY
-            m_state = EmitterState::PlayingLooped; // switch state
-            u32 ptr = calc_cursor(m_startTime, time, m_soundData->get_length_sec(), m_params.freq, RenderSource()->Format());
-            SetCursor(ptr);
-
-            SoundRender->i_start(this);
-        }
+        OnLoopedSimulate(deltaTime);
         break;
     }
 
@@ -696,6 +651,23 @@ void SoundEmitter::OnStart(float deltaTime, bool isLooped)
     }
 }
 
+void SoundEmitter::OnDelayedStart(float deltaTime, bool isLooped)
+{
+    if (m_paused)
+    {
+        return;
+    }
+
+    m_startDelay -= deltaTime;
+
+    if (m_startDelay <= 0)
+    {
+        m_state = isLooped 
+            ? EmitterState::StartingLooped 
+            : EmitterState::Starting;
+    }
+}
+
 void SoundEmitter::OnPlay(float deltaTime, bool isLooped)
 {    
     if (m_paused)
@@ -734,6 +706,64 @@ void SoundEmitter::OnPlay(float deltaTime, bool isLooped)
                 : EmitterState::Simulating;
             SoundRender->i_stop(this);
         }
+    }
+}
+
+void SoundEmitter::OnSimulate(float deltaTime)
+{
+    if (m_paused)
+    {
+        m_startTime += SoundRender->fTimer_Delta;
+        m_stopTime += SoundRender->fTimer_Delta;
+        m_propagadeTime += SoundRender->fTimer_Delta;
+
+        return;
+    }
+
+    if (SoundRender->fTimer_Value >= m_stopTime)
+    {
+        m_state = EmitterState::Stopped;
+    }
+    else
+    {
+        auto cursor = calc_cursor(
+            m_startTime, 
+            SoundRender->fTimer_Value, 
+            m_soundData->get_length_sec(), 
+            m_params.freq, 
+            RenderSource()->Format());
+
+        SetCursor(cursor);
+
+        if (UpdateCulling(deltaTime))
+        {
+            m_state = EmitterState::Playing;
+            SoundRender->i_start(this);
+        }
+    }
+}
+
+void SoundEmitter::OnLoopedSimulate(float deltaTime)
+{
+    if (m_paused)
+    {
+        m_startTime += SoundRender->fTimer_Delta;
+        m_propagadeTime += SoundRender->fTimer_Delta;
+        return;
+    }
+
+    if (UpdateCulling(deltaTime))
+    {
+        m_state = EmitterState::PlayingLooped;
+        auto cursor = calc_cursor(
+            m_startTime, 
+            SoundRender->fTimer_Value, 
+            m_soundData->get_length_sec(), 
+            m_params.freq, 
+            RenderSource()->Format());
+
+        SetCursor(cursor);
+        SoundRender->i_start(this);
     }
 }
 

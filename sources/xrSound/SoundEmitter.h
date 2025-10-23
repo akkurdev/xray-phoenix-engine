@@ -46,10 +46,14 @@ private:
     bool UpdateCulling(float deltaTime);
     void i_stop();
     void SetCursor(uint32_t position);
+
     void OnPropagade();
     void OnRelease();
     void OnStart(float deltaTime, bool isLooped);
+    void OnDelayedStart(float deltaTime, bool isLooped);
     void OnPlay(float deltaTime, bool isLooped);
+    void OnSimulate(float deltaTime);
+    void OnLoopedSimulate(float deltaTime);
 
     float Attitude() const;
     float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);
