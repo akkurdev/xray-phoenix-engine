@@ -628,47 +628,19 @@ void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
 }
 
 bool SoundEmitter::UpdateCulling(float deltaTime)
-{
-    if (m_is2D)
-    {
-        m_occluderVolume = 1.f;
-        m_fadeVolume += deltaTime * 10.f * (m_isStopped ? -1.f : 1.f);
-    }
-    else
-    {
-        // Check range
-        float dist = SoundRender->listener_position().distance_to(m_params.position);
-        if (dist > m_params.max_distance)
-        {
-            m_smoothVolume = 0;
-            return FALSE;
-        }
+{    
+    m_fadeVolume = UpdateFadeVolume(deltaTime, m_fadeVolume);
+    m_occluderVolume = UpdateOccludeVolume(deltaTime, m_occluderVolume);
+    m_smoothVolume = UpdateSmoothVolume(deltaTime, m_smoothVolume, m_fadeVolume, m_occluderVolume);
 
-        // Calc attenuated volume
-        float fade_scale =
-            m_isStopped || (Attitude() * m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
-            -1.f :
-            1.f;
-        m_fadeVolume += deltaTime * 10.f * fade_scale;
-
-        // Update occlusion
-        float occ = (m_soundData->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        volume_lerp(m_occluderVolume, occ, 1.f, deltaTime);
-        clamp(m_occluderVolume, 0.f, 1.f);
-    }
-    clamp(m_fadeVolume, 0.f, 1.f);
-    // Update smoothing
-    m_smoothVolume = .9f * m_smoothVolume +
-        .1f * (m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * m_occluderVolume * m_fadeVolume);
     if (m_smoothVolume < psSoundCull)
-        return FALSE; // allow volume to go up
-    // Here we has enought "PRIORITY" to be soundable
-    // If we are playing already, return OK
-    // --- else check availability of resources
-    if (m_renderTarget)
-        return TRUE;
-    else
-        return SoundRender->i_allow_play(this);
+    {
+        return false;
+    }
+
+    return m_renderTarget
+        ? true
+        : SoundRender->i_allow_play(this);
 }
 
 void SoundEmitter::i_stop()
@@ -770,58 +742,59 @@ float SoundEmitter::Attitude() const
     return attitude;
 }
 
-//float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume)
-//{    
-//    if (m_is2D)
-//    {
-//        return 0.f;
-//    }
-//
-//    float distance = SoundRender->listener_position().distance_to(m_params.position);
-//    if (distance > m_params.max_distance)
-//    {
-//        return 0.f;
-//    }
-//
-//    auto effectScale = m_soundData->s_type == st_Effect
-//        ? psSoundVEffects * psSoundVFactor
-//        : psSoundVMusic;
-//
-//    return 0.9f * m_smoothVolume + 0.1f * (m_params.base_volume * m_params.volume * effectScale * occludeVolume * fadeVolume);
-//}
-//
-//float SoundEmitter::UpdateFadeVolume(float deltaTime, float currentVolume)
-//{
-//    auto effectScale = m_soundData->s_type == st_Effect
-//        ? psSoundVEffects * psSoundVFactor
-//        : psSoundVMusic;
-//
-//    auto canCullByVolume = !m_is2D
-//        ? Attitude() * m_params.base_volume * m_params.volume * effectScale < psSoundCull
-//        : false;
-//
-//    float fadeScale = m_isStopped || canCullByVolume
-//        ? -1.f
-//        : 1.f;
-//
-//    auto volume = currentVolume + (deltaTime * 10.f * fadeScale);
-//    return std::clamp(volume, 0.f, 1.f);
-//}
-//
-//float SoundEmitter::UpdateOccludeVolume(float deltaTime, float currentVolume)
-//{
-//    if (m_is2D)
-//    {
-//        return 1.f;
-//    }
-//
-//    float occlusion = (m_soundData->g_type != SOUND_TYPE_WORLD_AMBIENT)
-//        ? SoundRender->get_occlusion(m_params.position, 0.2f, m_occluder)
-//        : 1.f;
-//
-//    float difference = occlusion - m_occluderVolume;
-//    float absoluteDifference = _abs(difference);
-//
-//    auto volume = currentVolume + (difference / absoluteDifference) * std::clamp(deltaTime, deltaTime, absoluteDifference);
-//    return std::clamp(volume, 0.f, 1.f);
-//}
+float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume)
+{    
+    if (m_is2D)
+    {
+        return currentVolume;
+    }
+
+    float distance = SoundRender->listener_position().distance_to(m_params.position);
+    if (distance > m_params.max_distance)
+    {
+        return 0.f;
+    }
+
+    auto effectScale = m_soundData->s_type == st_Effect
+        ? psSoundVEffects * psSoundVFactor
+        : psSoundVMusic;
+
+    return 0.9f * m_smoothVolume + 0.1f * (m_params.base_volume * m_params.volume * effectScale * occludeVolume * fadeVolume);
+}
+
+float SoundEmitter::UpdateFadeVolume(float deltaTime, float currentVolume)
+{
+    auto effectScale = m_soundData->s_type == st_Effect
+        ? psSoundVEffects * psSoundVFactor
+        : psSoundVMusic;
+
+    auto attitude = Attitude();
+
+    auto canCullByVolume = !m_is2D
+        ? attitude * m_params.base_volume * m_params.volume * effectScale < psSoundCull
+        : false;
+
+    float fadeScale = m_isStopped || canCullByVolume
+        ? -1.f
+        : 1.f;
+
+    auto volume = currentVolume + (deltaTime * 10.f * fadeScale);
+    return std::clamp(volume, 0.f, 1.f);
+}
+
+float SoundEmitter::UpdateOccludeVolume(float deltaTime, float currentVolume)
+{
+    if (m_is2D)
+    {
+        return 1.f;
+    }
+
+    float occlusion = (m_soundData->g_type != SOUND_TYPE_WORLD_AMBIENT)
+        ? SoundRender->get_occlusion(m_params.position, 0.2f, m_occluder)
+        : 1.f;
+
+    float volume = currentVolume;
+    volume_lerp(volume, occlusion, 1.f, deltaTime);
+
+    return std::clamp(volume, 0.f, 1.f);
+}

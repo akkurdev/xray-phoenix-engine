@@ -50,9 +50,9 @@ private:
     void OnRelease();
 
     float Attitude() const;
-    /*float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);
+    float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);
     float UpdateFadeVolume(float deltaTime, float currentVolume);
-    float UpdateOccludeVolume(float deltaTime, float currentVolume);*/
+    float UpdateOccludeVolume(float deltaTime, float currentVolume);
 
 private:
     float m_startDelay;
