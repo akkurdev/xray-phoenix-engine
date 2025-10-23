@@ -48,6 +48,7 @@ private:
     void SetCursor(uint32_t position);
     void OnPropagade();
     void OnRelease();
+    void OnStart(float deltaTime, bool isLooped);
     void OnPlay(float deltaTime, bool isLooped);
 
     float Attitude() const;

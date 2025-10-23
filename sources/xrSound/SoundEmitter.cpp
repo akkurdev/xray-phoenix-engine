@@ -210,23 +210,7 @@ void SoundEmitter::Update(float deltaTime)
             m_state = EmitterState::Starting;
         break;
     case EmitterState::Starting:
-        if (m_paused)
-            break;
-        m_startTime = time;
-        m_stopTime = time + (m_soundData->get_length_sec() / m_params.freq);
-        m_propagadeTime = time;
-        m_fadeVolume = 1.f;
-        m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
-
-        if (UpdateCulling(deltaTime))
-        {
-            m_state = EmitterState::Playing;
-            SetCursor(0);
-            SoundRender->i_start(this);
-        }
-        else
-            m_state = EmitterState::Simulating;
+        OnStart(deltaTime, false);
         break;
     case EmitterState::StartingLoopedDelayed:
         if (m_paused)
@@ -236,23 +220,7 @@ void SoundEmitter::Update(float deltaTime)
             m_state = EmitterState::StartingLooped;
         break;
     case EmitterState::StartingLooped:
-        if (m_paused)
-            break;
-        m_startTime = time;
-        m_stopTime = TIME_TO_STOP_INFINITE;
-        m_propagadeTime = time;
-        m_fadeVolume = 1.f;
-        m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-        m_smoothVolume = m_params.base_volume * m_params.volume * (m_soundData->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (m_is2D ? 1.f : m_occluderVolume);
-
-        if (UpdateCulling(deltaTime))
-        {
-            m_state = EmitterState::PlayingLooped;
-            SetCursor(0);
-            SoundRender->i_start(this);
-        }
-        else
-            m_state = EmitterState::SimulatingLooped;
+        OnStart(deltaTime, true);
         break;
     case EmitterState::Playing:
         OnPlay(deltaTime, false);
@@ -683,6 +651,48 @@ void SoundEmitter::OnRelease()
             SoundRender->s_events.erase(SoundRender->s_events.begin() + it);
             it--;
         }
+    }
+}
+
+void SoundEmitter::OnStart(float deltaTime, bool isLooped)
+{
+    if (m_paused)
+    {
+        return;
+    }
+
+    auto effectScale = m_soundData->s_type == st_Effect 
+        ? psSoundVEffects * psSoundVFactor 
+        : psSoundVMusic;
+
+    auto occludeVolumeScale = m_is2D
+        ? 1.f
+        : m_occluderVolume;
+
+    m_startTime = SoundRender->fTimer_Value;    
+    m_propagadeTime = SoundRender->fTimer_Value;
+    m_stopTime = isLooped 
+        ? TIME_TO_STOP_INFINITE 
+        : SoundRender->fTimer_Value + (m_soundData->get_length_sec() / m_params.freq);
+
+    m_fadeVolume = 1.f;
+    m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
+    m_smoothVolume = m_params.base_volume * m_params.volume * effectScale * occludeVolumeScale;
+
+    if (UpdateCulling(deltaTime))
+    {
+        m_state = isLooped 
+            ? EmitterState::PlayingLooped 
+            : EmitterState::Playing;
+
+        SetCursor(0);
+        SoundRender->i_start(this);
+    }
+    else
+    {
+        m_state = isLooped 
+            ? EmitterState::SimulatingLooped 
+            : EmitterState::Simulating;
     }
 }
 
