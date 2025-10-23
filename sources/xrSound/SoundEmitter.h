@@ -48,6 +48,7 @@ private:
     void SetCursor(uint32_t position);
     void OnPropagade();
     void OnRelease();
+    void OnPlay(float deltaTime, bool isLooped);
 
     float Attitude() const;
     float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);

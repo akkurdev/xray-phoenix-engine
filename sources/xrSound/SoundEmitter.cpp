@@ -255,33 +255,7 @@ void SoundEmitter::Update(float deltaTime)
             m_state = EmitterState::SimulatingLooped;
         break;
     case EmitterState::Playing:
-        if (m_paused)
-        {
-            if (m_renderTarget)
-            {
-                SoundRender->i_stop(this);
-                m_state = EmitterState::Simulating;
-            }
-            m_startTime += fDeltaTime;
-            m_stopTime += fDeltaTime;
-            m_propagadeTime += fDeltaTime;
-            break;
-        }
-        if (time >= m_stopTime)
-        {
-            // STOP
-            m_state = EmitterState::Stopped;
-            SoundRender->i_stop(this);
-        }
-        else
-        {
-            if (!UpdateCulling(deltaTime))
-            {
-                // switch to: SIMULATE
-                m_state = EmitterState::Simulating; // switch state
-                SoundRender->i_stop(this);
-            }
-        }
+        OnPlay(deltaTime, false);
         break;
     case EmitterState::Simulating:
         if (m_paused)
@@ -310,23 +284,7 @@ void SoundEmitter::Update(float deltaTime)
         }
         break;
     case EmitterState::PlayingLooped:
-        if (m_paused)
-        {
-            if (m_renderTarget)
-            {
-                SoundRender->i_stop(this);
-                m_state = EmitterState::SimulatingLooped;
-            }
-            m_startTime += fDeltaTime;
-            m_propagadeTime += fDeltaTime;
-            break;
-        }
-        if (!UpdateCulling(deltaTime))
-        {
-            // switch to: SIMULATE
-            m_state = EmitterState::SimulatingLooped; // switch state
-            SoundRender->i_stop(this);
-        }
+        OnPlay(deltaTime, true);
         break;
     case EmitterState::SimulatingLooped:
         if (m_paused)
@@ -724,6 +682,47 @@ void SoundEmitter::OnRelease()
         {
             SoundRender->s_events.erase(SoundRender->s_events.begin() + it);
             it--;
+        }
+    }
+}
+
+void SoundEmitter::OnPlay(float deltaTime, bool isLooped)
+{    
+    if (m_paused)
+    {
+        if (m_renderTarget)
+        {
+            SoundRender->i_stop(this);
+            m_state = isLooped 
+                ? EmitterState::SimulatingLooped 
+                : EmitterState::Simulating;
+        }
+
+        m_startTime += SoundRender->fTimer_Delta;        
+        m_propagadeTime += SoundRender->fTimer_Delta;
+
+        if (!isLooped)
+        {
+            m_stopTime += SoundRender->fTimer_Delta;
+        }
+        return;
+    }
+    if (SoundRender->fTimer_Value >= m_stopTime)
+    {
+        if (!isLooped)
+        {
+            m_state = EmitterState::Stopped;
+            SoundRender->i_stop(this);
+        }
+    }
+    else
+    {
+        if (!UpdateCulling(deltaTime))
+        {
+            m_state = isLooped 
+                ? EmitterState::SimulatingLooped 
+                : EmitterState::Simulating;
+            SoundRender->i_stop(this);
         }
     }
 }
