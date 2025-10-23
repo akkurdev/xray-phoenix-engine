@@ -239,17 +239,18 @@ void SoundEmitter::Update(float deltaTime)
 
     // if deffered stop active and volume==0 -> physically stop sound
     if (m_isStopped && fis_zero(m_fadeVolume))
+    {
         i_stop();
+    }
 
-    /*VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)), "owner");
-    VERIFY2(owner_data ? *(int*)(owner_data->feedback) : 1, "owner");*/
-
-    // footer
     m_isMoved = false;
+
     if (m_state != EmitterState::Stopped)
     {
         if (SoundRender->fTimer_Value >= m_propagadeTime)
+        {
             OnPropagade();
+        }
     }
     else if (m_soundData)
     {
