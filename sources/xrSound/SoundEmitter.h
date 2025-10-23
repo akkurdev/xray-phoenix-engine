@@ -54,6 +54,7 @@ private:
     void OnPlay(float deltaTime, bool isLooped);
     void OnSimulate(float deltaTime);
     void OnLoopedSimulate(float deltaTime);
+    void OnRewind();
 
     float Attitude() const;
     float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);

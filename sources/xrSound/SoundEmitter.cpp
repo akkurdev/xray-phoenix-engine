@@ -187,16 +187,12 @@ void SoundEmitter::Cancel()
 
 void SoundEmitter::Update(float deltaTime)
 {
-    float time = SoundRender->fTimer_Value;
-    float fDeltaTime = SoundRender->fTimer_Delta;
-
-    /*VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)), "owner");
-    VERIFY2(owner_data ? *(int*)(&owner_data->feedback) : 1, "owner");*/
-
     if (m_isRewind)
     {
         if (m_renderTarget)
+        {
             SoundRender->i_rewind(this);
+        }
         m_isRewind = false;
     }
 
@@ -228,48 +224,17 @@ void SoundEmitter::Update(float deltaTime)
         break;
     }
 
-    // hard rewind
-    switch (m_state)
+    auto canRewind =
+        m_state == EmitterState::Starting ||
+        m_state == EmitterState::StartingLooped ||
+        m_state == EmitterState::Playing || 
+        m_state == EmitterState::Simulating || 
+        m_state == EmitterState::PlayingLooped || 
+        m_state == EmitterState::SimulatingLooped;
+
+    if (canRewind)
     {
-    case EmitterState::Starting:
-    case EmitterState::StartingLooped:
-    case EmitterState::Playing:
-    case EmitterState::Simulating:
-    case EmitterState::PlayingLooped:
-    case EmitterState::SimulatingLooped:
-        if (m_rewindTime > 0.0f)
-        {
-            float fLength = m_soundData->get_length_sec();
-            bool bLooped = (m_stopTime == 0xffffffff);
-
-            R_ASSERT2(fLength >= m_rewindTime, "set_time: target time is bigger than length of sound");
-
-            float fRemainingTime = (fLength - m_rewindTime) / m_params.freq;
-            float fPastTime = m_rewindTime / m_params.freq;
-
-            m_startTime = SoundRender->fTimer_Value - fPastTime;
-            m_propagadeTime = m_startTime; //--> For AI events
-
-            if (m_startTime < 0.0f)
-            {
-                R_ASSERT2(m_startTime >= 0.0f, "Possible error in sound rewind logic! See log.");
-
-                m_startTime = SoundRender->fTimer_Value;
-                m_propagadeTime = m_startTime;
-            }
-
-            if (!bLooped)
-            {
-                //--> Пересчитываем время, когда звук должен остановиться [recalculate stop time]
-                m_stopTime = SoundRender->fTimer_Value + fRemainingTime;
-            }
-
-            u32 ptr = calc_cursor(m_startTime, time, fLength, m_params.freq, RenderSource()->Format());
-            SetCursor(ptr);
-
-            m_rewindTime = 0.0f;
-        }
-    default: break;
+        OnRewind();
     }
 
     // if deffered stop active and volume==0 -> physically stop sound
@@ -283,7 +248,7 @@ void SoundEmitter::Update(float deltaTime)
     m_isMoved = false;
     if (m_state != EmitterState::Stopped)
     {
-        if (time >= m_propagadeTime)
+        if (SoundRender->fTimer_Value >= m_propagadeTime)
             OnPropagade();
     }
     else if (m_soundData)
@@ -765,6 +730,49 @@ void SoundEmitter::OnLoopedSimulate(float deltaTime)
         SetCursor(cursor);
         SoundRender->i_start(this);
     }
+}
+
+void SoundEmitter::OnRewind()
+{
+    if (m_rewindTime <= 0.f)
+    {
+        return;
+    }
+
+    auto length = m_soundData->get_length_sec();
+    auto isLooped = (m_stopTime == 0xffffffff);
+
+    R_ASSERT2(length >= m_rewindTime, "set_time: target time is bigger than length of sound");
+
+    float remainTime = (length - m_rewindTime) / m_params.freq;
+    float pastTime = m_rewindTime / m_params.freq;
+
+    m_startTime = SoundRender->fTimer_Value - pastTime;
+    m_propagadeTime = m_startTime; //--> For AI events
+
+    if (m_startTime < 0.0f)
+    {
+        R_ASSERT2(m_startTime >= 0.0f, "Possible error in sound rewind logic! See log.");
+
+        m_startTime = SoundRender->fTimer_Value;
+        m_propagadeTime = m_startTime;
+    }
+
+    if (!isLooped)
+    {
+        //--> Пересчитываем время, когда звук должен остановиться [recalculate stop time]
+        m_stopTime = SoundRender->fTimer_Value + remainTime;
+    }
+
+    auto cursor = calc_cursor(
+        m_startTime, 
+        SoundRender->fTimer_Value, 
+        length, 
+        m_params.freq, 
+        RenderSource()->Format());
+
+    SetCursor(cursor);
+    m_rewindTime = 0.0f;
 }
 
 float SoundEmitter::Attitude() const
