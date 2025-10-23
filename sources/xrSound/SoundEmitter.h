@@ -41,18 +41,18 @@ public:
     virtual void SetVolume(float volume);
     virtual void FillBlock(void* ptr, uint32_t size);
 
-private:
-    float Attitude() const;
+private:    
     void FillData(uint8_t* ptr, uint32_t offset, uint32_t size);
     bool UpdateCulling(float deltaTime);
-    uint32_t get_bytes_total() const;
-    float get_length_sec() const;
     void i_stop();
-    void set_cursor(uint32_t p);
-    uint32_t get_cursor(bool b_absolute) const;
-    void move_cursor(int offset);
+    void SetCursor(uint32_t position);
     void OnPropagade();
     void OnRelease();
+
+    float Attitude() const;
+    /*float UpdateSmoothVolume(float deltaTime, float currentVolume, float fadeVolume, float occludeVolume);
+    float UpdateFadeVolume(float deltaTime, float currentVolume);
+    float UpdateOccludeVolume(float deltaTime, float currentVolume);*/
 
 private:
     float m_startDelay;
