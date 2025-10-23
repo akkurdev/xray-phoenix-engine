@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "OalSoundRenderTarget.h"
-#include "soundrender_emitter.h"
+#include "SoundEmitter.h"
 #include "SoundRenderSource.h"
 #include "soundrender_core.h"
 #include <efx.h>
@@ -41,7 +41,7 @@ OggVorbis_File* DefaultSoundRenderTarget::OggFile()
     return m_oggFile;
 }
 
-CSoundRender_Emitter* DefaultSoundRenderTarget::Emitter()
+ISoundEmitter* DefaultSoundRenderTarget::Emitter()
 {
     return m_emitter;
 }
@@ -86,8 +86,8 @@ void DefaultSoundRenderTarget::Attach()
     VERIFY(m_reader == nullptr);
     VERIFY(m_emitter);
     ov_callbacks ovc = { ov_read_func, ov_seek_func, ov_close_func, ov_tell_func };
-    m_reader = FS.r_open(m_emitter->source()->FileName());
-    R_ASSERT3(m_reader && m_reader->length(), "Can't open wave file:", m_emitter->source()->FileName());
+    m_reader = FS.r_open(m_emitter->RenderSource()->FileName());
+    R_ASSERT3(m_reader && m_reader->length(), "Can't open wave file:", m_emitter->RenderSource()->FileName());
     ov_open_callbacks(m_reader, m_oggFile, NULL, 0, ovc);
     VERIFY(m_reader != nullptr);
 }
@@ -140,7 +140,7 @@ void DefaultSoundRenderTarget::Restart()
     Initialize();
 }
 
-void DefaultSoundRenderTarget::Start(CSoundRender_Emitter* emitter)
+void DefaultSoundRenderTarget::Start(ISoundEmitter* emitter)
 {
     R_ASSERT(emitter);
 
@@ -152,7 +152,7 @@ void DefaultSoundRenderTarget::Start(CSoundRender_Emitter* emitter)
     m_isRendering = false;
 
     // Calc storage
-    m_bufferBlock = sdef_target_block * emitter->source()->Format().nAvgBytesPerSec / 1000;
+    m_bufferBlock = sdef_target_block * emitter->RenderSource()->Format().nAvgBytesPerSec / 1000;
     g_target_temp_data.resize(m_bufferBlock);
 }
 
@@ -244,13 +244,13 @@ void DefaultSoundRenderTarget::Fill()
     VERIFY(m_emitter->source()->file_name());
 
     // 3D params
-    alSourcef(m_source, AL_REFERENCE_DISTANCE, m_emitter->p_source.min_distance);
-    alSourcef(m_source, AL_MAX_DISTANCE, m_emitter->p_source.max_distance);
-    alSource3f(m_source, AL_POSITION, m_emitter->p_source.position.x, m_emitter->p_source.position.y, -m_emitter->p_source.position.z);
-    alSourcei(m_source, AL_SOURCE_RELATIVE, m_emitter->b2D);
+    alSourcef(m_source, AL_REFERENCE_DISTANCE, m_emitter->Params()->min_distance);
+    alSourcef(m_source, AL_MAX_DISTANCE, m_emitter->Params()->max_distance);
+    alSource3f(m_source, AL_POSITION, m_emitter->Params()->position.x, m_emitter->Params()->position.y, -m_emitter->Params()->position.z);
+    alSourcei(m_source, AL_SOURCE_RELATIVE, m_emitter->Is2D());
     alSourcef(m_source, AL_ROLLOFF_FACTOR, psSoundRolloff);
 
-    float _gain = m_emitter->smooth_volume;
+    float _gain = m_emitter->Volume();
     clamp(_gain, EPS_S, 1.f);
 
     if (!fsimilar(_gain, m_cacheGain, 0.01f))
@@ -260,7 +260,7 @@ void DefaultSoundRenderTarget::Fill()
     }
 
     // Correct sound "speed" by time factor
-    float _pitch = m_emitter->p_source.freq * psSoundTimeFactor; 
+    float _pitch = m_emitter->Params()->freq * psSoundTimeFactor;
 
     // Increase sound frequancy (speed) limit
     clamp(_pitch, EPS_L, 100.f); 
@@ -286,13 +286,13 @@ void DefaultSoundRenderTarget::OnSourceChanged()
 void DefaultSoundRenderTarget::FillBlock(ALuint bufferId)
 {
     R_ASSERT(m_emitter);
-    m_emitter->fill_block(&g_target_temp_data.front(), m_bufferBlock);
+    m_emitter->FillBlock(&g_target_temp_data.front(), m_bufferBlock);
 
-    ALuint format = (m_emitter->source()->Format().nChannels == 1)
+    ALuint format = (m_emitter->RenderSource()->Format().nChannels == 1)
         ? AL_FORMAT_MONO16 
         : AL_FORMAT_STEREO16;
 
-    alBufferData(bufferId, format, &g_target_temp_data.front(), m_bufferBlock, m_emitter->source()->Format().nSamplesPerSec);
+    alBufferData(bufferId, format, &g_target_temp_data.front(), m_bufferBlock, m_emitter->RenderSource()->Format().nSamplesPerSec);
 }
 
 void DefaultSoundRenderTarget::ProcessBuffers(ALint buffersCount)

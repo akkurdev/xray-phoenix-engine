@@ -3,12 +3,12 @@
 #include "sound.h"
 
 class CSoundRender_Core;
-class CSoundRender_Source;
-class CSoundRender_Emitter;
+//class CSoundRender_Source;
+//class CSoundRender_Emitter;
 class CSoundRender_EmitterParams;
-class CSoundRender_Target;
-class CSoundRender_Environment;
-class SoundEnvironment_LIB;
+//class CSoundRender_Target;
+//class CSoundRender_Environment;
+//class SoundEnvironment_LIB;
 
 const u32 sdef_target_count = 3; //
 const u32 sdef_target_block = 400; // ms

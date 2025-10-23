@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "script_entity.h"
 #include "CustomMonster.h"
+#include "xrSound/ISoundEmitter.h"
 #include "..\xr_3da\feel_vision.h"
 #include "../xrRender/Kinematics.h"
 #include "../xrRender/KinematicsAnimated.h"
@@ -211,7 +212,7 @@ void CScriptEntity::vfUpdateSounds()
 {
     CScriptSoundAction& l_tSoundAction = GetCurrentAction()->m_tSoundAction;
     if (xr_strlen(l_tSoundAction.m_caBoneName) && m_current_sound && m_current_sound->_feedback())
-        m_current_sound->_feedback()->set_position(GetUpdatedMatrix(l_tSoundAction.m_caBoneName, l_tSoundAction.m_tSoundPosition, Fvector().set(0, 0, 0)).c);
+        m_current_sound->_feedback()->SetPosition(GetUpdatedMatrix(l_tSoundAction.m_caBoneName, l_tSoundAction.m_tSoundPosition, Fvector().set(0, 0, 0)).c);
 }
 
 void CScriptEntity::vfFinishAction(CScriptEntityAction* tpEntityAction)

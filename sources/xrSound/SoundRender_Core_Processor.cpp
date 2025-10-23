@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "../xrcdb/cl_intersect.h"
 #include "SoundRender_Core.h"
-#include "SoundRender_Emitter.h"
+#include "SoundEmitter.h"
 #include "OalSoundRenderTarget.h"
 #include "SoundRenderSource.h"
 
-CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
+ISoundEmitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
 {
     VERIFY(S->_p->feedback == 0);
-    CSoundRender_Emitter* E = xr_new<CSoundRender_Emitter>();
+    ISoundEmitter* E = xr_new<SoundEmitter>();
     S->_p->feedback = E;
-    E->start(S, _loop, delay);
+    E->Start(S, _loop, delay);
     s_emitters.push_back(E);
     return E;
 }
@@ -36,14 +36,14 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     for (it = 0; it < s_targets.size(); it++)
     {
         ISoundRenderTarget* T = s_targets[it];
-        CSoundRender_Emitter* E = T->Emitter();
+        ISoundEmitter* E = T->Emitter();
         if (E)
         {
-            E->update(dt_sec);
-            E->marker = s_emitters_u;
+            E->Update(dt_sec);
+            E->SetMarker(s_emitters_u);
             E = T->Emitter(); // update can stop itself
             if (E)
-                T->SetPriority(E->priority());
+                T->SetPriority(E->Priority());
             else
                 T->SetPriority(- 1);
         }
@@ -57,13 +57,13 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     // Msg	("! update: emitters");
     for (it = 0; it < s_emitters.size(); it++)
     {
-        CSoundRender_Emitter* pEmitter = s_emitters[it];
-        if (pEmitter->marker != s_emitters_u)
+        ISoundEmitter* pEmitter = s_emitters[it];
+        if (pEmitter->Marker() != s_emitters_u)
         {
-            pEmitter->update(dt_sec);
-            pEmitter->marker = s_emitters_u;
+            pEmitter->Update(dt_sec);
+            pEmitter->SetMarker(s_emitters_u);
         }
-        if (!pEmitter->isPlaying())
+        if (!pEmitter->IsPlaying())
         {
             // Stopped
             xr_delete(pEmitter);
@@ -183,18 +183,18 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
     {
         for (u32 it = 0; it < s_emitters.size(); it++)
         {
-            CSoundRender_Emitter* _E = s_emitters[it];
+            ISoundEmitter* _E = s_emitters[it];
             CSound_stats_ext::SItem _I;
-            _I._3D = !_E->b2D;
-            _I._rendered = !!_E->target;
-            _I.params = _E->p_source;
-            _I.volume = _E->smooth_volume;
-            if (_E->owner_data)
+            _I._3D = !_E->Is2D();
+            _I._rendered = !!_E->RenderTarget();
+            _I.params = *_E->Params();
+            _I.volume = _E->Volume();
+            if (_E->SoundData())
             {
-                _I.name = _E->source()->FileName();
-                _I.game_object = _E->owner_data->g_object;
-                _I.game_type = _E->owner_data->g_type;
-                _I.type = _E->owner_data->s_type;
+                _I.name = _E->RenderSource()->FileName();
+                _I.game_object = _E->SoundData()->g_object;
+                _I.game_type = _E->SoundData()->g_type;
+                _I.type = _E->SoundData()->s_type;
             }
             else
             {

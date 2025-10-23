@@ -45,7 +45,7 @@
     <ClInclude Include="SoundRender_CoreA.h">
       <Filter>Core\OpenAL</Filter>
     </ClInclude>
-    <ClInclude Include="SoundRender_Emitter.h">
+    <ClInclude Include="SoundEmitter.h">
       <Filter>Emitter</Filter>
     </ClInclude>
     <ClInclude Include="SoundRenderSource.h">
@@ -69,6 +69,30 @@
     </ClInclude>
     <ClInclude Include="SoundEnvironmentLibrary.h">
       <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="EmitterState.h">
+      <Filter>Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="ISoundEmitter.h">
+      <Filter>Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="ref_sound_data.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="ref_sound.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundType.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="sound_user_data.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundParams.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="dllexp.h">
+      <Filter>Kernel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -99,16 +123,7 @@
     <ClCompile Include="SoundRender_CoreA.cpp">
       <Filter>Core\OpenAL</Filter>
     </ClCompile>
-    <ClCompile Include="SoundRender_Emitter.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_FSM.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_StartStop.cpp">
-      <Filter>Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Emitter_streamer.cpp">
+    <ClCompile Include="SoundEmitter.cpp">
       <Filter>Emitter</Filter>
     </ClCompile>
     <ClCompile Include="SoundRenderSource.cpp">
@@ -126,6 +141,15 @@
     </ClCompile>
     <ClCompile Include="SoundEnvironmentLibrary.cpp">
       <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="ref_sound_data.cpp">
+      <Filter>Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="ref_sound.cpp">
+      <Filter>Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="sound_user_data.cpp">
+      <Filter>Kernel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

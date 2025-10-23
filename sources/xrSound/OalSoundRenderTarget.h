@@ -9,7 +9,7 @@ public:
     virtual ~DefaultSoundRenderTarget();
 
     virtual OggVorbis_File* OggFile();
-    virtual CSoundRender_Emitter* Emitter();
+    virtual ISoundEmitter* Emitter();
 
     virtual bool IsRendering() const;
     virtual float CacheGain();
@@ -27,7 +27,7 @@ public:
     virtual void Destroy();
     virtual void Restart();
 
-    virtual void Start(CSoundRender_Emitter* emitter);
+    virtual void Start(ISoundEmitter* emitter);
     virtual void Render();
     virtual void Rewind();
     virtual void Stop();
@@ -53,7 +53,7 @@ private:
     bool m_isRendering;
     bool m_hasAlSoft;
 
-    CSoundRender_Emitter* m_emitter;
+    ISoundEmitter* m_emitter;
     OggVorbis_File* m_oggFile;
     IReader* m_reader;    
 };

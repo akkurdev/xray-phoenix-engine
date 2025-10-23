@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include "xrSound/ISoundEmitter.h"
 #include "PHSoundPlayer.h"
 #include "PhysicsShellHolder.h"
 
@@ -31,7 +31,7 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, Fvector* pos, bool check_vel, 
     CLONE_MTL_SOUND(snd, mtl_pair, CollideSounds);
     snd.play_at_pos(smart_cast<CPhysicsShellHolder*>(m_object), *pos);
     if (vol)
-        snd._feedback()->set_volume(*vol);
+        snd._feedback()->SetVolume(*vol);
 
     Fvector2 dist = m_object->CollideSndDist();
     if (dist.x >= 0.f || dist.y >= 0.f)
@@ -40,7 +40,7 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, Fvector* pos, bool check_vel, 
             dist.x = snd.get_params()->min_distance;
         if (dist.y < 0.f)
             dist.y = snd.get_params()->max_distance;
-        snd._feedback()->set_range(dist.x, dist.y);
+        snd._feedback()->SetRange(dist.x, dist.y);
     }
 }
 

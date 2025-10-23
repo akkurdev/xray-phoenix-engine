@@ -2,7 +2,7 @@
 #include "../xr_3da/xrLevel.h"
 #include "soundrender_core.h"
 #include "SoundRenderSource.h"
-#include "SoundRender_emitter.h"
+#include "SoundEmitter.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4995)
@@ -121,7 +121,7 @@ void CSoundRender_Core::_clear()
 void CSoundRender_Core::stop_emitters()
 {
     for (u32 eit = 0; eit < s_emitters.size(); eit++)
-        s_emitters[eit]->stop(FALSE);
+        s_emitters[eit]->Stop(false);
 }
 
 int CSoundRender_Core::pause_emitters(bool val)
@@ -130,7 +130,7 @@ int CSoundRender_Core::pause_emitters(bool val)
     VERIFY(m_iPauseCounter >= 0);
 
     for (u32 it = 0; it < s_emitters.size(); it++)
-        ((CSoundRender_Emitter*)s_emitters[it])->pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
+        s_emitters[it]->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
 
     return m_iPauseCounter;
 }
@@ -299,7 +299,10 @@ void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
     S._p->dwBytesTotal += s->BytesCount();
     S._p->fTimeTotal += s->Length();
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->fTimeToStop += s->Length();
+    {
+        auto emitter = S._feedback();
+        emitter->SetStopTime(emitter->StopTime() + s->Length());
+    }
 
     SoundRender->i_destroy_source(s);
 }
@@ -324,12 +327,12 @@ void CSoundRender_Core::play(ref_sound& S, CObject* O, u32 flags, float delay)
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->rewind();
+        S._feedback()->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 
     if (flags & sm_2D || S._handle()->Format().nChannels == 2)
-        S._feedback()->switch_to_2D();
+        S._feedback()->SwitchTo2D();
 }
 
 void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags, float delay, Fvector* pos, float* vol, float* freq, Fvector2* range)
@@ -349,16 +352,16 @@ void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags, fl
     i_play(&S, flags & sm_Looped, delay);
 
     if (flags & sm_2D || S._handle()->Format().nChannels == 2)
-        S._feedback()->switch_to_2D();
+        S._feedback()->SwitchTo2D();
 
     if (pos)
-        S._feedback()->set_position(*pos);
+        S._feedback()->SetPosition(*pos);
     if (freq)
-        S._feedback()->set_frequency(*freq);
+        S._feedback()->SetFrequency(*freq);
     if (range)
-        S._feedback()->set_range((*range)[0], (*range)[1]);
+        S._feedback()->SetRange((*range)[0], (*range)[1]);
     if (vol)
-        S._feedback()->set_volume(*vol);
+        S._feedback()->SetVolume(*vol);
     S._p = orig;
 }
 
@@ -368,21 +371,21 @@ void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O, const Fvector& pos
         return;
     S._p->g_object = O;
     if (S._feedback())
-        ((CSoundRender_Emitter*)S._feedback())->rewind();
+        S._feedback()->Rewind();
     else
         i_play(&S, flags & sm_Looped, delay);
 
-    S._feedback()->set_position(pos);
+    S._feedback()->SetPosition(pos);
 
     if (flags & sm_2D || S._handle()->Format().nChannels == 2)
-        S._feedback()->switch_to_2D();
+        S._feedback()->SwitchTo2D();
 }
 void CSoundRender_Core::destroy(ref_sound& S)
 {
     if (S._feedback())
     {
-        CSoundRender_Emitter* E = (CSoundRender_Emitter*)S._feedback();
-        E->stop(FALSE);
+        ISoundEmitter* E = S._feedback();
+        E->Stop(false);
     }
     S._p = 0;
 }
@@ -406,8 +409,8 @@ void CSoundRender_Core::_destroy_data(ref_sound_data& S)
 {
     if (S.feedback)
     {
-        CSoundRender_Emitter* E = (CSoundRender_Emitter*)S.feedback;
-        E->stop(FALSE);
+        ISoundEmitter* E = S.feedback;
+        E->Stop(false);
     }
     R_ASSERT(0 == S.feedback);
     SoundRender->i_destroy_source(S.handle);
@@ -632,9 +635,9 @@ void CSoundRender_Core::object_relcase(CObject* obj)
         for (u32 eit = 0; eit < s_emitters.size(); eit++)
         {
             if (s_emitters[eit])
-                if (s_emitters[eit]->owner_data)
-                    if (obj == s_emitters[eit]->owner_data->g_object)
-                        s_emitters[eit]->owner_data->g_object = 0;
+                if (s_emitters[eit]->SoundData())
+                    if (obj == s_emitters[eit]->SoundData()->g_object)
+                        s_emitters[eit]->SoundData()->g_object = 0;
         }
     }
 }

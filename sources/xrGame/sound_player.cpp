@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "xrSound/ISoundEmitter.h"
 #include "sound_player.h"
 #include "script_engine.h"
 #include "ai_stalker_space.h"
@@ -147,7 +148,7 @@ void CSoundPlayer::update_playing_sounds()
     for (; I != E; ++I)
     {
         if ((*I).m_sound->_feedback())
-            (*I).m_sound->_feedback()->set_position(compute_sound_point(*I));
+            (*I).m_sound->_feedback()->SetPosition(compute_sound_point(*I));
         else if (!(*I).started() && (Device.dwTimeGlobal >= (*I).m_start_time))
             (*I).play_at_pos(m_object, compute_sound_point(*I));
     }
