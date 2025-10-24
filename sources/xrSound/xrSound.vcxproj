@@ -280,6 +280,9 @@
     <ClInclude Include="ref_sound.h" />
     <ClInclude Include="ref_sound_data.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundDevice.h" />
+    <ClInclude Include="SoundDeviceList.h" />
+    <ClInclude Include="SoundDeviceProperties.h" />
     <ClInclude Include="SoundEnvironment.h" />
     <ClInclude Include="SoundEnvironmentLibrary.h" />
     <ClInclude Include="SoundParams.h" />
@@ -311,6 +314,7 @@
     <ClCompile Include="ref_sound.cpp" />
     <ClCompile Include="ref_sound_data.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="SoundDeviceList.cpp" />
     <ClCompile Include="SoundEnvironment.cpp" />
     <ClCompile Include="SoundEnvironmentLibrary.cpp" />
     <ClCompile Include="sound_user_data.cpp" />

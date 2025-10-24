@@ -28,6 +28,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4995)
 #include <objbase.h>
+#include "SoundDeviceList.h"
 #pragma warning(pop)
 
 ALDeviceList::ALDeviceList()

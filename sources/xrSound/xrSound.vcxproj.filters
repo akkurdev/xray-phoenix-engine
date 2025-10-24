@@ -25,6 +25,9 @@
     <Filter Include="Cache">
       <UniqueIdentifier>{132c2ae4-2620-4e72-8317-06b86e63f115}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Device">
+      <UniqueIdentifier>{06319d31-1a9b-44c6-9b66-dd8c1699279e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sound.h">
@@ -94,6 +97,15 @@
     <ClInclude Include="dllexp.h">
       <Filter>Kernel</Filter>
     </ClInclude>
+    <ClInclude Include="SoundDeviceProperties.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundDevice.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundDeviceList.h">
+      <Filter>Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
@@ -150,6 +162,9 @@
     </ClCompile>
     <ClCompile Include="sound_user_data.cpp">
       <Filter>Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundDeviceList.cpp">
+      <Filter>Device</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
