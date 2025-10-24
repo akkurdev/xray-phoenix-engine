@@ -280,6 +280,9 @@
     <ClInclude Include="ref_sound.h" />
     <ClInclude Include="ref_sound_data.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundDevice.h" />
+    <ClInclude Include="SoundDeviceList.h" />
+    <ClInclude Include="SoundDeviceProperties.h" />
     <ClInclude Include="SoundEnvironment.h" />
     <ClInclude Include="SoundEnvironmentLibrary.h" />
     <ClInclude Include="SoundParams.h" />
@@ -288,7 +291,6 @@
     <ClInclude Include="sound_user_data.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
-    <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="SoundRender_CoreA.h" />
     <ClInclude Include="SoundEmitter.h" />
     <ClInclude Include="SoundRenderSource.h" />
@@ -311,6 +313,7 @@
     <ClCompile Include="ref_sound.cpp" />
     <ClCompile Include="ref_sound_data.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="SoundDeviceList.cpp" />
     <ClCompile Include="SoundEnvironment.cpp" />
     <ClCompile Include="SoundEnvironmentLibrary.cpp" />
     <ClCompile Include="sound_user_data.cpp" />
@@ -324,7 +327,6 @@
     <ClCompile Include="SoundRender_Core_Processor.cpp" />
     <ClCompile Include="SoundRender_Core_SourceManager.cpp" />
     <ClCompile Include="SoundRender_Core_StartStop.cpp" />
-    <ClCompile Include="OpenALDeviceList.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />
     <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />

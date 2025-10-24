@@ -1,34 +1,8 @@
 #pragma once
-
 #include "SoundRender_Core.h"
-#include "OpenALDeviceList.h"
+#include "SoundDeviceList.h"
 #include <eax.h>
-
-#ifdef DEBUG
-#define A_CHK(expr) \
-    { \
-        alGetError(); \
-        expr; \
-        ALenum error = alGetError(); \
-        VERIFY2(error == AL_NO_ERROR, (LPCSTR)alGetString(error)); \
-    }
-#define AC_CHK(expr) \
-    { \
-        alcGetError(pDevice); \
-        expr; \
-        ALCenum error = alcGetError(pDevice); \
-        VERIFY2(error == ALC_NO_ERROR, (LPCSTR)alcGetString(pDevice, error)); \
-    }
-#else
-#define A_CHK(expr) \
-    { \
-        expr; \
-    }
-#define AC_CHK(expr) \
-    { \
-        expr; \
-    }
-#endif
+#include <alc.h>
 
 class CSoundRender_CoreA : public CSoundRender_Core
 {
@@ -37,7 +11,7 @@ class CSoundRender_CoreA : public CSoundRender_Core
     EAXGet eaxGet; // EAXGet function, retrieved if EAX Extension is supported
     ALCdevice* pDevice;
     ALCcontext* pContext;
-    ALDeviceList* pDeviceList;
+    SoundDeviceList pDeviceList;
 
     struct SListener
     {
