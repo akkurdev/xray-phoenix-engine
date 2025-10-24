@@ -291,7 +291,6 @@
     <ClInclude Include="sound_user_data.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
-    <ClInclude Include="OpenALDeviceList.h" />
     <ClInclude Include="SoundRender_CoreA.h" />
     <ClInclude Include="SoundEmitter.h" />
     <ClInclude Include="SoundRenderSource.h" />
@@ -328,7 +327,6 @@
     <ClCompile Include="SoundRender_Core_Processor.cpp" />
     <ClCompile Include="SoundRender_Core_SourceManager.cpp" />
     <ClCompile Include="SoundRender_Core_StartStop.cpp" />
-    <ClCompile Include="OpenALDeviceList.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />
     <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />

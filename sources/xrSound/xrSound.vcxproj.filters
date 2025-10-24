@@ -42,9 +42,6 @@
     <ClInclude Include="SoundRender_Core.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="OpenALDeviceList.h">
-      <Filter>Core\OpenAL</Filter>
-    </ClInclude>
     <ClInclude Include="SoundRender_CoreA.h">
       <Filter>Core\OpenAL</Filter>
     </ClInclude>
@@ -128,9 +125,6 @@
     </ClCompile>
     <ClCompile Include="SoundRender_Core_StartStop.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenALDeviceList.cpp">
-      <Filter>Core\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="SoundRender_CoreA.cpp">
       <Filter>Core\OpenAL</Filter>
