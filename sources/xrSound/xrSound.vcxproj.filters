@@ -114,15 +114,6 @@
     <ClCompile Include="SoundRender_Core.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="SoundRender_Core_Processor.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Core_SourceManager.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_Core_StartStop.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="SoundEmitter.cpp">
       <Filter>Emitter</Filter>
     </ClCompile>

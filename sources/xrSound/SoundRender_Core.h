@@ -8,61 +8,21 @@
 
 class CSoundRender_Core : public CSound_manager_interface
 {
-    volatile BOOL bLocked;
-
-protected:
-    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
-    virtual void _destroy_data(ref_sound_data& S);
-
-protected:
-    BOOL bListenerMoved;
-
-    SoundEnvironment e_current;
-    SoundEnvironment e_target;
-
 public:
     typedef std::pair<ref_sound_data_ptr, float> event;
     xr_vector<event> s_events;
-
-public:
     BOOL bPresent;
-    BOOL bEAX; // Boolean variable to indicate presence of EAX Extension
+    BOOL bEAX; 
     BOOL bDeferredEAX;
-    bool bEFX; // boolean variable to indicate presence of EFX Extension
+    bool bEFX;
     BOOL bReady;
 
     CTimer Timer;
     float fTimer_Value;
     float fTimer_Delta;
     sound_event* Handler;
-
-protected:
-    // Collider
-    CDB::COLLIDER geom_DB;
-    CDB::MODEL* geom_SOM;
-    CDB::MODEL* geom_MODEL;
-    CDB::MODEL* geom_ENV;
-
-    // Containers
-    xr_vector<ISoundRenderSource*> s_sources;
-    xr_vector<ISoundEmitter*> s_emitters;
-    u32 s_emitters_u; // emitter update marker
-    xr_vector<ISoundRenderTarget*> s_targets;
-    xr_vector<ISoundRenderTarget*> s_targets_defer;
-    u32 s_targets_pu; // parameters update
-    SoundEnvironmentLibrary* s_environment;
-    xr_vector<u16> s_environment_ids;
-
-    int m_iPauseCounter;
-
-public:
-    // Cache
     SoundRenderCache cache;
     u32 cache_bytes_per_line{};
-
-protected:
-    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
-    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
 
 public:
     CSoundRender_Core();
@@ -96,18 +56,12 @@ public:
     virtual void update_events();
     virtual void statistic(CSound_stats* dest, CSound_stats_ext* ext);
 
-    // listener
     virtual void update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) = 0;
-
-    // eax listener
     void i_eax_listener_set(SoundEnvironment* E);
     void i_eax_commit_setting();
-
-    // efx listener
     void i_efx_listener_set(SoundEnvironment* E);
     bool i_efx_commit_setting();
 
-public:
     ISoundRenderSource* i_create_source(LPCSTR name);
     void i_destroy_source(ISoundRenderSource* S);
     ISoundEmitter* i_play(ref_sound* S, BOOL _loop, float delay);
@@ -118,7 +72,6 @@ public:
     virtual BOOL i_locked() { return bLocked; }
 
     virtual void object_relcase(CObject* obj);
-
     virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
     float get_occlusion(Fvector& P, float R, Fvector* occ);
     SoundEnvironment* get_environment(const Fvector& P);
@@ -127,12 +80,40 @@ public:
     void env_unload();
     void env_apply();
 
-protected: // EFX
+protected:
+    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
+    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
+    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
+    virtual void _destroy_data(ref_sound_data& S);
+    bool EFXTestSupport();
+    void InitAlEFXAPI();
+
+protected:
+    BOOL bListenerMoved;
+    SoundEnvironment e_current;
+    SoundEnvironment e_target;
+
+    CDB::COLLIDER geom_DB;
+    CDB::MODEL* geom_SOM;
+    CDB::MODEL* geom_MODEL;
+    CDB::MODEL* geom_ENV;
+
+    xr_vector<ISoundRenderSource*> s_sources;
+    xr_vector<ISoundEmitter*> s_emitters;
+    u32 s_emitters_u; // emitter update marker
+    xr_vector<ISoundRenderTarget*> s_targets;
+    xr_vector<ISoundRenderTarget*> s_targets_defer;
+    u32 s_targets_pu; // parameters update
+    SoundEnvironmentLibrary* s_environment;
+    xr_vector<u16> s_environment_ids;
+
+    int m_iPauseCounter;
     EFXEAXREVERBPROPERTIES efx_reverb;
     ALuint effect;
     ALuint slot;
-    bool EFXTestSupport();
-    void InitAlEFXAPI();
+
+private:
+    volatile BOOL bLocked;
 };
 
 extern XRSOUND_API CSoundRender_Core* SoundRender;

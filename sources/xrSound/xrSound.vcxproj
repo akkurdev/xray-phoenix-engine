@@ -324,9 +324,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SoundRender_Core.cpp" />
-    <ClCompile Include="SoundRender_Core_Processor.cpp" />
-    <ClCompile Include="SoundRender_Core_SourceManager.cpp" />
-    <ClCompile Include="SoundRender_Core_StartStop.cpp" />
     <ClCompile Include="SoundRender_CoreA.cpp" />
     <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />
