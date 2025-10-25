@@ -90,7 +90,7 @@ protected:
     std::vector<uint16_t> m_environmentIds;
     EFXEAXREVERBPROPERTIES m_reverberationProps;
     ALuint m_effectId;
-    ALuint slot;
+    ALuint m_slot;
     BOOL bEAX;
     BOOL bDeferredEAX;
     bool bEFX;

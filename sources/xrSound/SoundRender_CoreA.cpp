@@ -153,7 +153,7 @@ void CSoundRender_CoreA::_initialize(int stage)
             if (T->Initialize())
             {
                 if (bEFX)
-                    T->OpenALAuxInit(slot);
+                    T->OpenALAuxInit(m_slot);
 
                 T->UseAlSoft(pDeviceList.IsOalSoftEnabled());
                 m_renderTargets.push_back(T);

@@ -63,7 +63,7 @@ CSoundRender_Core::CSoundRender_Core()
     m_reverberationProps = EFX_REVERB_PRESET_GENERIC;
     bEFX = false;
     m_effectId = 0;
-    slot = 0;
+    m_slot = 0;
 }
 
 CSoundRender_Core::~CSoundRender_Core()
@@ -73,8 +73,8 @@ CSoundRender_Core::~CSoundRender_Core()
         if (m_effectId)
             alDeleteEffects(1, &m_effectId);
 
-        if (slot)
-            alDeleteAuxiliaryEffectSlots(1, &slot);
+        if (m_slot)
+            alDeleteAuxiliaryEffectSlots(1, &m_slot);
     }
 
     xr_delete(geom_ENV);
@@ -500,7 +500,7 @@ bool CSoundRender_Core::EFXTestSupport()
         return false;
     }
 
-    alGenAuxiliaryEffectSlots(1, &slot);
+    alGenAuxiliaryEffectSlots(1, &m_slot);
     err = alGetError();
     ASSERT_FMT_DBG(err == AL_NO_ERROR, "!![%s] OpenAL EFX error: [%s]", __FUNCTION__, alGetString(err));
 
@@ -540,7 +540,7 @@ bool CSoundRender_Core::i_efx_commit_setting()
      * effectively copies the effect properties. You can modify or delete the
      * effect object afterward without affecting the effect slot.
      */
-    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, m_effectId);
+    alAuxiliaryEffectSloti(m_slot, AL_EFFECTSLOT_EFFECT, m_effectId);
     ALenum err = alGetError();
     if (err != AL_NO_ERROR)
     {
