@@ -87,7 +87,7 @@ protected:
     std::vector<ISoundRenderTarget*> m_deferredRenderTargets;
     u32 s_targets_pu; // parameters update
     SoundEnvironmentLibrary* m_environments;
-    xr_vector<u16> s_environment_ids;
+    std::vector<uint16_t> m_environmentIds;
     int m_iPauseCounter;
     EFXEAXREVERBPROPERTIES efx_reverb;
     ALuint effect;

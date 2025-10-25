@@ -219,7 +219,7 @@ void CSoundRender_Core::set_geometry_som(IReader* I)
 void CSoundRender_Core::set_geometry_env(IReader* I)
 {
     xr_delete(geom_ENV);
-    s_environment_ids.clear();
+    m_environmentIds.clear();
 
     if (0 == I)
         return;
@@ -234,8 +234,8 @@ void CSoundRender_Core::set_geometry_env(IReader* I)
         names->r_stringZ(n, sizeof(n));
         int id = m_environments->GetEnvironmentId(n);
         R_ASSERT(id >= 0);
-        s_environment_ids.push_back(u16(id));
-        Msg("~ set_geometry_env id=%d name[%s]=environment id[%d]", s_environment_ids.size() - 1, n, id);
+        m_environmentIds.push_back(u16(id));
+        Msg("~ set_geometry_env id=%d name[%s]=environment id[%d]", m_environmentIds.size() - 1, n, id);
     }
     names->close();
 
@@ -439,13 +439,13 @@ SoundEnvironment* CSoundRender_Core::get_environment(const Fvector& P)
             {
                 u16 id_front = (u16)((((u32)T->dummy) & 0x0000ffff) >> 0); //	front face
 
-                return m_environments->GetById(s_environment_ids[id_front]);
+                return m_environments->GetById(m_environmentIds[id_front]);
             }
             else
             {
                 u16 id_back = (u16)((((u32)T->dummy) & 0xffff0000) >> 16); //	back face
 
-                return m_environments->GetById(s_environment_ids[id_back]);
+                return m_environments->GetById(m_environmentIds[id_back]);
             }
         }
     }
