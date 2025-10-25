@@ -15,12 +15,12 @@ using namespace luabind;
 #pragma optimize("s", on)
 void CScriptSound::script_register(lua_State* L)
 {
-    module(L)[class_<CSound_params>("sound_params")
-                  .def_readwrite("position", &CSound_params::position)
-                  .def_readwrite("volume", &CSound_params::volume)
-                  .def_readwrite("frequency", &CSound_params::freq)
-                  .def_readwrite("min_distance", &CSound_params::min_distance)
-                  .def_readwrite("max_distance", &CSound_params::max_distance),
+    module(L)[class_<SoundParams>("sound_params")
+                  .def_readwrite("position", &SoundParams::Position)
+                  .def_readwrite("volume", &SoundParams::Volume)
+                  .def_readwrite("frequency", &SoundParams::Frequency)
+                  .def_readwrite("min_distance", &SoundParams::DistanceMin)
+                  .def_readwrite("max_distance", &SoundParams::DistanceMax),
 
               class_<CScriptSound>("sound_object")
                   .enum_("sound_play_type")[value("looped", sm_Looped), value("s2d", sm_2D), value("s3d", 0)]

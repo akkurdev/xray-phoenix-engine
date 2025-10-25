@@ -113,7 +113,7 @@ uint32_t SoundEmitter::Marker() const
     return m_marker;
 }
 
-CSound_params* SoundEmitter::Params()
+SoundParams* SoundEmitter::Params()
 {
     return &m_params;
 }
@@ -158,13 +158,13 @@ void SoundEmitter::Start(ref_sound* sound, bool isLooped, float delay)
     m_isStopped = false;
     m_isRewind = false;
 
-    m_params.position.set(0, 0, 0);
-    m_params.min_distance = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
-    m_params.max_distance = RenderSource()->MaxDistance(); // 300.f;
-    m_params.base_volume = RenderSource()->BaseVolume(); // 1.f
-    m_params.volume = 1.f;
-    m_params.freq = 1.f;
-    m_params.max_ai_distance = RenderSource()->MaxAiDistance(); // 300.f;     
+    m_params.Position.set(0, 0, 0);
+    m_params.DistanceMin = RenderSource()->MinDistance(); // DS3D_DEFAULTMINDISTANCE;
+    m_params.DistanceMax = RenderSource()->MaxDistance(); // 300.f;
+    m_params.BaseVolume = RenderSource()->BaseVolume(); // 1.f
+    m_params.Volume = 1.f;
+    m_params.Frequency = 1.f;
+    m_params.DistanceAI = RenderSource()->MaxAiDistance(); // 300.f;     
 }
 
 void SoundEmitter::Cancel()
@@ -339,7 +339,7 @@ void SoundEmitter::SetStopTime(float stopTime)
 
 void SoundEmitter::SetPosition(const Fvector& position)
 {
-    m_params.position = RenderSource()->Format().nChannels == 1 && _valid(position)
+    m_params.Position = RenderSource()->Format().nChannels == 1 && _valid(position)
         ? position
         : Fvector{ 0, 0, 0 };
     
@@ -350,20 +350,20 @@ void SoundEmitter::SetFrequency(float frequency)
 {
     VERIFY(_valid(scale));
 
-    m_params.freq = frequency;
+    m_params.Frequency = frequency;
 }
 
 void SoundEmitter::SetRange(float minDistance, float maxDistance)
 {
     VERIFY(_valid(min) && _valid(max));
 
-    m_params.min_distance = minDistance;
-    m_params.max_distance = maxDistance;
+    m_params.DistanceMin = minDistance;
+    m_params.DistanceMax = maxDistance;
 }
 
 void SoundEmitter::SetVolume(float volume)
 {
-    m_params.volume = _valid(volume)
+    m_params.Volume = _valid(volume)
         ? volume
         : 0.f;
 }
@@ -548,8 +548,8 @@ void SoundEmitter::OnPropagade()
 
     VERIFY(_valid(m_params.volume));
 
-    float clip = m_params.max_ai_distance * m_params.volume;
-    float range = _min(m_params.max_ai_distance, clip);
+    float clip = m_params.DistanceAI * m_params.Volume;
+    float range = _min(m_params.DistanceAI, clip);
 
     if (range < 0.1f)
     {
@@ -594,11 +594,11 @@ void SoundEmitter::OnStart(float deltaTime, bool isLooped)
     m_propagadeTime = SoundRender->fTimer_Value;
     m_stopTime = isLooped 
         ? TIME_TO_STOP_INFINITE 
-        : SoundRender->fTimer_Value + (m_soundData->get_length_sec() / m_params.freq);
+        : SoundRender->fTimer_Value + (m_soundData->get_length_sec() / m_params.Frequency);
 
     m_fadeVolume = 1.f;
-    m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
-    m_smoothVolume = m_params.base_volume * m_params.volume * effectScale * occludeVolumeScale;
+    m_occluderVolume = SoundRender->get_occlusion(m_params.Position, .2f, m_occluder);
+    m_smoothVolume = m_params.BaseVolume * m_params.Volume * effectScale * occludeVolumeScale;
 
     if (UpdateCulling(deltaTime))
     {
@@ -696,7 +696,7 @@ void SoundEmitter::OnSimulate(float deltaTime)
             m_startTime, 
             SoundRender->fTimer_Value, 
             m_soundData->get_length_sec(), 
-            m_params.freq, 
+            m_params.Frequency, 
             RenderSource()->Format());
 
         SetCursor(cursor);
@@ -725,7 +725,7 @@ void SoundEmitter::OnLoopedSimulate(float deltaTime)
             m_startTime, 
             SoundRender->fTimer_Value, 
             m_soundData->get_length_sec(), 
-            m_params.freq, 
+            m_params.Frequency,
             RenderSource()->Format());
 
         SetCursor(cursor);
@@ -745,8 +745,8 @@ void SoundEmitter::OnRewind()
 
     R_ASSERT2(length >= m_rewindTime, "set_time: target time is bigger than length of sound");
 
-    float remainTime = (length - m_rewindTime) / m_params.freq;
-    float pastTime = m_rewindTime / m_params.freq;
+    float remainTime = (length - m_rewindTime) / m_params.Frequency;
+    float pastTime = m_rewindTime / m_params.Frequency;
 
     m_startTime = SoundRender->fTimer_Value - pastTime;
     m_propagadeTime = m_startTime; //--> For AI events
@@ -769,7 +769,7 @@ void SoundEmitter::OnRewind()
         m_startTime, 
         SoundRender->fTimer_Value, 
         length, 
-        m_params.freq, 
+        m_params.Frequency,
         RenderSource()->Format());
 
     SetCursor(cursor);
@@ -778,9 +778,9 @@ void SoundEmitter::OnRewind()
 
 float SoundEmitter::Attitude() const
 {
-    float distance = SoundRender->listener_position().distance_to(m_params.position);
-    float minDistanceDiff = psSoundRolloff * distance - m_params.min_distance;
-    float maxDistanceDiff = m_params.max_distance - m_params.min_distance;
+    float distance = SoundRender->listener_position().distance_to(m_params.Position);
+    float minDistanceDiff = psSoundRolloff * distance - m_params.DistanceMin;
+    float maxDistanceDiff = m_params.DistanceMax - m_params.DistanceMin;
 
     float attitude = minDistanceDiff > 0.f
         ? pow(1.f - (minDistanceDiff / maxDistanceDiff), psSoundLinearFadeFactor)
@@ -797,8 +797,8 @@ float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, flo
         return currentVolume;
     }
 
-    float distance = SoundRender->listener_position().distance_to(m_params.position);
-    if (distance > m_params.max_distance)
+    float distance = SoundRender->listener_position().distance_to(m_params.Position);
+    if (distance > m_params.DistanceMax)
     {
         return 0.f;
     }
@@ -807,7 +807,7 @@ float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, flo
         ? psSoundVEffects * psSoundVFactor
         : psSoundVMusic;
 
-    return 0.9f * m_smoothVolume + 0.1f * (m_params.base_volume * m_params.volume * effectScale * occludeVolume * fadeVolume);
+    return 0.9f * m_smoothVolume + 0.1f * (m_params.BaseVolume * m_params.Volume * effectScale * occludeVolume * fadeVolume);
 }
 
 float SoundEmitter::UpdateFadeVolume(float deltaTime, float currentVolume)
@@ -819,7 +819,7 @@ float SoundEmitter::UpdateFadeVolume(float deltaTime, float currentVolume)
     auto attitude = Attitude();
 
     auto canCullByVolume = !m_is2D
-        ? attitude * m_params.base_volume * m_params.volume * effectScale < psSoundCull
+        ? attitude * m_params.BaseVolume * m_params.Volume * effectScale < psSoundCull
         : false;
 
     float fadeScale = m_isStopped || canCullByVolume
@@ -838,7 +838,7 @@ float SoundEmitter::UpdateOccludeVolume(float deltaTime, float currentVolume)
     }
 
     float occlusion = (m_soundData->g_type != SOUND_TYPE_WORLD_AMBIENT)
-        ? SoundRender->get_occlusion(m_params.position, 0.2f, m_occluder)
+        ? SoundRender->get_occlusion(m_params.Position, 0.2f, m_occluder)
         : 1.f;
 
     float volume = currentVolume;

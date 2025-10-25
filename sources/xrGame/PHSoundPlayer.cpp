@@ -37,9 +37,9 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, Fvector* pos, bool check_vel, 
     if (dist.x >= 0.f || dist.y >= 0.f)
     {
         if (dist.x < 0.f)
-            dist.x = snd.get_params()->min_distance;
+            dist.x = snd.get_params()->DistanceMin;
         if (dist.y < 0.f)
-            dist.y = snd.get_params()->max_distance;
+            dist.y = snd.get_params()->DistanceMax;
         snd._feedback()->SetRange(dist.x, dist.y);
     }
 }
@@ -66,9 +66,9 @@ void CPHSoundPlayer::PlayNext(SGameMtlPair* mtl_pair, Fvector* pos, bool check_v
     if (dist.x >= 0.f || dist.y >= 0.f)
     {
         if (dist.x < 0.f)
-            dist.x = snd.get_params()->min_distance;
+            dist.x = snd.get_params()->DistanceMin;
         if (dist.y < 0.f)
-            dist.y = snd.get_params()->max_distance;
+            dist.y = snd.get_params()->DistanceMax;
         range = &dist;
     }
 

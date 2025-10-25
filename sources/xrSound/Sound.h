@@ -88,7 +88,7 @@ public:
     struct SItem
     {
         shared_str name;
-        CSound_params params;
+        SoundParams params;
         float volume;
         esound_type type;
         int game_type;

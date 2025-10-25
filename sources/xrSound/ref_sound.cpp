@@ -124,7 +124,7 @@ void ref_sound::stop_deffered()
         _feedback()->Stop(true);
 }
 
-CSound_params* ref_sound::get_params()
+SoundParams* ref_sound::get_params()
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
@@ -133,14 +133,14 @@ CSound_params* ref_sound::get_params()
         return NULL;
 }
 
-void ref_sound::set_params(CSound_params* p)
+void ref_sound::set_params(SoundParams* p)
 {
     VERIFY(!::Sound->i_locked());
     if (_feedback())
     {
-        _feedback()->SetPosition(p->position);
-        _feedback()->SetFrequency(p->freq);
-        _feedback()->SetRange(p->min_distance, p->max_distance);
-        _feedback()->SetVolume(p->volume);
+        _feedback()->SetPosition(p->Position);
+        _feedback()->SetFrequency(p->Frequency);
+        _feedback()->SetRange(p->DistanceMin, p->DistanceMax);
+        _feedback()->SetVolume(p->Volume);
     }
 }

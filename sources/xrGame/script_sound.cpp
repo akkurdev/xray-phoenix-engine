@@ -33,9 +33,9 @@ CScriptSound::~CScriptSound()
 Fvector CScriptSound::GetPosition() const
 {
     VERIFY(m_sound._handle());
-    const CSound_params* l_tpSoundParams = m_sound.get_params();
+    const SoundParams* l_tpSoundParams = m_sound.get_params();
     if (l_tpSoundParams)
-        return (l_tpSoundParams->position);
+        return (l_tpSoundParams->Position);
     else
     {
         ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "Sound was not launched, can't get position!");

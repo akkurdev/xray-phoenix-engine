@@ -244,9 +244,9 @@ void DefaultSoundRenderTarget::Fill()
     VERIFY(m_emitter->source()->file_name());
 
     // 3D params
-    alSourcef(m_source, AL_REFERENCE_DISTANCE, m_emitter->Params()->min_distance);
-    alSourcef(m_source, AL_MAX_DISTANCE, m_emitter->Params()->max_distance);
-    alSource3f(m_source, AL_POSITION, m_emitter->Params()->position.x, m_emitter->Params()->position.y, -m_emitter->Params()->position.z);
+    alSourcef(m_source, AL_REFERENCE_DISTANCE, m_emitter->Params()->DistanceMin);
+    alSourcef(m_source, AL_MAX_DISTANCE, m_emitter->Params()->DistanceMax);
+    alSource3f(m_source, AL_POSITION, m_emitter->Params()->Position.x, m_emitter->Params()->Position.y, -m_emitter->Params()->Position.z);
     alSourcei(m_source, AL_SOURCE_RELATIVE, m_emitter->Is2D());
     alSourcef(m_source, AL_ROLLOFF_FACTOR, psSoundRolloff);
 
@@ -260,7 +260,7 @@ void DefaultSoundRenderTarget::Fill()
     }
 
     // Correct sound "speed" by time factor
-    float _pitch = m_emitter->Params()->freq * psSoundTimeFactor;
+    float _pitch = m_emitter->Params()->Frequency * psSoundTimeFactor;
 
     // Increase sound frequancy (speed) limit
     clamp(_pitch, EPS_L, 100.f); 

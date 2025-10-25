@@ -36,8 +36,8 @@ public:
     IC void SetPosition(const Fvector& position);
     IC void SetFrequency(float frequency);
     IC void SetVolume(float volume);
-    IC const CSound_params* GetParams();
-    IC void SetParams(CSound_params* sound_params);
+    IC const SoundParams* GetParams();
+    IC void SetParams(SoundParams* sound_params);
     void SetTime(float t);
     void SetMinDistance(const float fMinDistance);
     IC void SetMaxDistance(const float fMaxDistance);
