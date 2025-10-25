@@ -117,21 +117,21 @@ void CSoundRender_CoreA::_initialize(int stage)
     if (!pDeviceList.IsOalSoftEnabled())
     {
         // Check for EAX extension
-        bEAX = deviceDesc.Props.Eax && !deviceDesc.Props.IsEaxUnwanted;
+        m_hasEax = deviceDesc.Props.Eax && !deviceDesc.Props.IsEaxUnwanted;
 
         eaxSet = (EAXSet)alGetProcAddress((const ALchar*)"EAXSet");
         if (eaxSet == NULL)
-            bEAX = false;
+            m_hasEax = false;
         eaxGet = (EAXGet)alGetProcAddress((const ALchar*)"EAXGet");
         if (eaxGet == NULL)
-            bEAX = false;
+            m_hasEax = false;
 
-        if (bEAX)
+        if (m_hasEax)
         {
             m_hasDeferredEax = EAXTestSupport(true);
-            bEAX = EAXTestSupport(FALSE);
+            m_hasEax = EAXTestSupport(false);
         }
-        Msg("[OpenAL] EAX 2.0 extension: %s", bEAX ? "present" : "absent");
+        Msg("[OpenAL] EAX 2.0 extension: %s", m_hasEax ? "present" : "absent");
         Msg("[OpenAL] EAX 2.0 deferred: %s", m_hasDeferredEax ? "present" : "absent");
     }
     else if (deviceDesc.Props.Efx)

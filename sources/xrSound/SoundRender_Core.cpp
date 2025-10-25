@@ -44,7 +44,7 @@ LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti;
 CSoundRender_Core::CSoundRender_Core()
 {
     bPresent = FALSE;
-    bEAX = FALSE;
+    m_hasEax = false;
     m_hasDeferredEax = false;
     geom_MODEL = NULL;
     geom_ENV = NULL;
@@ -705,7 +705,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     }
 
     // update EAX or EFX
-    if (psSoundFlags.test(ss_EAX) && (bEAX || bEFX))
+    if (psSoundFlags.test(ss_EAX) && (m_hasEax || bEFX))
     {
         static shared_str curr_env;
 
@@ -723,7 +723,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
 
         m_currentEnvironment.Lerp(m_currentEnvironment, m_targetEnvironment, dt_sec);
 
-        if (bEAX)
+        if (m_hasEax)
         {
             i_eax_listener_set(&m_currentEnvironment);
             i_eax_commit_setting();

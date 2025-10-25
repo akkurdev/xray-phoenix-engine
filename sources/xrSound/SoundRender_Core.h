@@ -91,7 +91,7 @@ protected:
     EFXEAXREVERBPROPERTIES m_reverberationProps;
     ALuint m_effectId;
     ALuint m_slot;
-    BOOL bEAX;
+    bool m_hasEax;
     bool m_hasDeferredEax;
     bool bEFX;
     BOOL bReady;
