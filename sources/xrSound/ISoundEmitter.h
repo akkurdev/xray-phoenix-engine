@@ -15,7 +15,7 @@ __interface ISoundEmitter
     bool IsPlaying() const;
     uint32_t PlayTime() const;
     uint32_t Marker() const;
-    CSound_params* Params();
+    SoundParams* Params();
     ref_sound_data_ptr SoundData();
     ISoundRenderSource* RenderSource();
     ISoundRenderTarget* RenderTarget();

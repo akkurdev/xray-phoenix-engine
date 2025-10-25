@@ -1,14 +1,14 @@
 #pragma once
 #include "dllexp.h"
 
-class XRSOUND_API CSound_params
+class XRSOUND_API SoundParams
 {
 public:
-    Fvector position;
-    float base_volume;
-    float volume;
-    float freq;
-    float min_distance;
-    float max_distance;
-    float max_ai_distance;
+    Fvector Position;
+    float BaseVolume;
+    float Volume;
+    float Frequency;
+    float DistanceMin;
+    float DistanceMax;
+    float DistanceAI;
 };

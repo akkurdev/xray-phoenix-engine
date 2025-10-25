@@ -38,7 +38,7 @@ public:
     void set_priority(float vol);
     void set_time(float t);
 
-    CSound_params* get_params();
-    void set_params(CSound_params* p);
+    SoundParams* get_params();
+    void set_params(SoundParams* p);
     float get_length_sec() const { return _p ? _p->get_length_sec() : 0.0f; };
 };

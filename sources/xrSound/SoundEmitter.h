@@ -17,7 +17,7 @@ public:
     virtual float StopTime() const;
     virtual bool IsPlaying() const;
     virtual uint32_t Marker() const;
-    virtual CSound_params* Params();
+    virtual SoundParams* Params();
     virtual ref_sound_data_ptr SoundData();
     virtual ISoundRenderSource* RenderSource();
     virtual ISoundRenderTarget* RenderTarget();
@@ -73,7 +73,7 @@ private:
     EmitterState m_state;
     uint32_t m_streamCursor;
     uint32_t m_handleCursor;
-    CSound_params m_params;
+    SoundParams m_params;
     int32_t m_paused;
     bool m_isMoved;
     bool m_is2D;

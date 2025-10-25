@@ -28,15 +28,15 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range)
 
     clamp(range, 0.1f, 500.f);
 
-    const CSound_params* p = S->feedback->Params();
-    Fvector snd_position = p->position;
+    const SoundParams* p = S->feedback->Params();
+    Fvector snd_position = p->Position;
     if (S->feedback->Is2D())
     {
         snd_position.add(Sound->listener_position());
     }
 
     VERIFY(p && _valid(range));
-    range = _min(range, p->max_ai_distance);
+    range = _min(range, p->DistanceAI);
     VERIFY(_valid(snd_position));
     VERIFY(_valid(p->max_ai_distance));
     VERIFY(_valid(p->volume));
@@ -61,11 +61,11 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range)
         // Energy and signal
         VERIFY(_valid((*it)->spatial.sphere.P));
         float dist = snd_position.distance_to((*it)->spatial.sphere.P);
-        if (dist > p->max_ai_distance)
+        if (dist > p->DistanceAI)
             continue;
         VERIFY(_valid(dist));
         VERIFY2(!fis_zero(p->max_ai_distance), S->handle->file_name());
-        float Power = (1.f - dist / p->max_ai_distance) * p->volume;
+        float Power = (1.f - dist / p->DistanceAI) * p->Volume;
         VERIFY(_valid(Power));
         if (Power > EPS_S)
         {
@@ -91,7 +91,7 @@ void IGame_Level::SoundEvent_Dispatch()
         if (D.source->feedback)
         {
             D.dest->feel_sound_new(D.source->g_object, D.source->g_type, D.source->g_userdata,
-                                   D.source->feedback->Is2D() ? Device.vCameraPosition : D.source->feedback->Params()->position, D.power);
+                                   D.source->feedback->Is2D() ? Device.vCameraPosition : D.source->feedback->Params()->Position, D.power);
         }
         snd_Events.pop_back();
     }
