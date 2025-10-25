@@ -522,7 +522,7 @@ void SoundEmitter::SetCursor(uint32_t position)
         m_soundData->fn_attached[0].size() && 
         m_streamCursor >= m_handleCursor + (m_soundData->handle)->BytesCount())
     {
-        SoundRender->i_destroy_source(m_soundData->handle);
+        xr_delete(m_soundData->handle);
 
         m_soundData->handle = SoundRender->i_create_source(m_soundData->fn_attached[0].c_str());
         m_soundData->fn_attached[0] = m_soundData->fn_attached[1];

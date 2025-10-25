@@ -456,13 +456,6 @@ void CSoundRender_Core::set_geometry_env(IReader* I)
     xr_free(_data);
 }
 
-void CSoundRender_Core::create(ref_sound& S, const char* fName, esound_type sound_type, int game_type)
-{
-    if (!bPresent)
-        return;
-    S._p = xr_new<ref_sound_data>(fName, sound_type, game_type);
-}
-
 void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
 {
     if (!bPresent)
@@ -488,8 +481,8 @@ void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
         auto emitter = S._feedback();
         emitter->SetStopTime(emitter->StopTime() + s->Length());
     }
-
-    SoundRender->i_destroy_source(s);
+    // Созданный SoundRenderSource не уничтожается
+    // SoundRender->i_destroy_source(s);
 }
 
 void CSoundRender_Core::clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type)
@@ -575,32 +568,11 @@ void CSoundRender_Core::destroy(ref_sound& S)
     S._p = 0;
 }
 
-void CSoundRender_Core::_create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type)
+void CSoundRender_Core::create(ref_sound& S, const char* fName, esound_type sound_type, int game_type)
 {
-    string_path fn;
-    xr_strcpy(fn, fName);
-    if (strext(fn))
-        *strext(fn) = 0;
-    S.handle = SoundRender->i_create_source(fn);
-    S.g_type = (game_type == sg_SourceType) ? S.handle->Type() : game_type;
-    S.s_type = sound_type;
-    S.feedback = 0;
-    S.g_object = 0;
-    S.g_userdata = 0;
-    S.dwBytesTotal = S.handle->BytesCount();
-    S.fTimeTotal = S.handle->Length();
-}
-void CSoundRender_Core::_destroy_data(ref_sound_data& S)
-{
-    if (S.feedback)
-    {
-        ISoundEmitter* E = S.feedback;
-        E->Stop(false);
-    }
-    R_ASSERT(0 == S.feedback);
-    SoundRender->i_destroy_source(S.handle);
-
-    S.handle = NULL;
+    if (!bPresent)
+        return;
+    S._p = xr_new<ref_sound_data>(fName, sound_type, game_type);
 }
 
 SoundEnvironment* CSoundRender_Core::get_environment(const Fvector& P)
@@ -1153,11 +1125,6 @@ ISoundRenderSource* CSoundRender_Core::i_create_source(LPCSTR name)
     S->Load(id);
     m_renderSources.push_back(S);
     return S;
-}
-
-void CSoundRender_Core::i_destroy_source(ISoundRenderSource* S)
-{
-    // No actual destroy at all
 }
 
 void CSoundRender_Core::i_start(ISoundEmitter* E)

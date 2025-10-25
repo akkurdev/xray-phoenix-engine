@@ -33,9 +33,7 @@ public:
     virtual void SetTime(float time);
     virtual SoundRenderCache Cache() const;
 
-    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
-    virtual void _destroy_data(ref_sound_data& S);
-    virtual void create(ref_sound& S, const char* fName, esound_type sound_type, int game_type);
+    virtual void create(ref_sound& S, const char* fName, esound_type sound_type, int game_type);    
     virtual void attach_tail(ref_sound& S, const char* fName);
     virtual void clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type);
     virtual void destroy(ref_sound& S);    
@@ -56,7 +54,6 @@ public:
     virtual void statistic(CSound_stats* dest, CSound_stats_ext* ext);
     virtual void object_relcase(CObject* obj);
     virtual ISoundRenderSource* i_create_source(LPCSTR name);
-    virtual void i_destroy_source(ISoundRenderSource* S);
     virtual void i_start(ISoundEmitter* E);
     virtual void i_stop(ISoundEmitter* E);
     virtual void i_rewind(ISoundEmitter* E);

@@ -118,8 +118,6 @@ class XRSOUND_API CSound_manager_interface
 
 protected:
     friend class ref_sound_data;
-    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type) = 0;
-    virtual void _destroy_data(ref_sound_data& S) = 0;
 
 public:
     virtual ~CSound_manager_interface() {}
