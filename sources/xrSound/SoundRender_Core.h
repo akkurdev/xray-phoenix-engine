@@ -84,7 +84,7 @@ protected:
     std::vector<ISoundEmitter*> m_emitters;
     u32 s_emitters_u; // emitter update marker
     std::vector<ISoundRenderTarget*> m_renderTargets;
-    xr_vector<ISoundRenderTarget*> s_targets_defer;
+    std::vector<ISoundRenderTarget*> m_deferredRenderTargets;
     u32 s_targets_pu; // parameters update
     SoundEnvironmentLibrary* s_environment;
     xr_vector<u16> s_environment_ids;

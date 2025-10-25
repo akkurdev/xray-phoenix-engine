@@ -680,7 +680,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     }
 
     // Get currently rendering emitters
-    s_targets_defer.clear();
+    m_deferredRenderTargets.clear();
     s_targets_pu++;
     for (it = 0; it < m_renderTargets.size(); it++)
     {
@@ -694,16 +694,16 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
                 T->Update();
             }
             else
-                s_targets_defer.push_back(T);
+                m_deferredRenderTargets.push_back(T);
         }
     }
 
     // Commit parameters from pending targets
-    if (!s_targets_defer.empty())
+    if (!m_deferredRenderTargets.empty())
     {
-        s_targets_defer.erase(std::unique(s_targets_defer.begin(), s_targets_defer.end()), s_targets_defer.end());
-        for (it = 0; it < s_targets_defer.size(); it++)
-            s_targets_defer[it]->Fill();
+        m_deferredRenderTargets.erase(std::unique(m_deferredRenderTargets.begin(), m_deferredRenderTargets.end()), m_deferredRenderTargets.end());
+        for (it = 0; it < m_deferredRenderTargets.size(); it++)
+            m_deferredRenderTargets[it]->Fill();
     }
 
     // update EAX or EFX
@@ -741,10 +741,10 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     update_listener(P, D, N, dt_sec);
 
     // Start rendering of pending targets
-    if (!s_targets_defer.empty())
+    if (!m_deferredRenderTargets.empty())
     {
-        for (it = 0; it < s_targets_defer.size(); it++)
-            s_targets_defer[it]->Render();
+        for (it = 0; it < m_deferredRenderTargets.size(); it++)
+            m_deferredRenderTargets[it]->Render();
     }
 
     update_events();
