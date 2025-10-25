@@ -22,30 +22,15 @@ public:
     CSoundRender_Core();
     virtual ~CSoundRender_Core();
 
-    virtual void create(ref_sound& S, LPCSTR fName, esound_type sound_type, int game_type);
+    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
+    virtual void _destroy_data(ref_sound_data& S);
+    virtual void create(ref_sound& S, const char* fName, esound_type sound_type, int game_type);
     virtual void attach_tail(ref_sound& S, LPCSTR fName);
     virtual void clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type);
     virtual void destroy(ref_sound& S);    
     virtual void play(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f);
     virtual void play_at_pos(ref_sound& S, CObject* O, const Fvector& pos, u32 flags = 0, float delay = 0.f);
     virtual void play_no_feedback(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f, Fvector* pos = 0, float* vol = 0, float* freq = 0, Fvector2* range = 0); 
- 
-    ISoundRenderSource* i_create_source(LPCSTR name);
-    void i_destroy_source(ISoundRenderSource* S);    
-    void i_start(ISoundEmitter* E);
-    void i_stop(ISoundEmitter* E);
-    void i_rewind(ISoundEmitter* E);
-    BOOL i_allow_play(ISoundEmitter* E);
-    virtual BOOL i_locked() { return m_isLocked; }
-    float get_occlusion(Fvector& P, float R, Fvector* occ);    
-
-protected:
-    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
-    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
-    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
-    virtual void _destroy_data(ref_sound_data& S);
-    bool EFXTestSupport();
-    void InitAlEFXAPI();
     virtual void _initialize(int stage) = 0;
     virtual void _clear() = 0;
     virtual void _restart();
@@ -57,16 +42,30 @@ protected:
     virtual void set_geometry_occ(CDB::MODEL* M);
     virtual void set_handler(sound_event* E);
     virtual void update(const Fvector& P, const Fvector& D, const Fvector& N);
-    virtual void update_events();
     virtual void statistic(CSound_stats* dest, CSound_stats_ext* ext);
+    virtual void object_relcase(CObject* obj);
+    ISoundRenderSource* i_create_source(LPCSTR name);
+    void i_destroy_source(ISoundRenderSource* S);    
+    void i_start(ISoundEmitter* E);
+    void i_stop(ISoundEmitter* E);
+    void i_rewind(ISoundEmitter* E);
+    BOOL i_allow_play(ISoundEmitter* E);
+    virtual BOOL i_locked() { return m_isLocked; }
+    float get_occlusion(Fvector& P, float R, Fvector* occ);  
+    virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
+
+protected:
+    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
+    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) = 0;    
+    bool EFXTestSupport();
+    void InitAlEFXAPI();       
+    virtual void update_events();    
     virtual void update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) = 0;
     void i_eax_listener_set(SoundEnvironment* E);
     void i_eax_commit_setting();
     void i_efx_listener_set(SoundEnvironment* E);
     bool i_efx_commit_setting();
-    ISoundEmitter* i_play(ref_sound* S, BOOL _loop, float delay);
-    virtual void object_relcase(CObject* obj);
-    virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
+    ISoundEmitter* i_play(ref_sound* S, BOOL _loop, float delay);    
     SoundEnvironment* get_environment(const Fvector& P);
     void env_load();
     void env_unload();
@@ -82,7 +81,7 @@ protected:
     CDB::MODEL* geom_ENV;
     std::vector<ISoundRenderSource*> m_renderSources;
     std::vector<ISoundEmitter*> m_emitters;
-    uint32_t m_emitterMarker; // emitter update marker
+    uint32_t m_emitterMarker;
     std::vector<ISoundRenderTarget*> m_renderTargets;
     std::vector<ISoundRenderTarget*> m_deferredRenderTargets;
     SoundEnvironmentLibrary* m_environments;
