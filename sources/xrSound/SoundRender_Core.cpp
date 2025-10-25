@@ -107,9 +107,9 @@ void CSoundRender_Core::_clear()
     env_unload();
 
     // remove sources
-    for (u32 sit = 0; sit < s_sources.size(); sit++)
-        xr_delete(s_sources[sit]);
-    s_sources.clear();
+    for (u32 sit = 0; sit < m_renderSources.size(); sit++)
+        xr_delete(m_renderSources[sit]);
+    m_renderSources.clear();
 
     // remove emmiters
     for (u32 eit = 0; eit < s_emitters.size(); eit++)
@@ -910,16 +910,16 @@ ISoundRenderSource* CSoundRender_Core::i_create_source(LPCSTR name)
     if (strext(id))
         *strext(id) = 0;
 
-    for (u32 it = 0; it < s_sources.size(); it++)
+    for (u32 it = 0; it < m_renderSources.size(); it++)
     {
-        if (0 == xr_strcmp(s_sources[it]->FileName(), id))
-            return s_sources[it];
+        if (0 == xr_strcmp(m_renderSources[it]->FileName(), id))
+            return m_renderSources[it];
     }
 
     // Load a _new one
     ISoundRenderSource* S = xr_new<SoundRenderSource>();
     S->Load(id);
-    s_sources.push_back(S);
+    m_renderSources.push_back(S);
     return S;
 }
 
