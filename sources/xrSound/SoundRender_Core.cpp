@@ -60,8 +60,6 @@ CSoundRender_Core::CSoundRender_Core()
     bLocked = FALSE;
     fTimer_Value = Timer.GetElapsed_sec();
     fTimer_Delta = 0.0f;
-    m_pauseCounter = 1;
-
     efx_reverb = EFX_REVERB_PRESET_GENERIC;
     bEFX = false;
     effect = 0;
@@ -127,13 +125,13 @@ void CSoundRender_Core::stop_emitters()
 
 int CSoundRender_Core::pause_emitters(bool val)
 {
-    m_pauseCounter += val ? +1 : -1;
+    int32_t pauseCounter = val ? +1 : -1;
     VERIFY(m_iPauseCounter >= 0);
 
     for (u32 it = 0; it < m_emitters.size(); it++)
-        m_emitters[it]->Pause(val, val ? m_pauseCounter : m_pauseCounter + 1);
+        m_emitters[it]->Pause(val, val ? pauseCounter : pauseCounter + 1);
 
-    return m_pauseCounter;
+    return pauseCounter;
 }
 
 void CSoundRender_Core::env_load()

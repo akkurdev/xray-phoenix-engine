@@ -88,7 +88,6 @@ protected:
     u32 s_targets_pu; // parameters update
     SoundEnvironmentLibrary* m_environments;
     std::vector<uint16_t> m_environmentIds;
-    int32_t m_pauseCounter;
     EFXEAXREVERBPROPERTIES efx_reverb;
     ALuint effect;
     ALuint slot;
