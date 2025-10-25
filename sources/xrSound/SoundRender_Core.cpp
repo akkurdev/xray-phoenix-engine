@@ -46,6 +46,7 @@ CSoundRender_Core::CSoundRender_Core()
     bPresent = FALSE;
     m_hasEax = false;
     m_hasDeferredEax = false;
+    m_cacheLineSize = 0;
     geom_MODEL = NULL;
     geom_ENV = NULL;
     geom_SOM = NULL;
@@ -91,8 +92,8 @@ void CSoundRender_Core::_initialize(int stage)
     bPresent = TRUE;
 
     // Cache
-    cache_bytes_per_line = (sdef_target_block / 8) * 276400 / 1000;
-    cache.Initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
+    m_cacheLineSize = (sdef_target_block / 8) * 276400 / 1000;
+    cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
 
     m_isReady = true;
 }
@@ -164,7 +165,7 @@ void CSoundRender_Core::env_unload()
 void CSoundRender_Core::_restart()
 {
     cache.Destroy();
-    cache.Initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
+    cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
     env_apply();
 }
 

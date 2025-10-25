@@ -95,7 +95,7 @@ protected:
     bool m_hasDeferredEax;
     bool m_hasEfx;
     bool m_isReady;
-    u32 cache_bytes_per_line{};
+    uint32_t m_cacheLineSize;
 
 private:
     volatile BOOL bLocked;
