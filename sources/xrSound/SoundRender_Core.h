@@ -89,7 +89,7 @@ protected:
     SoundEnvironmentLibrary* m_environments;
     std::vector<uint16_t> m_environmentIds;
     EFXEAXREVERBPROPERTIES m_reverberationProps;
-    ALuint effect;
+    ALuint m_effectId;
     ALuint slot;
     BOOL bEAX;
     BOOL bDeferredEAX;
