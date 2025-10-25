@@ -56,7 +56,7 @@ CSoundRender_Core::CSoundRender_Core()
     m_currentEnvironment.SetIdentity();
     m_targetEnvironment.SetIdentity();
     m_isListenerMoved = false;
-    bReady = FALSE;
+    m_isReady = false;
     bLocked = FALSE;
     fTimer_Value = Timer.GetElapsed_sec();
     fTimer_Delta = 0.0f;
@@ -94,13 +94,13 @@ void CSoundRender_Core::_initialize(int stage)
     cache_bytes_per_line = (sdef_target_block / 8) * 276400 / 1000;
     cache.Initialize(psSoundCacheSizeMB * 1024, cache_bytes_per_line);
 
-    bReady = TRUE;
+    m_isReady = true;
 }
 
 extern xr_vector<u8> g_target_temp_data;
 void CSoundRender_Core::_clear()
 {
-    bReady = FALSE;
+    m_isReady = false;
     cache.Destroy();
     env_unload();
 
@@ -627,7 +627,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
 {
     u32 it;
 
-    if (0 == bReady)
+    if (0 == m_isReady)
         return;
     bLocked = TRUE;
     Timer.time_factor(psSoundTimeFactor); //--#SM+#--

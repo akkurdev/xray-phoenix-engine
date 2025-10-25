@@ -94,7 +94,7 @@ protected:
     bool m_hasEax;
     bool m_hasDeferredEax;
     bool bEFX;
-    BOOL bReady;
+    bool m_isReady;
     u32 cache_bytes_per_line{};
 
 private:
