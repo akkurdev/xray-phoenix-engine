@@ -53,7 +53,7 @@ CSoundRender_Core::CSoundRender_Core()
     Handler = NULL;
     s_targets_pu = 0;
     s_emitters_u = 0;
-    e_current.SetIdentity();
+    m_currentEnvironment.SetIdentity();
     e_target.SetIdentity();
     m_isListenerMoved = false;
     bReady = FALSE;
@@ -723,16 +723,16 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
             }
         }
 
-        e_current.Lerp(e_current, e_target, dt_sec);
+        m_currentEnvironment.Lerp(m_currentEnvironment, e_target, dt_sec);
 
         if (bEAX)
         {
-            i_eax_listener_set(&e_current);
+            i_eax_listener_set(&m_currentEnvironment);
             i_eax_commit_setting();
         }
         else
         {
-            i_efx_listener_set(&e_current);
+            i_efx_listener_set(&m_currentEnvironment);
             bEFX = i_efx_commit_setting();
         }
     }

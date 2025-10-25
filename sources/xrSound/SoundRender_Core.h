@@ -74,7 +74,7 @@ protected:
 
 protected:
     bool m_isListenerMoved;
-    SoundEnvironment e_current;
+    SoundEnvironment m_currentEnvironment;
     SoundEnvironment e_target;
     CDB::COLLIDER geom_DB;
     CDB::MODEL* geom_SOM;
