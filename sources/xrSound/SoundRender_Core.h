@@ -73,7 +73,7 @@ protected:
     void env_apply();
 
 protected:
-    BOOL bListenerMoved;
+    bool m_isListenerMoved;
     SoundEnvironment e_current;
     SoundEnvironment e_target;
     CDB::COLLIDER geom_DB;

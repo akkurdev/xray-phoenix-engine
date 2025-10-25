@@ -55,7 +55,7 @@ CSoundRender_Core::CSoundRender_Core()
     s_emitters_u = 0;
     e_current.SetIdentity();
     e_target.SetIdentity();
-    bListenerMoved = FALSE;
+    m_isListenerMoved = false;
     bReady = FALSE;
     bLocked = FALSE;
     fTimer_Value = Timer.GetElapsed_sec();
@@ -456,7 +456,7 @@ SoundEnvironment* CSoundRender_Core::get_environment(const Fvector& P)
 
 void CSoundRender_Core::env_apply()
 {
-    bListenerMoved = TRUE;
+    m_isListenerMoved = true;
 }
 
 void CSoundRender_Core::update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) {}
@@ -711,9 +711,9 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     {
         static shared_str curr_env;
 
-        if (bListenerMoved)
+        if (m_isListenerMoved)
         {
-            bListenerMoved = FALSE;
+            m_isListenerMoved = FALSE;
             e_target = *get_environment(P);
 
             if (!curr_env.size() || curr_env != e_target.Name())
