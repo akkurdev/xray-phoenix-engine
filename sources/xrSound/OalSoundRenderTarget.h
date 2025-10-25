@@ -1,6 +1,5 @@
 #pragma once
 #include "ISoundRenderTarget.h"
-#include "soundrender_CoreA.h"
 
 class DefaultSoundRenderTarget final : public ISoundRenderTarget
 {

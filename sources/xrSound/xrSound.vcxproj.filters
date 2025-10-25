@@ -97,9 +97,6 @@
     <ClInclude Include="SoundDeviceList.h">
       <Filter>Device</Filter>
     </ClInclude>
-    <ClInclude Include="SoundRender_CoreA.h">
-      <Filter>Core</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="guids.cpp">
@@ -144,9 +141,6 @@
     </ClCompile>
     <ClCompile Include="SoundDeviceList.cpp">
       <Filter>Device</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundRender_CoreA.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

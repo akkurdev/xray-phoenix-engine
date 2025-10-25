@@ -291,7 +291,6 @@
     <ClInclude Include="sound_user_data.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
-    <ClInclude Include="SoundRender_CoreA.h" />
     <ClInclude Include="SoundEmitter.h" />
     <ClInclude Include="SoundRenderSource.h" />
     <ClInclude Include="ISoundRenderTarget.h" />
@@ -324,7 +323,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SoundRender_Core.cpp" />
-    <ClCompile Include="SoundRender_CoreA.cpp" />
     <ClCompile Include="SoundEmitter.cpp" />
     <ClCompile Include="SoundRenderSource.cpp" />
     <ClCompile Include="OalSoundRenderTarget.cpp" />

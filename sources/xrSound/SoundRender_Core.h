@@ -1,10 +1,19 @@
 #pragma once
 #include <al.h>
+#include <alc.h>
+#include <eax.h>
 #include <efx-presets.h>
 #include "SoundRender.h"
 #include "SoundRenderCache.h"
 #include "ISoundrenderTarget.h"
 #include <SoundEnvironmentLibrary.h>
+#include <SoundDeviceList.h>
+
+struct SoundListener
+{
+    Fvector position;
+    Fvector orientation[2];
+};
 
 class CSoundRender_Core : public CSound_manager_interface
 {
@@ -33,12 +42,12 @@ public:
     virtual void play(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f);
     virtual void play_at_pos(ref_sound& S, CObject* O, const Fvector& pos, u32 flags = 0, float delay = 0.f);
     virtual void play_no_feedback(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f, Fvector* pos = 0, float* vol = 0, float* freq = 0, Fvector2* range = 0); 
-    virtual void _initialize(int stage) = 0;
-    virtual void _clear() = 0;
+    virtual void _initialize(int stage);
+    virtual void _clear();
     virtual void _restart();
     virtual void stop_emitters();
     virtual int pause_emitters(bool val);
-    virtual void set_master_volume(float f) = 0;
+    virtual void set_master_volume(float f);
     virtual void set_geometry_env(IReader* I);
     virtual void set_geometry_som(IReader* I);
     virtual void set_geometry_occ(CDB::MODEL* M);
@@ -55,14 +64,15 @@ public:
     virtual BOOL i_locked() { return m_isLocked; }
     float get_occlusion(Fvector& P, float R, Fvector* occ);  
     virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
+    virtual const Fvector& listener_position();
 
 protected:
-    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) = 0;
-    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) = 0;    
     bool EFXTestSupport();
+    BOOL EAXQuerySupport(BOOL bDeferred, const GUID* guid, u32 prop, void* val, u32 sz);
+    BOOL EAXTestSupport(BOOL bDeferred);
     void InitAlEFXAPI();       
     virtual void update_events();    
-    virtual void update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) = 0;
+    virtual void update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt);
     void i_eax_listener_set(SoundEnvironment* E);
     void i_eax_commit_setting();
     void i_efx_listener_set(SoundEnvironment* E);
@@ -72,6 +82,8 @@ protected:
     void env_load();
     void env_unload();
     void env_apply();
+    virtual void i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz);
+    virtual void i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz);    
 
 protected:
     float m_time;
@@ -101,6 +113,12 @@ protected:
     bool m_isReady;
     uint32_t m_cacheLineSize;
     volatile bool m_isLocked;
+    EAXSet m_eaxSet;
+    EAXGet m_eaxGet;
+    ALCdevice* m_device;
+    ALCcontext* m_context;
+    SoundDeviceList m_deviceList;
+    SoundListener m_listener;
 };
 
 extern XRSOUND_API CSoundRender_Core* SoundRender;

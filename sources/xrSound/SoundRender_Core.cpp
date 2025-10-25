@@ -13,6 +13,7 @@
 #include <SoundEnvironment.h>
 #include <SoundEnvironmentLibrary.h>
 #include <xrCDB/cl_intersect.h>
+#include <OalSoundRenderTarget.h>
 
 int psSoundTargets = 256; // 512; 
 Flags32 psSoundFlags = {ss_Hardware};
@@ -64,6 +65,10 @@ CSoundRender_Core::CSoundRender_Core()
     m_hasEfx = false;
     m_effect = 0;
     m_slot = 0;
+    m_eaxSet = 0;
+    m_eaxGet = 0;
+    m_device = nullptr;
+    m_context = nullptr;
 }
 
 CSoundRender_Core::~CSoundRender_Core()
@@ -108,6 +113,86 @@ SoundRenderCache CSoundRender_Core::Cache() const
 
 void CSoundRender_Core::_initialize(int stage)
 {
+    if (stage == 0)
+    {
+        if (0 == m_deviceList.Count())
+        {
+            CHECK_OR_EXIT(0, "OpenAL: Can't create sound device.");
+        }
+        return;
+    }
+
+    m_deviceList.SelectBestDevice();
+    R_ASSERT(snd_device_id >= 0 && snd_device_id < m_deviceList.Count());
+    auto deviceDesc = m_deviceList[snd_device_id];
+
+    // OpenAL device
+    m_device = alcOpenDevice(deviceDesc.Name.c_str());
+    if (m_device == NULL)
+    {
+        CHECK_OR_EXIT(0, "SOUND: OpenAL: Failed to create device.");
+        bPresent = FALSE;
+        return;
+    }
+
+    // Get the device specifier.
+    const ALCchar* deviceSpecifier;
+    deviceSpecifier = alcGetString(m_device, ALC_DEVICE_SPECIFIER);
+
+    // Create context
+    m_context = alcCreateContext(m_device, NULL);
+
+    if (0 == m_context)
+    {
+        CHECK_OR_EXIT(0, "OpenAL: Failed to create context.");
+        bPresent = FALSE;
+        alcCloseDevice(m_device);
+        m_device = 0;
+        return;
+    }
+
+    // clear errors
+    alGetError();
+    alcGetError(m_device);
+
+    // Set active context
+    alcMakeContextCurrent(m_context);
+
+    // initialize listener
+    alListener3f(AL_POSITION, 0.f, 0.f, 0.f);
+    alListener3f(AL_VELOCITY, 0.f, 0.f, 0.f);
+    Fvector orient[2] = { {0.f, 0.f, 1.f}, {0.f, 1.f, 0.f} };
+
+    alListenerfv(AL_ORIENTATION, &orient[0].x);
+    alListenerf(AL_GAIN, 1.f);
+
+    if (!m_deviceList.IsOalSoftEnabled())
+    {
+        // Check for EAX extension
+        m_hasEax = deviceDesc.Props.Eax && !deviceDesc.Props.IsEaxUnwanted;
+
+        m_eaxSet = (EAXSet)alGetProcAddress((const ALchar*)"EAXSet");
+        if (m_eaxSet == NULL)
+            m_hasEax = false;
+        m_eaxGet = (EAXGet)alGetProcAddress((const ALchar*)"EAXGet");
+        if (m_eaxGet == NULL)
+            m_hasEax = false;
+
+        if (m_hasEax)
+        {
+            m_hasDeferredEax = EAXTestSupport(true);
+            m_hasEax = EAXTestSupport(false);
+        }
+        Msg("[OpenAL] EAX 2.0 extension: %s", m_hasEax ? "present" : "absent");
+        Msg("[OpenAL] EAX 2.0 deferred: %s", m_hasDeferredEax ? "present" : "absent");
+    }
+    else if (deviceDesc.Props.Efx)
+    {
+        InitAlEFXAPI();
+        m_hasEfx = EFXTestSupport();
+        Msg("[OpenAL] EFX: %s", m_hasEfx ? "present" : "absent");
+    }
+
     m_timer.Start();
 
     // load environment
@@ -120,9 +205,35 @@ void CSoundRender_Core::_initialize(int stage)
     m_cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
 
     m_isReady = true;
+
+    if (stage == 1) // first initialize
+    {
+        // Pre-create targets
+        ISoundRenderTarget* T = 0;
+        for (u32 tit = 0; tit < u32(psSoundTargets); tit++)
+        {
+            T = xr_new<DefaultSoundRenderTarget>();
+            if (T->Initialize())
+            {
+                if (m_hasEfx)
+                    T->OpenALAuxInit(m_slot);
+
+                T->UseAlSoft(m_deviceList.IsOalSoftEnabled());
+                m_renderTargets.push_back(T);
+            }
+            else
+            {
+                Msg("OpenAL: Max targets - [%u]", tit);
+                T->Destroy();
+                xr_delete(T);
+                break;
+            }
+        }
+    }
 }
 
 extern xr_vector<u8> g_target_temp_data;
+
 void CSoundRender_Core::_clear()
 {
     m_isReady = false;
@@ -140,6 +251,61 @@ void CSoundRender_Core::_clear()
     m_emitters.clear();
 
     g_target_temp_data.clear();
+
+    // remove targets
+    ISoundRenderTarget* T = 0;
+    for (u32 tit = 0; tit < m_renderTargets.size(); tit++)
+    {
+        T = m_renderTargets[tit];
+        T->Destroy();
+        xr_delete(T);
+    }
+    // Reset the current context to NULL.
+    alcMakeContextCurrent(NULL);
+    // Release the context and the device.
+    alcDestroyContext(m_context);
+    m_context = 0;
+    alcCloseDevice(m_device);
+    m_device = 0;
+}
+
+void CSoundRender_Core::set_master_volume(float f)
+{
+    if (bPresent)
+    {
+        alListenerf(AL_GAIN, f);
+    }
+}
+
+const Fvector& CSoundRender_Core::listener_position()
+{
+    return m_listener.position;
+}
+
+void CSoundRender_Core::i_eax_set(const GUID* guid, u32 prop, void* val, u32 sz) 
+{ 
+    m_eaxSet(guid, prop, 0, val, sz); 
+}
+
+void CSoundRender_Core::i_eax_get(const GUID* guid, u32 prop, void* val, u32 sz) 
+{ 
+    m_eaxGet(guid, prop, 0, val, sz); 
+}
+
+void CSoundRender_Core::update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt)
+{
+    if (!m_listener.position.similar(P))
+    {
+        m_listener.position.set(P);
+        m_isListenerMoved = true;
+    }
+
+    m_listener.orientation[0].set(D.x, D.y, -D.z);
+    m_listener.orientation[1].set(N.x, N.y, -N.z);
+
+    alListener3f(AL_POSITION, m_listener.position.x, m_listener.position.y, -m_listener.position.z);
+    alListener3f(AL_VELOCITY, 0.f, 0.f, 0.f);
+    alListenerfv(AL_ORIENTATION, &m_listener.orientation[0].x);
 }
 
 void CSoundRender_Core::stop_emitters()
@@ -193,9 +359,15 @@ void CSoundRender_Core::_restart()
     env_apply();
 }
 
-void CSoundRender_Core::set_handler(sound_event* E) { Handler = E; }
+void CSoundRender_Core::set_handler(sound_event* E) 
+{ 
+    Handler = E; 
+}
 
-void CSoundRender_Core::set_geometry_occ(CDB::MODEL* M) { geom_MODEL = M; }
+void CSoundRender_Core::set_geometry_occ(CDB::MODEL* M) 
+{ 
+    geom_MODEL = M; 
+}
 
 void CSoundRender_Core::set_geometry_som(IReader* I)
 {
@@ -482,8 +654,6 @@ void CSoundRender_Core::env_apply()
     m_isListenerMoved = true;
 }
 
-void CSoundRender_Core::update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) {}
-
 void CSoundRender_Core::InitAlEFXAPI()
 {
     LOAD_PROC(alDeleteAuxiliaryEffectSlots, LPALDELETEAUXILIARYEFFECTSLOTS);
@@ -530,6 +700,46 @@ bool CSoundRender_Core::EFXTestSupport()
     ASSERT_FMT_DBG(err == AL_NO_ERROR, "!![%s] OpenAL EFX error: [%s]", __FUNCTION__, alGetString(err));
 
     return true;
+}
+
+BOOL CSoundRender_Core::EAXQuerySupport(BOOL bDeferred, const GUID* guid, u32 prop, void* val, u32 sz)
+{
+    if (AL_NO_ERROR != m_eaxGet(guid, prop, 0, val, sz))
+        return FALSE;
+    if (AL_NO_ERROR != m_eaxSet(guid, (bDeferred ? DSPROPERTY_EAXLISTENER_DEFERRED : 0) | prop, 0, val, sz))
+        return FALSE;
+
+    return TRUE;
+}
+
+BOOL CSoundRender_Core::EAXTestSupport(BOOL bDeferred)
+{
+    EAXLISTENERPROPERTIES ep;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ROOM, &ep.lRoom, sizeof(LONG)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ROOMHF, &ep.lRoomHF, sizeof(LONG)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ROOMROLLOFFFACTOR, &ep.flRoomRolloffFactor, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_DECAYTIME, &ep.flDecayTime, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_DECAYHFRATIO, &ep.flDecayHFRatio, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_REFLECTIONS, &ep.lReflections, sizeof(LONG)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_REFLECTIONSDELAY, &ep.flReflectionsDelay, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_REVERB, &ep.lReverb, sizeof(LONG)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_REVERBDELAY, &ep.flReverbDelay, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ENVIRONMENTDIFFUSION, &ep.flEnvironmentDiffusion, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_AIRABSORPTIONHF, &ep.flAirAbsorptionHF, sizeof(float)))
+        return FALSE;
+    if (!EAXQuerySupport(bDeferred, &DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_FLAGS, &ep.dwFlags, sizeof(DWORD)))
+        return FALSE;
+    return TRUE;
 }
 
 inline static float mB_to_gain(float mb) { return powf(10.0f, mb / 2000.0f); }
