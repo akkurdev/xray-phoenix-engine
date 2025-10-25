@@ -54,7 +54,7 @@ CSoundRender_Core::CSoundRender_Core()
     s_targets_pu = 0;
     s_emitters_u = 0;
     m_currentEnvironment.SetIdentity();
-    e_target.SetIdentity();
+    m_targetEnvironment.SetIdentity();
     m_isListenerMoved = false;
     bReady = FALSE;
     bLocked = FALSE;
@@ -714,16 +714,16 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         if (m_isListenerMoved)
         {
             m_isListenerMoved = FALSE;
-            e_target = *get_environment(P);
+            m_targetEnvironment = *get_environment(P);
 
-            if (!curr_env.size() || curr_env != e_target.Name())
+            if (!curr_env.size() || curr_env != m_targetEnvironment.Name())
             {
-                curr_env = e_target.Name();
+                curr_env = m_targetEnvironment.Name();
                 Msg("~ current environment sound zone name [%s]", curr_env.c_str());
             }
         }
 
-        m_currentEnvironment.Lerp(m_currentEnvironment, e_target, dt_sec);
+        m_currentEnvironment.Lerp(m_currentEnvironment, m_targetEnvironment, dt_sec);
 
         if (bEAX)
         {
