@@ -28,7 +28,7 @@
 #include "ActorEffector.h"
 #include "../xrRender/CameraBase.h"
 
-void CBaseMonster::feel_sound_new(CObject* who, int eType, CSound_UserDataPtr user_data, const Fvector& Position, float power)
+void CBaseMonster::feel_sound_new(CObject* who, int eType, SoundUserDataPtr user_data, const Fvector& Position, float power)
 {
     if (!g_Alive())
         return;
@@ -38,7 +38,7 @@ void CBaseMonster::feel_sound_new(CObject* who, int eType, CSound_UserDataPtr us
         return;
 
     if (user_data)
-        user_data->accept(sound_user_data_visitor());
+        user_data->Accept(sound_user_data_visitor());
 
     // ignore unknown sounds
     if (eType == 0xffffffff)

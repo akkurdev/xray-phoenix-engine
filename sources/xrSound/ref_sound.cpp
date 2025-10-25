@@ -21,7 +21,7 @@ esound_type ref_sound::_sound_type()
     return _p->s_type;
 }
 
-CSound_UserDataPtr ref_sound::_g_userdata()
+SoundUserDataPtr ref_sound::_g_userdata()
 {
     VERIFY(_p);
     return _p->g_userdata;

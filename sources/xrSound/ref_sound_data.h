@@ -1,7 +1,7 @@
 #pragma once
 #include "dllexp.h"
 #include "SoundType.h"
-#include "sound_user_data.h"
+#include "SoundUserData.h"
 
 class CObject;
 __interface ISoundRenderSource;
@@ -16,7 +16,7 @@ public:
     esound_type s_type;
     int g_type; //!< Sound type, usually for AI
     CObject* g_object; //!< Game object that emitts ref_sound
-    CSound_UserDataPtr g_userdata;
+    SoundUserDataPtr g_userdata;
     shared_str fn_attached[2];
 
     u32 dwBytesTotal;

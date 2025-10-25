@@ -113,7 +113,7 @@ void CSoundMemoryManager::enable(const CObject* object, bool enable)
 
 IC bool is_sound_type(int s, const ESoundTypes& t) { return ((s & t) == t); }
 
-void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type, CSound_UserDataPtr user_data, const Fvector& position, float sound_power)
+void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type, SoundUserDataPtr user_data, const Fvector& position, float sound_power)
 {
 #ifndef MASTER_GOLD
     if (object && (object->CLS_ID == CLSID_OBJECT_ACTOR) && psAI_Flags.test(aiIgnoreActor))
@@ -125,7 +125,7 @@ void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type, CSound
         return;
 
     if (user_data)
-        user_data->accept(m_visitor);
+        user_data->Accept(m_visitor);
 
     CObject* self = m_object;
     VERIFY(self);

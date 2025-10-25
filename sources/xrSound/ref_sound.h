@@ -19,7 +19,7 @@ public:
     CObject* _g_object();
     int _g_type();
     esound_type _sound_type();
-    CSound_UserDataPtr _g_userdata();
+    SoundUserDataPtr _g_userdata();
 
     void create(LPCSTR name, esound_type sound_type, int game_type);
     void attach_tail(LPCSTR name);

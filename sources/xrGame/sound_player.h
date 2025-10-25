@@ -49,7 +49,7 @@ public:
 
     struct CSoundCollectionParamsFull : public CSoundParams, public CSoundCollectionParams
     {
-        CSound_UserDataPtr m_data;
+        SoundUserDataPtr m_data;
     };
 
     struct CSoundCollection
@@ -132,8 +132,8 @@ public:
     virtual void reinit();
     virtual void reload(LPCSTR section);
     void unload();
-    u32 add(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, CSound_UserDataPtr data = 0);
-    CSoundCollection* add_deferred(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, CSound_UserDataPtr data = 0);
+    u32 add(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, SoundUserDataPtr data = 0);
+    CSoundCollection* add_deferred(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, SoundUserDataPtr data = 0);
     void remove(u32 internal_type);
     void clear();
     void play(u32 internal_type, u32 max_start_time = 0, u32 min_start_time = 0, u32 max_stop_time = 0, u32 min_stop_time = 0, u32 id = u32(-1));

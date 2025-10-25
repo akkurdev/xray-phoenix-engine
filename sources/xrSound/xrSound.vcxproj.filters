@@ -85,7 +85,7 @@
     <ClInclude Include="SoundType.h">
       <Filter>Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="sound_user_data.h">
+    <ClInclude Include="SoundUserData.h">
       <Filter>Kernel</Filter>
     </ClInclude>
     <ClInclude Include="SoundParams.h">
@@ -154,7 +154,7 @@
     <ClCompile Include="ref_sound.cpp">
       <Filter>Kernel</Filter>
     </ClCompile>
-    <ClCompile Include="sound_user_data.cpp">
+    <ClCompile Include="SoundUserData.cpp">
       <Filter>Kernel</Filter>
     </ClCompile>
     <ClCompile Include="SoundDeviceList.cpp">

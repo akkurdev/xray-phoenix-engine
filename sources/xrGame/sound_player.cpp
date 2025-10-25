@@ -59,7 +59,7 @@ void CSoundPlayer::unload()
     VERIFY(m_playing_sounds.empty());
 }
 
-u32 CSoundPlayer::add(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, CSound_UserDataPtr data)
+u32 CSoundPlayer::add(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name, SoundUserDataPtr data)
 {
     SOUND_COLLECTIONS::iterator I = m_sounds.find(internal_type);
     if (I != m_sounds.end())
@@ -71,7 +71,7 @@ u32 CSoundPlayer::add(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priori
 }
 
 CSoundPlayer::CSoundCollection* CSoundPlayer::add_deferred(LPCSTR prefix, u32 max_count, ESoundTypes type, u32 priority, u32 mask, u32 internal_type, LPCSTR bone_name,
-                                                           CSound_UserDataPtr data)
+                                                           SoundUserDataPtr data)
 {
     SOUND_COLLECTIONS::iterator I = m_sounds.find(internal_type);
     if (I != m_sounds.end())

@@ -288,7 +288,7 @@
     <ClInclude Include="SoundParams.h" />
     <ClInclude Include="SoundRender.h" />
     <ClInclude Include="SoundType.h" />
-    <ClInclude Include="sound_user_data.h" />
+    <ClInclude Include="SoundUserData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SoundRender_Core.h" />
     <ClInclude Include="SoundRender_CoreA.h" />
@@ -316,7 +316,7 @@
     <ClCompile Include="SoundDeviceList.cpp" />
     <ClCompile Include="SoundEnvironment.cpp" />
     <ClCompile Include="SoundEnvironmentLibrary.cpp" />
-    <ClCompile Include="sound_user_data.cpp" />
+    <ClCompile Include="SoundUserData.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

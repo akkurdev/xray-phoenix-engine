@@ -14,6 +14,6 @@ class CSound_UserDataVisitor
 {
 public:
     virtual ~CSound_UserDataVisitor(){};
-    virtual void visit(CSound_UserData* data){};
+    virtual void visit(SoundUserData* data){};
     virtual void visit(CStalkerSoundData* data){};
 };
