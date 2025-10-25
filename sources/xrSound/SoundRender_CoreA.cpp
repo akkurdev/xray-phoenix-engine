@@ -156,7 +156,7 @@ void CSoundRender_CoreA::_initialize(int stage)
                     T->OpenALAuxInit(slot);
 
                 T->UseAlSoft(pDeviceList.IsOalSoftEnabled());
-                s_targets.push_back(T);
+                m_renderTargets.push_back(T);
             }
             else
             {
@@ -182,9 +182,9 @@ void CSoundRender_CoreA::_clear()
     inherited::_clear();
     // remove targets
     ISoundRenderTarget* T = 0;
-    for (u32 tit = 0; tit < s_targets.size(); tit++)
+    for (u32 tit = 0; tit < m_renderTargets.size(); tit++)
     {
-        T = s_targets[tit];
+        T = m_renderTargets[tit];
         T->Destroy();
         xr_delete(T);
     }

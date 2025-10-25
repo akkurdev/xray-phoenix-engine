@@ -641,9 +641,9 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     s_emitters_u++;
 
     // Firstly update emitters, which are now being rendered
-    for (it = 0; it < s_targets.size(); it++)
+    for (it = 0; it < m_renderTargets.size(); it++)
     {
-        ISoundRenderTarget* T = s_targets[it];
+        ISoundRenderTarget* T = m_renderTargets[it];
         ISoundEmitter* E = T->Emitter();
         if (E)
         {
@@ -682,9 +682,9 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     // Get currently rendering emitters
     s_targets_defer.clear();
     s_targets_pu++;
-    for (it = 0; it < s_targets.size(); it++)
+    for (it = 0; it < m_renderTargets.size(); it++)
     {
-        ISoundRenderTarget* T = s_targets[it];
+        ISoundRenderTarget* T = m_renderTargets[it];
         if (T->Emitter())
         {
             // Has emmitter, maybe just not started rendering
@@ -769,9 +769,9 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
     if (dest)
     {
         dest->_rendered = 0;
-        for (u32 it = 0; it < s_targets.size(); it++)
+        for (u32 it = 0; it < m_renderTargets.size(); it++)
         {
-            ISoundRenderTarget* T = s_targets[it];
+            ISoundRenderTarget* T = m_renderTargets[it];
             if (T->Emitter() && T->IsRendering())
                 dest->_rendered++;
         }
@@ -937,9 +937,9 @@ void CSoundRender_Core::i_start(ISoundEmitter* E)
     float Ptarget = flt_max;
     ISoundRenderTarget* T = 0;
 
-    for (u32 it = 0; it < s_targets.size(); it++)
+    for (u32 it = 0; it < m_renderTargets.size(); it++)
     {
-        ISoundRenderTarget* Ttest = s_targets[it];
+        ISoundRenderTarget* Ttest = m_renderTargets[it];
         if (Ttest->Priority() < Ptarget)
         {
             T = Ttest;
@@ -976,9 +976,9 @@ BOOL CSoundRender_Core::i_allow_play(ISoundEmitter* E)
 {
     // Search available target
     float Ptest = E->Priority();
-    for (u32 it = 0; it < s_targets.size(); it++)
+    for (u32 it = 0; it < m_renderTargets.size(); it++)
     {
-        ISoundRenderTarget* T = s_targets[it];
+        ISoundRenderTarget* T = m_renderTargets[it];
         if (T->Priority() < Ptest)
             return TRUE;
     }
