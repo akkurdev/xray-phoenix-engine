@@ -15,7 +15,7 @@ struct SoundListener
     Fvector orientation[2];
 };
 
-class CSoundRender_Core : public CSound_manager_interface
+class CSoundRender_Core final : public CSound_manager_interface
 {
 public:
     typedef std::pair<ref_sound_data_ptr, float> event;
@@ -27,11 +27,11 @@ public:
     CSoundRender_Core();
     virtual ~CSoundRender_Core();
 
-    float Time() const;
-    float ElapsedTime() const;
-    float DeltaTime() const;
-    void SetTime(float time);
-    SoundRenderCache Cache() const;
+    virtual float Time() const;
+    virtual float ElapsedTime() const;
+    virtual float DeltaTime() const;
+    virtual void SetTime(float time);
+    virtual SoundRenderCache Cache() const;
 
     virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
     virtual void _destroy_data(ref_sound_data& S);
@@ -55,14 +55,14 @@ public:
     virtual void update(const Fvector& P, const Fvector& D, const Fvector& N);
     virtual void statistic(CSound_stats* dest, CSound_stats_ext* ext);
     virtual void object_relcase(CObject* obj);
-    ISoundRenderSource* i_create_source(LPCSTR name);
-    void i_destroy_source(ISoundRenderSource* S);    
-    void i_start(ISoundEmitter* E);
-    void i_stop(ISoundEmitter* E);
-    void i_rewind(ISoundEmitter* E);
-    BOOL i_allow_play(ISoundEmitter* E);
+    virtual ISoundRenderSource* i_create_source(LPCSTR name);
+    virtual void i_destroy_source(ISoundRenderSource* S);
+    virtual void i_start(ISoundEmitter* E);
+    virtual void i_stop(ISoundEmitter* E);
+    virtual void i_rewind(ISoundEmitter* E);
+    virtual BOOL i_allow_play(ISoundEmitter* E);
     virtual BOOL i_locked() { return m_isLocked; }
-    float get_occlusion(Fvector& P, float R, Fvector* occ);  
+    virtual float get_occlusion(Fvector& P, float R, Fvector* occ);
     virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
     virtual const Fvector& listener_position();
 
