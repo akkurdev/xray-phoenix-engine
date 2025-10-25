@@ -128,11 +128,11 @@ void CSoundRender_CoreA::_initialize(int stage)
 
         if (bEAX)
         {
-            bDeferredEAX = EAXTestSupport(TRUE);
+            m_hasDeferredEax = EAXTestSupport(true);
             bEAX = EAXTestSupport(FALSE);
         }
         Msg("[OpenAL] EAX 2.0 extension: %s", bEAX ? "present" : "absent");
-        Msg("[OpenAL] EAX 2.0 deferred: %s", bDeferredEAX ? "present" : "absent");
+        Msg("[OpenAL] EAX 2.0 deferred: %s", m_hasDeferredEax ? "present" : "absent");
     }
     else if (deviceDesc.Props.Efx)
     {

@@ -92,7 +92,7 @@ protected:
     ALuint m_effectId;
     ALuint m_slot;
     BOOL bEAX;
-    BOOL bDeferredEAX;
+    bool m_hasDeferredEax;
     bool bEFX;
     BOOL bReady;
     u32 cache_bytes_per_line{};

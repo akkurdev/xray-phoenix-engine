@@ -45,7 +45,7 @@ CSoundRender_Core::CSoundRender_Core()
 {
     bPresent = FALSE;
     bEAX = FALSE;
-    bDeferredEAX = FALSE;
+    m_hasDeferredEax = false;
     geom_MODEL = NULL;
     geom_ENV = NULL;
     geom_SOM = NULL;
@@ -573,7 +573,7 @@ void CSoundRender_Core::i_eax_listener_set(SoundEnvironment* _E)
     ep.flAirAbsorptionHF = E->AirAbsorptionFactor(); // change in level per meter at 5 kHz
     ep.dwFlags = EAXLISTENER_DEFAULTFLAGS; // modifies the behavior of properties
 
-    u32 deferred = bDeferredEAX ? DSPROPERTY_EAXLISTENER_DEFERRED : 0;
+    u32 deferred = m_hasDeferredEax ? DSPROPERTY_EAXLISTENER_DEFERRED : 0;
 
     i_eax_set(&DSPROPSETID_EAX_ListenerProperties, deferred | DSPROPERTY_EAXLISTENER_ROOM, &ep.lRoom, sizeof(LONG));
     i_eax_set(&DSPROPSETID_EAX_ListenerProperties, deferred | DSPROPERTY_EAXLISTENER_ROOMHF, &ep.lRoomHF, sizeof(LONG));
@@ -592,7 +592,7 @@ void CSoundRender_Core::i_eax_listener_set(SoundEnvironment* _E)
 void CSoundRender_Core::i_eax_commit_setting()
 {
     // commit eax
-    if (bDeferredEAX)
+    if (m_hasDeferredEax)
         i_eax_set(&DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_COMMITDEFERREDSETTINGS, NULL, 0);
 }
 
