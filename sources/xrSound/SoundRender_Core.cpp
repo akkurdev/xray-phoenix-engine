@@ -58,7 +58,7 @@ CSoundRender_Core::CSoundRender_Core()
     m_targetEnvironment.SetIdentity();
     m_isListenerMoved = false;
     m_isReady = false;
-    bLocked = FALSE;
+    m_isLocked = false;
     fTimer_Value = Timer.GetElapsed_sec();
     fTimer_Delta = 0.0f;
     m_reverberationProps = EFX_REVERB_PRESET_GENERIC;
@@ -630,7 +630,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
 
     if (0 == m_isReady)
         return;
-    bLocked = TRUE;
+    m_isLocked = true;
     Timer.time_factor(psSoundTimeFactor); //--#SM+#--
     float new_tm = Timer.GetElapsed_sec();
     fTimer_Delta = new_tm - fTimer_Value;
@@ -748,7 +748,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
 
     update_events();
 
-    bLocked = FALSE;
+    m_isLocked = false;
 }
 
 static u32 g_saved_event_count = 0;

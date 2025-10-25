@@ -36,7 +36,7 @@ public:
     void i_stop(ISoundEmitter* E);
     void i_rewind(ISoundEmitter* E);
     BOOL i_allow_play(ISoundEmitter* E);
-    virtual BOOL i_locked() { return bLocked; }    
+    virtual BOOL i_locked() { return m_isLocked; }
     float get_occlusion(Fvector& P, float R, Fvector* occ);    
 
 protected:
@@ -96,9 +96,7 @@ protected:
     bool m_hasEfx;
     bool m_isReady;
     uint32_t m_cacheLineSize;
-
-private:
-    volatile BOOL bLocked;
+    volatile bool m_isLocked;
 };
 
 extern XRSOUND_API CSoundRender_Core* SoundRender;
