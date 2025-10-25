@@ -137,8 +137,8 @@ void CSoundRender_CoreA::_initialize(int stage)
     else if (deviceDesc.Props.Efx)
     {
         InitAlEFXAPI();
-        bEFX = EFXTestSupport();
-        Msg("[OpenAL] EFX: %s", bEFX ? "present" : "absent");
+        m_hasEfx = EFXTestSupport();
+        Msg("[OpenAL] EFX: %s", m_hasEfx ? "present" : "absent");
     }
 
     inherited::_initialize(stage);
@@ -152,7 +152,7 @@ void CSoundRender_CoreA::_initialize(int stage)
             T = xr_new<DefaultSoundRenderTarget>();
             if (T->Initialize())
             {
-                if (bEFX)
+                if (m_hasEfx)
                     T->OpenALAuxInit(m_slot);
 
                 T->UseAlSoft(pDeviceList.IsOalSoftEnabled());

@@ -93,7 +93,7 @@ protected:
     ALuint m_slot;
     bool m_hasEax;
     bool m_hasDeferredEax;
-    bool bEFX;
+    bool m_hasEfx;
     bool m_isReady;
     u32 cache_bytes_per_line{};
 

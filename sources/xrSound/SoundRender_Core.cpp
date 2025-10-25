@@ -61,14 +61,14 @@ CSoundRender_Core::CSoundRender_Core()
     fTimer_Value = Timer.GetElapsed_sec();
     fTimer_Delta = 0.0f;
     m_reverberationProps = EFX_REVERB_PRESET_GENERIC;
-    bEFX = false;
+    m_hasEfx = false;
     m_effectId = 0;
     m_slot = 0;
 }
 
 CSoundRender_Core::~CSoundRender_Core()
 {
-    if (bEFX)
+    if (m_hasEfx)
     {
         if (m_effectId)
             alDeleteEffects(1, &m_effectId);
@@ -705,7 +705,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     }
 
     // update EAX or EFX
-    if (psSoundFlags.test(ss_EAX) && (m_hasEax || bEFX))
+    if (psSoundFlags.test(ss_EAX) && (m_hasEax || m_hasEfx))
     {
         static shared_str curr_env;
 
@@ -731,7 +731,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         else
         {
             i_efx_listener_set(&m_currentEnvironment);
-            bEFX = i_efx_commit_setting();
+            m_hasEfx = i_efx_commit_setting();
         }
     }
 
