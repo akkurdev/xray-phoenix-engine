@@ -112,17 +112,17 @@ void CSoundRender_Core::_clear()
     m_renderSources.clear();
 
     // remove emmiters
-    for (u32 eit = 0; eit < s_emitters.size(); eit++)
-        xr_delete(s_emitters[eit]);
-    s_emitters.clear();
+    for (u32 eit = 0; eit < m_emitters.size(); eit++)
+        xr_delete(m_emitters[eit]);
+    m_emitters.clear();
 
     g_target_temp_data.clear();
 }
 
 void CSoundRender_Core::stop_emitters()
 {
-    for (u32 eit = 0; eit < s_emitters.size(); eit++)
-        s_emitters[eit]->Stop(false);
+    for (u32 eit = 0; eit < m_emitters.size(); eit++)
+        m_emitters[eit]->Stop(false);
 }
 
 int CSoundRender_Core::pause_emitters(bool val)
@@ -130,8 +130,8 @@ int CSoundRender_Core::pause_emitters(bool val)
     m_iPauseCounter += val ? +1 : -1;
     VERIFY(m_iPauseCounter >= 0);
 
-    for (u32 it = 0; it < s_emitters.size(); it++)
-        s_emitters[it]->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
+    for (u32 it = 0; it < m_emitters.size(); it++)
+        m_emitters[it]->Pause(val, val ? m_iPauseCounter : m_iPauseCounter + 1);
 
     return m_iPauseCounter;
 }
@@ -602,12 +602,12 @@ void CSoundRender_Core::object_relcase(CObject* obj)
 {
     if (obj)
     {
-        for (u32 eit = 0; eit < s_emitters.size(); eit++)
+        for (u32 eit = 0; eit < m_emitters.size(); eit++)
         {
-            if (s_emitters[eit])
-                if (s_emitters[eit]->SoundData())
-                    if (obj == s_emitters[eit]->SoundData()->g_object)
-                        s_emitters[eit]->SoundData()->g_object = 0;
+            if (m_emitters[eit])
+                if (m_emitters[eit]->SoundData())
+                    if (obj == m_emitters[eit]->SoundData()->g_object)
+                        m_emitters[eit]->SoundData()->g_object = 0;
         }
     }
 }
@@ -620,7 +620,7 @@ ISoundEmitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
     ISoundEmitter* E = xr_new<SoundEmitter>();
     S->_p->feedback = E;
     E->Start(S, _loop, delay);
-    s_emitters.push_back(E);
+    m_emitters.push_back(E);
     return E;
 }
 
@@ -662,9 +662,9 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     }
 
     // Update emmitters
-    for (it = 0; it < s_emitters.size(); it++)
+    for (it = 0; it < m_emitters.size(); it++)
     {
-        ISoundEmitter* pEmitter = s_emitters[it];
+        ISoundEmitter* pEmitter = m_emitters[it];
         if (pEmitter->Marker() != s_emitters_u)
         {
             pEmitter->Update(dt_sec);
@@ -674,7 +674,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         {
             // Stopped
             xr_delete(pEmitter);
-            s_emitters.erase(s_emitters.begin() + it);
+            m_emitters.erase(m_emitters.begin() + it);
             it--;
         }
     }
@@ -775,7 +775,7 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
             if (T->Emitter() && T->IsRendering())
                 dest->_rendered++;
         }
-        dest->_simulated = s_emitters.size();
+        dest->_simulated = m_emitters.size();
         dest->_cache_hits = cache.StatsHits();
         dest->_cache_misses = cache.StatsMiss();
         dest->_events = g_saved_event_count;
@@ -783,9 +783,9 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
     }
     if (ext)
     {
-        for (u32 it = 0; it < s_emitters.size(); it++)
+        for (u32 it = 0; it < m_emitters.size(); it++)
         {
-            ISoundEmitter* _E = s_emitters[it];
+            ISoundEmitter* _E = m_emitters[it];
             CSound_stats_ext::SItem _I;
             _I._3D = !_E->Is2D();
             _I._rendered = !!_E->RenderTarget();

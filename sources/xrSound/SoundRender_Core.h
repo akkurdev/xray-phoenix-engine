@@ -81,7 +81,7 @@ protected:
     CDB::MODEL* geom_MODEL;
     CDB::MODEL* geom_ENV;
     std::vector<ISoundRenderSource*> m_renderSources;
-    xr_vector<ISoundEmitter*> s_emitters;
+    std::vector<ISoundEmitter*> m_emitters;
     u32 s_emitters_u; // emitter update marker
     xr_vector<ISoundRenderTarget*> s_targets;
     xr_vector<ISoundRenderTarget*> s_targets_defer;
