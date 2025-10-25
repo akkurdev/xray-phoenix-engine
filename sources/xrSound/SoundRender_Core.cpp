@@ -52,7 +52,6 @@ CSoundRender_Core::CSoundRender_Core()
     geom_SOM = NULL;
     m_environments = nullptr;
     Handler = NULL;
-    s_targets_pu = 0;
     m_emitterMarker = 0;
     m_currentEnvironment.SetIdentity();
     m_targetEnvironment.SetIdentity();
@@ -680,7 +679,6 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
 
     // Get currently rendering emitters
     m_deferredRenderTargets.clear();
-    s_targets_pu++;
     for (it = 0; it < m_renderTargets.size(); it++)
     {
         ISoundRenderTarget* T = m_renderTargets[it];

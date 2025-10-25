@@ -85,7 +85,6 @@ protected:
     uint32_t m_emitterMarker; // emitter update marker
     std::vector<ISoundRenderTarget*> m_renderTargets;
     std::vector<ISoundRenderTarget*> m_deferredRenderTargets;
-    u32 s_targets_pu; // parameters update
     SoundEnvironmentLibrary* m_environments;
     std::vector<uint16_t> m_environmentIds;
     EFXEAXREVERBPROPERTIES m_reverberationProps;
