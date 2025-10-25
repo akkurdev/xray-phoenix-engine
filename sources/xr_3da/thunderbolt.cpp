@@ -69,7 +69,7 @@ void SThunderboltDesc::load(CInifile& pIni, shared_str const& sect)
     // sound
     m_name = pIni.r_string(sect, "sound");
     if (m_name && m_name[0])
-        snd.create(m_name, st_Effect, sg_Undefined);
+        snd.create(m_name, SoundType::Effect, sg_Undefined);
 }
 
 void SThunderboltDesc::create_top_gradient_shoc(CInifile* pIni, shared_str const& sect)
@@ -117,7 +117,7 @@ void SThunderboltDesc::load_shoc(CInifile* pIni, shared_str const& sect)
     // sound
     m_name = pIni->r_string(sect, "sound");
     if (m_name && m_name[0])
-        snd.create(m_name, st_Effect, sg_Undefined);
+        snd.create(m_name, SoundType::Effect, sg_Undefined);
 }
 
 //----------------------------------------------------------------------------------------------

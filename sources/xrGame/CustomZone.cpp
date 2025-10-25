@@ -114,36 +114,36 @@ void CCustomZone::Load(LPCSTR section)
     if (pSettings->line_exist(section, "idle_sound"))
     {
         sound_str = pSettings->r_string(section, "idle_sound");
-        m_idle_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_idle_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
 
     if (pSettings->line_exist(section, "accum_sound"))
     {
         sound_str = pSettings->r_string(section, "accum_sound");
-        m_accum_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_accum_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
     if (pSettings->line_exist(section, "awake_sound"))
     {
         sound_str = pSettings->r_string(section, "awake_sound");
-        m_awaking_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_awaking_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
 
     if (pSettings->line_exist(section, "blowout_sound"))
     {
         sound_str = pSettings->r_string(section, "blowout_sound");
-        m_blowout_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_blowout_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
 
     if (pSettings->line_exist(section, "hit_sound"))
     {
         sound_str = pSettings->r_string(section, "hit_sound");
-        m_hit_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_hit_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
 
     if (pSettings->line_exist(section, "entrance_sound"))
     {
         sound_str = pSettings->r_string(section, "entrance_sound");
-        m_entrance_sound.create(sound_str, st_Effect, sg_SourceType);
+        m_entrance_sound.create(sound_str, SoundType::Effect, sg_SourceType);
     }
 
     if (pSettings->line_exist(section, "idle_particles"))
@@ -288,7 +288,7 @@ void CCustomZone::Load(LPCSTR section)
         if (pSettings->line_exist(section, "artefact_born_sound"))
         {
             sound_str = pSettings->r_string(section, "artefact_born_sound");
-            m_ArtefactBornSound.create(sound_str, st_Effect, sg_SourceType);
+            m_ArtefactBornSound.create(sound_str, SoundType::Effect, sg_SourceType);
         }
 
         m_fThrowOutPower = pSettings->r_float(section, "throw_out_power");

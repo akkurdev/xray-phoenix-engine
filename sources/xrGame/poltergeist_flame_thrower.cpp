@@ -18,7 +18,7 @@ void CPolterFlame::load(LPCSTR section)
 {
     inherited::load(section);
 
-    m_sound.create(pSettings->r_string(section, "flame_sound"), st_Effect, SOUND_TYPE_WORLD);
+    m_sound.create(pSettings->r_string(section, "flame_sound"), SoundType::Effect, SOUND_TYPE_WORLD);
 
     m_particles_prepare = pSettings->r_string(section, "flame_particles_prepare");
     m_particles_fire = pSettings->r_string(section, "flame_particles_fire");
@@ -65,7 +65,7 @@ void CPolterFlame::load(LPCSTR section)
     m_scan_effector_time_attack = pSettings->r_float(ppi_section, "time_attack");
     m_scan_effector_time_release = pSettings->r_float(ppi_section, "time_release");
 
-    m_scan_sound.create(pSettings->r_string(section, "flame_scan_sound"), st_Effect, SOUND_TYPE_WORLD);
+    m_scan_sound.create(pSettings->r_string(section, "flame_scan_sound"), SoundType::Effect, SOUND_TYPE_WORLD);
     //-----------------------------------------------------------------------------------------
 
     m_state_scanning = false;
@@ -85,7 +85,7 @@ void CPolterFlame::create_flame(const CObject* target_object)
     element->position = position;
     element->target_object = target_object;
     element->time_started = time();
-    element->sound.clone(m_sound, st_Effect, SOUND_TYPE_WORLD);
+    element->sound.clone(m_sound, SoundType::Effect, SOUND_TYPE_WORLD);
     element->sound.play_at_pos(m_object, element->position);
     element->particles_object = 0;
     element->time_last_hit = 0;

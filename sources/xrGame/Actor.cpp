@@ -386,17 +386,17 @@ void CActor::Load(LPCSTR section)
         VERIFY(cnt != 0);
         for (int i = 0; i < cnt; ++i)
         {
-            sndHit[hit_type].emplace_back().create(_GetItem(hit_snds, i, tmp), st_Effect, sg_SourceType);
+            sndHit[hit_type].emplace_back().create(_GetItem(hit_snds, i, tmp), SoundType::Effect, sg_SourceType);
         }
         char buf[256];
 
-        ::Sound->create(sndDie[0], strconcat(sizeof(buf), buf, *cName(), "\\die0"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        ::Sound->create(sndDie[1], strconcat(sizeof(buf), buf, *cName(), "\\die1"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        ::Sound->create(sndDie[2], strconcat(sizeof(buf), buf, *cName(), "\\die2"), st_Effect, SOUND_TYPE_MONSTER_DYING);
-        ::Sound->create(sndDie[3], strconcat(sizeof(buf), buf, *cName(), "\\die3"), st_Effect, SOUND_TYPE_MONSTER_DYING);
+        ::Sound->create(sndDie[0], strconcat(sizeof(buf), buf, *cName(), "\\die0"), SoundType::Effect, SOUND_TYPE_MONSTER_DYING);
+        ::Sound->create(sndDie[1], strconcat(sizeof(buf), buf, *cName(), "\\die1"), SoundType::Effect, SOUND_TYPE_MONSTER_DYING);
+        ::Sound->create(sndDie[2], strconcat(sizeof(buf), buf, *cName(), "\\die2"), SoundType::Effect, SOUND_TYPE_MONSTER_DYING);
+        ::Sound->create(sndDie[3], strconcat(sizeof(buf), buf, *cName(), "\\die3"), SoundType::Effect, SOUND_TYPE_MONSTER_DYING);
 
-        m_HeavyBreathSnd.create(pSettings->r_string(section, "heavy_breath_snd"), st_Effect, SOUND_TYPE_MONSTER_INJURING);
-        m_BloodSnd.create(pSettings->r_string(section, "heavy_blood_snd"), st_Effect, SOUND_TYPE_MONSTER_INJURING);
+        m_HeavyBreathSnd.create(pSettings->r_string(section, "heavy_breath_snd"), SoundType::Effect, SOUND_TYPE_MONSTER_INJURING);
+        m_BloodSnd.create(pSettings->r_string(section, "heavy_blood_snd"), SoundType::Effect, SOUND_TYPE_MONSTER_INJURING);
     }
     if (this == Level().CurrentEntity()) //--#SM+#-- Сбрасываем режим рендеринга в дефолтный [reset some render flags]
     {

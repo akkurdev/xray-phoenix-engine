@@ -268,7 +268,7 @@ void CSoundRender_Core::set_geometry_env(IReader* I)
     xr_free(_data);
 }
 
-void CSoundRender_Core::create(ref_sound& S, const char* fName, esound_type sound_type, int game_type)
+void CSoundRender_Core::create(ref_sound& S, const char* fName, SoundType sound_type, int game_type)
 {
     if (!bPresent)
         return;
@@ -307,7 +307,7 @@ void CSoundRender_Core::attach_tail(ref_sound& S, const char* fName)
     SoundRender->i_destroy_source(s);
 }
 
-void CSoundRender_Core::clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type)
+void CSoundRender_Core::clone(ref_sound& S, const ref_sound& from, SoundType sound_type, int game_type)
 {
     if (!bPresent)
         return;
@@ -390,7 +390,7 @@ void CSoundRender_Core::destroy(ref_sound& S)
     S._p = 0;
 }
 
-void CSoundRender_Core::_create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type)
+void CSoundRender_Core::_create_data(ref_sound_data& S, LPCSTR fName, SoundType sound_type, int game_type)
 {
     string_path fn;
     xr_strcpy(fn, fName);

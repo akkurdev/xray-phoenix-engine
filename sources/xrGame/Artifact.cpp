@@ -562,7 +562,7 @@ void SArtefactActivation::ChangeEffects()
 
     if (state_def.m_snd.size())
     {
-        m_snd.create(*state_def.m_snd, st_Effect, sg_SourceType);
+        m_snd.create(*state_def.m_snd, SoundType::Effect, sg_SourceType);
         m_snd.play_at_pos(m_af, m_af->Position());
     };
 
@@ -697,7 +697,7 @@ void SArtefactDetectorsSupport::SetVisible(bool b)
         m_parent->CParticlesPlayer::StartParticles(curr, bone_id, Fvector().set(0, 1, 0), m_parent->ID());
 
         curr = pSettings->r_string(m_parent->cNameSect().c_str(), (b) ? "det_show_snd" : "det_hide_snd");
-        m_sound.create(curr, st_Effect, sg_SourceType);
+        m_sound.create(curr, SoundType::Effect, sg_SourceType);
         m_sound.play_at_pos(0, m_parent->Position(), 0);
     }
 

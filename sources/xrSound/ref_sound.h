@@ -18,12 +18,12 @@ public:
 
     CObject* _g_object();
     int _g_type();
-    esound_type _sound_type();
+    SoundType _sound_type();
     SoundUserDataPtr _g_userdata();
 
-    void create(LPCSTR name, esound_type sound_type, int game_type);
+    void create(LPCSTR name, SoundType sound_type, int game_type);
     void attach_tail(LPCSTR name);
-    void clone(const ref_sound& from, esound_type sound_type, int game_type);
+    void clone(const ref_sound& from, SoundType sound_type, int game_type);
     void destroy();
     void play(CObject* O, u32 flags = 0, float delay = 0.f);
     void play_at_pos(CObject* O, const Fvector& pos, u32 flags = 0, float delay = 0.f);

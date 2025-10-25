@@ -259,7 +259,7 @@ bool CLevel::PrefetchSound(LPCSTR name)
     // if find failed - preload sound
     if (it == sound_registry.end())
     {
-        sound_registry[snd_name].create(snd_name.c_str(), st_Effect, sg_SourceType);
+        sound_registry[snd_name].create(snd_name.c_str(), SoundType::Effect, sg_SourceType);
         return true;
     }
     return false;

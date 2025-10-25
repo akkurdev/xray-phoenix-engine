@@ -15,7 +15,7 @@ int ref_sound::_g_type()
     return _p->g_type;
 }
 
-esound_type ref_sound::_sound_type()
+SoundType ref_sound::_sound_type()
 {
     VERIFY(_p);
     return _p->s_type;
@@ -27,7 +27,7 @@ SoundUserDataPtr ref_sound::_g_userdata()
     return _p->g_userdata;
 }
 
-void ref_sound::create(LPCSTR name, esound_type sound_type, int game_type)
+void ref_sound::create(LPCSTR name, SoundType sound_type, int game_type)
 {
     VERIFY(!::Sound->i_locked());
     ::Sound->create(*this, name, sound_type, game_type);
@@ -38,7 +38,7 @@ void ref_sound::attach_tail(LPCSTR name)
     ::Sound->attach_tail(*this, name);
 }
 
-void ref_sound::clone(const ref_sound& from, esound_type sound_type, int game_type)
+void ref_sound::clone(const ref_sound& from, SoundType sound_type, int game_type)
 {
     VERIFY(!::Sound->i_locked());
     ::Sound->clone(*this, from, sound_type, game_type);

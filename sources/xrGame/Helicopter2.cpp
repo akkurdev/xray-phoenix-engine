@@ -254,7 +254,7 @@ void CHelicopter::DieHelicopter()
 
     m_engineSound.stop();
 
-    m_brokenSound.create(pSettings->r_string(*cNameSect(), "broken_snd"), st_Effect, sg_SourceType);
+    m_brokenSound.create(pSettings->r_string(*cNameSect(), "broken_snd"), SoundType::Effect, sg_SourceType);
     m_brokenSound.play_at_pos(0, XFORM().c, sm_Looped);
 
     IKinematics* K = smart_cast<IKinematics*>(Visual());

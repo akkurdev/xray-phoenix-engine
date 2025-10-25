@@ -13,7 +13,7 @@ public:
     //	shared_str						nm;
     ISoundRenderSource* handle; //!< Pointer to wave-source interface
     ISoundEmitter* feedback; //!< Pointer to emitter, automaticaly clears on emitter-stop
-    esound_type s_type;
+    SoundType s_type;
     int g_type; //!< Sound type, usually for AI
     CObject* g_object; //!< Game object that emitts ref_sound
     SoundUserDataPtr g_userdata;
@@ -24,7 +24,7 @@ public:
 
 public:
     ref_sound_data();
-    ref_sound_data(LPCSTR fName, esound_type sound_type, int game_type);
+    ref_sound_data(LPCSTR fName, SoundType sound_type, int game_type);
     virtual ~ref_sound_data();
     float get_length_sec() const;
 };

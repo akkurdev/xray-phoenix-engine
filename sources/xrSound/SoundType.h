@@ -1,9 +1,8 @@
 #pragma once
 #include <stdint.h>
 
-enum esound_type
+enum class SoundType
 {
-    st_Effect = 0,
-    st_Music = 1,
-    st_forcedword = uint32_t(-1),
+    Effect = 0,
+    Music = 1
 };

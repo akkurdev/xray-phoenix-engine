@@ -43,7 +43,7 @@ void CMincer::Load(LPCSTR section)
     m_telekinetics.set_destroing_particles(shared_str(pSettings->r_string(section, "tearing_particles")));
     m_telekinetics.set_throw_power(pSettings->r_float(section, "throw_out_impulse"));
     m_torn_particles = pSettings->r_string(section, "torn_particles");
-    m_tearing_sound.create(pSettings->r_string(section, "body_tearing_sound"), st_Effect, sg_SourceType);
+    m_tearing_sound.create(pSettings->r_string(section, "body_tearing_sound"), SoundType::Effect, sg_SourceType);
     m_fActorBlowoutRadiusPercent = pSettings->r_float(section, "actor_blowout_radius_percent");
     // bak
     m_fArtefactSpawnProbabilityTorn = READ_IF_EXISTS(pSettings, r_float, section, "birth_on_torn_probability", 1.0f);

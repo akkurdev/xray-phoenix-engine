@@ -13,7 +13,7 @@ void SStaticSound::Load(IReader& F)
 
     xr_string wav_name;
     F.r_stringZ(wav_name);
-    m_Source.create(wav_name.c_str(), st_Effect, sg_SourceType);
+    m_Source.create(wav_name.c_str(), SoundType::Effect, sg_SourceType);
     F.r_fvector3(m_Position);
     m_Volume = F.r_float();
     m_Freq = F.r_float();
@@ -30,7 +30,7 @@ void SStaticSound::Load(IReader& F)
 void SStaticSound::LoadIni(CInifile::Sect& section)
 {
     LPCSTR wav_name = section.r_string("sound_name");
-    m_Source.create(wav_name, st_Effect, sg_SourceType);
+    m_Source.create(wav_name, SoundType::Effect, sg_SourceType);
     m_Position = section.r_fvector3("position");
     m_Volume = section.r_float("volume");
     m_Freq = section.r_float("frequency");
@@ -105,8 +105,8 @@ void SMusicTrack::Load(LPCSTR fn, LPCSTR params)
     string_path _l, _r;
     strconcat(sizeof(_l), _l, fn, "_l");
     strconcat(sizeof(_r), _r, fn, "_r");
-    m_SourceLeft.create(_l, st_Music, sg_Undefined);
-    m_SourceRight.create(_r, st_Music, sg_Undefined);
+    m_SourceLeft.create(_l, SoundType::Music, sg_Undefined);
+    m_SourceRight.create(_r, SoundType::Music, sg_Undefined);
     // parse params
     VERIFY(_GetItemCount(params) == 5);
     m_ActiveTime.set(0, 0);

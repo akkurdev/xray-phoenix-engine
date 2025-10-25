@@ -35,7 +35,7 @@ void HUD_SOUND::LoadSound(LPCSTR section, LPCSTR line, ref_sound& snd, int type,
     R_ASSERT(count);
 
     _GetItem(str, 0, buf_str);
-    snd.create(buf_str, st_Effect, type);
+    snd.create(buf_str, SoundType::Effect, type);
 
     if (volume != NULL)
     {

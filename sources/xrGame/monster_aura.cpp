@@ -89,10 +89,10 @@ void monster_aura::load_from_ini(CInifile* ini, pcstr const section, bool enable
     m_enable_for_dead = !!READ_IF_EXISTS(ini, r_bool, section, tempBuffer, enable_for_dead_default);
 
     if (sound_name)
-        m_sound.create(sound_name, st_Effect, sg_SourceType);
+        m_sound.create(sound_name, SoundType::Effect, sg_SourceType);
 
     if (detect_sound_name)
-        m_detect_sound.create(detect_sound_name, st_Effect, sg_SourceType);
+        m_detect_sound.create(detect_sound_name, SoundType::Effect, sg_SourceType);
 
     if (m_pp_effector_name || m_max_power || m_max_distance || sound_name || detect_sound_name)
         m_enabled = true;

@@ -28,7 +28,7 @@ void CreateSounds(SoundVec& lst, LPCSTR buf)
     R_ASSERT(cnt <= GAMEMTL_SUBITEM_COUNT + 2);
     lst.resize(cnt);
     for (int k = 0; k < cnt; ++k)
-        lst[k].create(_GetItem(buf, k, tmp), st_Effect, sg_SourceType);
+        lst[k].create(_GetItem(buf, k, tmp), SoundType::Effect, sg_SourceType);
 }
 /*
 void CreateMarks(ShaderVec& lst, LPCSTR buf)

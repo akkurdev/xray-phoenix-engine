@@ -309,7 +309,7 @@ void CCustomRocket::reload(LPCSTR section)
 
     if (pSettings->line_exist(section, "snd_fly_sound"))
     {
-        m_flyingSound.create(pSettings->r_string(section, "snd_fly_sound"), st_Effect, sg_SourceType);
+        m_flyingSound.create(pSettings->r_string(section, "snd_fly_sound"), SoundType::Effect, sg_SourceType);
     }
 }
 

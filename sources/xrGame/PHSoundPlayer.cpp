@@ -28,7 +28,7 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, Fvector* pos, bool check_vel, 
     }
 
     auto& snd = m_sound[mtl_pair];
-    CLONE_MTL_SOUND(snd, mtl_pair, CollideSounds);
+    { ((void)0); snd.clone((mtl_pair->CollideSounds[Random.randI(mtl_pair->CollideSounds.size())]), SoundType::Effect, sg_SourceType); };
     snd.play_at_pos(smart_cast<CPhysicsShellHolder*>(m_object), *pos);
     if (vol)
         snd._feedback()->SetVolume(*vol);

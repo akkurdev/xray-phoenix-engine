@@ -582,7 +582,7 @@ void SoundEmitter::OnStart(float deltaTime, bool isLooped)
         return;
     }
 
-    auto effectScale = m_soundData->s_type == st_Effect 
+    auto effectScale = m_soundData->s_type == SoundType::Effect
         ? psSoundVEffects * psSoundVFactor 
         : psSoundVMusic;
 
@@ -803,7 +803,7 @@ float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, flo
         return 0.f;
     }
 
-    auto effectScale = m_soundData->s_type == st_Effect
+    auto effectScale = m_soundData->s_type == SoundType::Effect
         ? psSoundVEffects * psSoundVFactor
         : psSoundVMusic;
 
@@ -812,7 +812,7 @@ float SoundEmitter::UpdateSmoothVolume(float deltaTime, float currentVolume, flo
 
 float SoundEmitter::UpdateFadeVolume(float deltaTime, float currentVolume)
 {
-    auto effectScale = m_soundData->s_type == st_Effect
+    auto effectScale = m_soundData->s_type == SoundType::Effect
         ? psSoundVEffects * psSoundVFactor
         : psSoundVMusic;
 

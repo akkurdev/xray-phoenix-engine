@@ -26,7 +26,7 @@ void CPolterSpecialAbility::load(LPCSTR section)
     m_particles_death = pSettings->r_string(section, "Particles_Death");
     m_particles_idle = pSettings->r_string(section, "Particles_Idle");
 
-    m_sound_base.create(pSettings->r_string(section, "Sound_Idle"), st_Effect, SOUND_TYPE_MONSTER_TALKING);
+    m_sound_base.create(pSettings->r_string(section, "Sound_Idle"), SoundType::Effect, SOUND_TYPE_MONSTER_TALKING);
 
     m_last_hit_frame = 0;
 }
@@ -157,7 +157,7 @@ void CPoltergeist::StrangeSounds(const Fvector& position)
                 // Играть звук
                 if (!mtl_pair->CollideSounds.empty())
                 {
-                    CLONE_MTL_SOUND(m_strange_sound, mtl_pair, CollideSounds);
+                    { ((void)0); m_strange_sound.clone((mtl_pair->CollideSounds[Random.randI(mtl_pair->CollideSounds.size())]), SoundType::Effect, sg_SourceType); };
                     Fvector pos;
                     pos.mad(position, dir, ((l_rq.range - 0.1f > 0) ? l_rq.range - 0.1f : l_rq.range));
                     m_strange_sound.play_at_pos(this, pos);

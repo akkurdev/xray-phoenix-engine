@@ -9,12 +9,12 @@ ref_sound_data::ref_sound_data()
     feedback = 0;
     g_type = 0;
     g_object = 0;
-    s_type = st_Effect;
+    s_type = SoundType::Effect;
     dwBytesTotal = 0;
     fTimeTotal = 0.0f;
 }
 
-ref_sound_data::ref_sound_data(LPCSTR fName, esound_type sound_type, int game_type)
+ref_sound_data::ref_sound_data(LPCSTR fName, SoundType sound_type, int game_type)
 {
     ::Sound->_create_data(*this, fName, sound_type, game_type);
 }

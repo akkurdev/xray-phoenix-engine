@@ -106,7 +106,7 @@ void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect)
     for (u32 k = 0; k < cnt; ++k)
     {
         _GetItem(snds, k, tmp);
-        m_sounds[k].create(tmp, st_Effect, sg_SourceType);
+        m_sounds[k].create(tmp, SoundType::Effect, sg_SourceType);
     }
 }
 
@@ -120,7 +120,7 @@ CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id)
     result->wind_gust_factor = config.r_float(id, "wind_gust_factor");
 
     if (config.line_exist(id, "sound"))
-        result->sound.create(config.r_string(id, "sound"), st_Effect, sg_SourceType);
+        result->sound.create(config.r_string(id, "sound"), SoundType::Effect, sg_SourceType);
 
     if (config.line_exist(id, "wind_blast_strength"))
     {
@@ -201,7 +201,7 @@ void CEnvAmbient::load_shoc(const shared_str& sect)
         {
             sounds.resize(cnt);
             for (u32 k = 0; k < cnt; ++k)
-                sounds[k].create(_GetItem(snds, k, tmp), st_Effect, sg_SourceType);
+                sounds[k].create(_GetItem(snds, k, tmp), SoundType::Effect, sg_SourceType);
         }
     }
     // effects
@@ -223,7 +223,7 @@ void CEnvAmbient::load_shoc(const shared_str& sect)
                 effects[k].offset = pSettings->r_fvector3(tmp, "offset");
                 effects[k].wind_gust_factor = pSettings->r_float(tmp, "wind_gust_factor");
                 if (pSettings->line_exist(tmp, "sound"))
-                    effects[k].sound.create(pSettings->r_string(tmp, "sound"), st_Effect, sg_SourceType);
+                    effects[k].sound.create(pSettings->r_string(tmp, "sound"), SoundType::Effect, sg_SourceType);
             }
         }
     }

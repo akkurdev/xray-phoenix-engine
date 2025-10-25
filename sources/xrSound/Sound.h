@@ -90,7 +90,7 @@ public:
         shared_str name;
         SoundParams params;
         float volume;
-        esound_type type;
+        SoundType type;
         int game_type;
         CObject* game_object;
         struct
@@ -118,7 +118,7 @@ class XRSOUND_API CSound_manager_interface
 
 protected:
     friend class ref_sound_data;
-    virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type) = 0;
+    virtual void _create_data(ref_sound_data& S, LPCSTR fName, SoundType sound_type, int game_type) = 0;
     virtual void _destroy_data(ref_sound_data& S) = 0;
 
 public:
@@ -130,9 +130,9 @@ public:
     virtual void _restart() = 0;
     virtual BOOL i_locked() = 0;
 
-    virtual void create(ref_sound& S, LPCSTR fName, esound_type sound_type, int game_type) = 0;
+    virtual void create(ref_sound& S, LPCSTR fName, SoundType sound_type, int game_type) = 0;
     virtual void attach_tail(ref_sound& S, LPCSTR fName) = 0;
-    virtual void clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type) = 0;
+    virtual void clone(ref_sound& S, const ref_sound& from, SoundType sound_type, int game_type) = 0;
     virtual void destroy(ref_sound& S) = 0;
     virtual void stop_emitters() = 0;
     virtual int pause_emitters(bool val) = 0;

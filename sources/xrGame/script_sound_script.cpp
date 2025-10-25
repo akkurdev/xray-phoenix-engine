@@ -24,7 +24,7 @@ void CScriptSound::script_register(lua_State* L)
 
               class_<CScriptSound>("sound_object")
                   .enum_("sound_play_type")[value("looped", sm_Looped), value("s2d", sm_2D), value("s3d", 0)]
-                  .enum_("sound_type")[value("effect", st_Effect), value("music", st_Music)]
+                  .enum_("sound_type")[value("effect", (int)SoundType::Effect), value("music", (int)SoundType::Music)]
 
                   .property("frequency", &CScriptSound::GetFrequency, &CScriptSound::SetFrequency)
                   .property("min_distance", &CScriptSound::GetMinDistance, &CScriptSound::SetMinDistance)
@@ -33,7 +33,7 @@ void CScriptSound::script_register(lua_State* L)
 
                   .def(constructor<LPCSTR>())
                   .def(constructor<LPCSTR, ESoundTypes>())
-                  .def(constructor<LPCSTR, ESoundTypes, esound_type>())
+                  .def(constructor<LPCSTR, ESoundTypes, SoundType>())
                   .def("get_position", &CScriptSound::GetPosition)
                   .def("set_position", &CScriptSound::SetPosition)
                   .def("play", (void(CScriptSound::*)(CScriptGameObject*))(&CScriptSound::Play))

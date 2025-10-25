@@ -389,7 +389,7 @@ bool CScriptEntity::bfAssignSound(CScriptEntityAction* tpEntityAction)
         if (xr_strlen(l_tSoundAction.m_caSoundToPlay))
         {
             m_current_sound = xr_new<ref_sound>();
-            m_current_sound->create(*l_tSoundAction.m_caSoundToPlay, st_Effect, l_tSoundAction.m_sound_type);
+            m_current_sound->create(*l_tSoundAction.m_caSoundToPlay, SoundType::Effect, l_tSoundAction.m_sound_type);
         }
         else
             l_tSoundAction.m_bCompleted = true;

@@ -415,7 +415,7 @@ void CUITalkWnd::PlaySnd(LPCSTR text)
         VERIFY(m_pActor);
         if (!m_pActor->OnDialogSoundHandlerStart(m_pOthersInvOwner, fn))
         {
-            m_sound.create(fn, st_Effect, sg_SourceType);
+            m_sound.create(fn, SoundType::Effect, sg_SourceType);
             m_sound.play(0, sm_2D);
         }
     }

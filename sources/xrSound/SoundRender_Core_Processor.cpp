@@ -200,7 +200,7 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
             {
                 _I.game_object = 0;
                 _I.game_type = 0;
-                _I.type = st_Effect;
+                _I.type = SoundType::Effect;
             }
             ext->append(_I);
         }

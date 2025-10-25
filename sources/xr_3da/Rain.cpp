@@ -15,7 +15,7 @@ CEffect_Rain::CEffect_Rain()
 {
     state = stIdle;
 
-    snd_Ambient.create("ambient\\rain", st_Effect, sg_Undefined);
+    snd_Ambient.create("ambient\\rain", SoundType::Effect, sg_Undefined);
 
     //	Moced to p_Render constructor
     /*
