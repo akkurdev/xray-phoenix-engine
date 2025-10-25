@@ -60,7 +60,7 @@ CSoundRender_Core::CSoundRender_Core()
     bLocked = FALSE;
     fTimer_Value = Timer.GetElapsed_sec();
     fTimer_Delta = 0.0f;
-    efx_reverb = EFX_REVERB_PRESET_GENERIC;
+    m_reverberationProps = EFX_REVERB_PRESET_GENERIC;
     bEFX = false;
     effect = 0;
     slot = 0;
@@ -476,19 +476,19 @@ bool CSoundRender_Core::EFXTestSupport()
     alGenEffects(1, &effect);
 
     alEffecti(effect, AL_EFFECT_TYPE, AL_EFFECT_REVERB);
-    alEffectf(effect, AL_REVERB_DENSITY, efx_reverb.flDensity);
-    alEffectf(effect, AL_REVERB_DIFFUSION, efx_reverb.flDiffusion);
-    alEffectf(effect, AL_REVERB_GAIN, efx_reverb.flGain);
-    alEffectf(effect, AL_REVERB_GAINHF, efx_reverb.flGainHF);
-    alEffectf(effect, AL_REVERB_DECAY_TIME, efx_reverb.flDecayTime);
-    alEffectf(effect, AL_REVERB_DECAY_HFRATIO, efx_reverb.flDecayHFRatio);
-    alEffectf(effect, AL_REVERB_REFLECTIONS_GAIN, efx_reverb.flReflectionsGain);
-    alEffectf(effect, AL_REVERB_REFLECTIONS_DELAY, efx_reverb.flReflectionsDelay);
-    alEffectf(effect, AL_REVERB_LATE_REVERB_GAIN, efx_reverb.flLateReverbGain);
-    alEffectf(effect, AL_REVERB_LATE_REVERB_DELAY, efx_reverb.flLateReverbDelay);
-    alEffectf(effect, AL_REVERB_AIR_ABSORPTION_GAINHF, efx_reverb.flAirAbsorptionGainHF);
-    alEffectf(effect, AL_REVERB_ROOM_ROLLOFF_FACTOR, efx_reverb.flRoomRolloffFactor);
-    alEffecti(effect, AL_REVERB_DECAY_HFLIMIT, efx_reverb.iDecayHFLimit);
+    alEffectf(effect, AL_REVERB_DENSITY, m_reverberationProps.flDensity);
+    alEffectf(effect, AL_REVERB_DIFFUSION, m_reverberationProps.flDiffusion);
+    alEffectf(effect, AL_REVERB_GAIN, m_reverberationProps.flGain);
+    alEffectf(effect, AL_REVERB_GAINHF, m_reverberationProps.flGainHF);
+    alEffectf(effect, AL_REVERB_DECAY_TIME, m_reverberationProps.flDecayTime);
+    alEffectf(effect, AL_REVERB_DECAY_HFRATIO, m_reverberationProps.flDecayHFRatio);
+    alEffectf(effect, AL_REVERB_REFLECTIONS_GAIN, m_reverberationProps.flReflectionsGain);
+    alEffectf(effect, AL_REVERB_REFLECTIONS_DELAY, m_reverberationProps.flReflectionsDelay);
+    alEffectf(effect, AL_REVERB_LATE_REVERB_GAIN, m_reverberationProps.flLateReverbGain);
+    alEffectf(effect, AL_REVERB_LATE_REVERB_DELAY, m_reverberationProps.flLateReverbDelay);
+    alEffectf(effect, AL_REVERB_AIR_ABSORPTION_GAINHF, m_reverberationProps.flAirAbsorptionGainHF);
+    alEffectf(effect, AL_REVERB_ROOM_ROLLOFF_FACTOR, m_reverberationProps.flRoomRolloffFactor);
+    alEffecti(effect, AL_REVERB_DECAY_HFLIMIT, m_reverberationProps.iDecayHFLimit);
 
     /* Check if an error occured, and clean up if so. */
     ALenum err = alGetError();
