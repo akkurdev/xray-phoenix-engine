@@ -12,8 +12,7 @@ public:
     typedef std::pair<ref_sound_data_ptr, float> event;
     xr_vector<event> s_events;
     BOOL bPresent;       
-    sound_event* Handler;
-    SoundRenderCache cache;    
+    sound_event* Handler;      
 
 public:
     CSoundRender_Core();
@@ -23,6 +22,7 @@ public:
     float ElapsedTime() const;
     float DeltaTime() const;
     void SetTime(float time);
+    SoundRenderCache Cache() const;
 
     virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
     virtual void _destroy_data(ref_sound_data& S);
@@ -77,6 +77,7 @@ protected:
     float m_time;
     float m_deltaTime;
     CTimer m_timer;
+    SoundRenderCache m_cache;
     bool m_isListenerMoved;
     SoundEnvironment m_currentEnvironment;
     SoundEnvironment m_targetEnvironment;

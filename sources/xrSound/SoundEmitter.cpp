@@ -447,7 +447,7 @@ void SoundEmitter::FillBlock(void* ptr, uint32_t size)
 
 void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
 {
-    auto lineSize = SoundRender->cache.LineSize();
+    auto lineSize = SoundRender->Cache().LineSize();
     auto line = offset / lineSize;
 
     // prepare for first line (it can be unaligned)
@@ -457,14 +457,14 @@ void SoundEmitter::FillData(uint8_t* ptr, uint32_t offset, uint32_t size)
     while (size)
     {
         // cache access
-        if (SoundRender->cache.Request(*RenderSource()->Cache(), line))
+        if (SoundRender->Cache().Request(*RenderSource()->Cache(), line))
         {
             RenderSource()->Decompress(line, m_renderTarget->OggFile());
         }
 
         // fill block
         auto blk_size = _min(size, lineAmount);
-        auto cachePtr = (uint8_t*)SoundRender->cache.GetDataById(*RenderSource()->Cache(), line);
+        auto cachePtr = (uint8_t*)SoundRender->Cache().GetDataById(*RenderSource()->Cache(), line);
 
         CopyMemory(ptr, cachePtr + lineOffset, blk_size);
 

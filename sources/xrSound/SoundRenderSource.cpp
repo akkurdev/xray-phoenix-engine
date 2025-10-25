@@ -80,12 +80,12 @@ void SoundRenderSource::Load(const char* fileName)
     ov_clear(&oggFile);
     FS.r_close(reader);
 
-    SoundRender->cache.CreateTable(*m_cache, m_bytesCount);
+    SoundRender->Cache().CreateTable(*m_cache, m_bytesCount);
 }
 
 void SoundRenderSource::Unload()
 {
-    SoundRender->cache.DestroyTable(*m_cache);
+    SoundRender->Cache().DestroyTable(*m_cache);
     m_length = 0.0f;
     m_bytesCount = 0;
 }
@@ -95,8 +95,8 @@ void SoundRenderSource::Decompress(uint32_t lineNumber, OggVorbis_File* oggFile)
     VERIFY(oggFile);
 
     // decompression of one cache-line
-    uint32_t lineSize = SoundRender->cache.LineSize();
-    char* cachePosition = (char*)SoundRender->cache.GetDataById(*m_cache, lineNumber);
+    uint32_t lineSize = SoundRender->Cache().LineSize();
+    char* cachePosition = (char*)SoundRender->Cache().GetDataById(*m_cache, lineNumber);
     uint32_t bufferOffset = (lineNumber * lineSize) / 2 / m_format.nChannels;
 
     uint32_t leftPosition = m_bytesCount - bufferOffset;

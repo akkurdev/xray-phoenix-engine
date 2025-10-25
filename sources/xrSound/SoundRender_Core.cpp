@@ -101,6 +101,11 @@ void CSoundRender_Core::SetTime(float time)
     m_time = time;
 }
 
+SoundRenderCache CSoundRender_Core::Cache() const
+{
+    return m_cache;
+}
+
 void CSoundRender_Core::_initialize(int stage)
 {
     m_timer.Start();
@@ -112,7 +117,7 @@ void CSoundRender_Core::_initialize(int stage)
 
     // Cache
     m_cacheLineSize = (sdef_target_block / 8) * 276400 / 1000;
-    cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
+    m_cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
 
     m_isReady = true;
 }
@@ -121,7 +126,7 @@ extern xr_vector<u8> g_target_temp_data;
 void CSoundRender_Core::_clear()
 {
     m_isReady = false;
-    cache.Destroy();
+    m_cache.Destroy();
     env_unload();
 
     // remove sources
@@ -183,8 +188,8 @@ void CSoundRender_Core::env_unload()
 
 void CSoundRender_Core::_restart()
 {
-    cache.Destroy();
-    cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
+    m_cache.Destroy();
+    m_cache.Initialize(psSoundCacheSizeMB * 1024, m_cacheLineSize);
     env_apply();
 }
 
@@ -793,10 +798,10 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
                 dest->_rendered++;
         }
         dest->_simulated = m_emitters.size();
-        dest->_cache_hits = cache.StatsHits();
-        dest->_cache_misses = cache.StatsMiss();
+        dest->_cache_hits = m_cache.StatsHits();
+        dest->_cache_misses = m_cache.StatsMiss();
         dest->_events = g_saved_event_count;
-        cache.ClearStatistic();
+        m_cache.ClearStatistic();
     }
     if (ext)
     {
