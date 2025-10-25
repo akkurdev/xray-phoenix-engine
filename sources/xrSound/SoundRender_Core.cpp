@@ -58,8 +58,8 @@ CSoundRender_Core::CSoundRender_Core()
     m_isListenerMoved = false;
     m_isReady = false;
     m_isLocked = false;
-    fTimer_Value = Timer.GetElapsed_sec();
-    fTimer_Delta = 0.0f;
+    m_time = m_timer.GetElapsed_sec();
+    m_deltaTime = 0.0f;
     m_reverberationProps = EFX_REVERB_PRESET_GENERIC;
     m_hasEfx = false;
     m_effect = 0;
@@ -81,9 +81,29 @@ CSoundRender_Core::~CSoundRender_Core()
     xr_delete(geom_SOM);
 }
 
+float CSoundRender_Core::Time() const
+{
+    return m_time;
+}
+
+float CSoundRender_Core::ElapsedTime() const
+{
+    return m_timer.GetElapsed_sec();
+}
+
+float CSoundRender_Core::DeltaTime() const
+{
+    return m_deltaTime;
+}
+
+void CSoundRender_Core::SetTime(float time)
+{
+    m_time = time;
+}
+
 void CSoundRender_Core::_initialize(int stage)
 {
-    Timer.Start();
+    m_timer.Start();
 
     // load environment
     env_load();
@@ -630,11 +650,11 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     if (0 == m_isReady)
         return;
     m_isLocked = true;
-    Timer.time_factor(psSoundTimeFactor); //--#SM+#--
-    float new_tm = Timer.GetElapsed_sec();
-    fTimer_Delta = new_tm - fTimer_Value;
-    float dt_sec = fTimer_Delta;
-    fTimer_Value = new_tm;
+    m_timer.time_factor(psSoundTimeFactor); //--#SM+#--
+    float new_tm = m_timer.GetElapsed_sec();
+    m_deltaTime = new_tm - m_time;
+    float dt_sec = m_deltaTime;
+    m_time = new_tm;
 
     m_emitterMarker++;
 

@@ -11,16 +11,20 @@ extern float psSoundVEffects;
 XRSOUND_API extern float psSoundCull;
 constexpr float TIME_TO_STOP_INFINITE = static_cast<float>(0xffffffff);
 
-inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTimeTotal, const float& fFreq, const WAVEFORMATEX& wfx)
+inline u32 calc_cursor(const float& fTimeStarted, const float& fTime, const float& fTimeTotal, const float& fFreq, const WAVEFORMATEX& wfx)
 {
-    if (fTime < fTimeStarted)
-        fTime = fTimeStarted; // Андрюха посоветовал, ассерт что ниже вылетел из за паузы как то хитро
-    R_ASSERT((fTime - fTimeStarted) >= 0.0f);
-    while ((fTime - fTimeStarted) > fTimeTotal / fFreq) // looped
+    auto time = fTime < fTimeStarted
+        ? fTimeStarted
+        : fTime;
+    
+    R_ASSERT((time - fTimeStarted) >= 0.0f);
+    while ((time - fTimeStarted) > fTimeTotal / fFreq) // looped
     {
-        fTime -= fTimeTotal / fFreq;
+        time -= fTimeTotal / fFreq;
     }
-    u32 curr_sample_num = iFloor((fTime - fTimeStarted) * fFreq * wfx.nSamplesPerSec);
+    u32 curr_sample_num = iFloor((time - fTimeStarted) * fFreq * wfx.nSamplesPerSec);
+    SoundRender->SetTime(time);
+
     return curr_sample_num * (wfx.wBitsPerSample / 8) * wfx.nChannels;
 }
 
@@ -89,7 +93,7 @@ uint32_t SoundEmitter::PlayTime() const
         m_state == EmitterState::SimulatingLooped;
     
     return isPlayed
-        ? iFloor((SoundRender->fTimer_Value - m_startTime) * 1000.0f)
+        ? iFloor((SoundRender->Time() - m_startTime) * 1000.0f)
         : 0;
 }
 
@@ -150,7 +154,7 @@ void SoundEmitter::Start(ref_sound* sound, bool isLooped, float delay)
             ? EmitterState::StartingLoopedDelayed
             : EmitterState::StartingDelayed;
 
-        m_propagadeTime = SoundRender->Timer.GetElapsed_sec();
+        m_propagadeTime = SoundRender->ElapsedTime();
     }
 
     m_startDelay = delay;
@@ -247,7 +251,7 @@ void SoundEmitter::Update(float deltaTime)
 
     if (m_state != EmitterState::Stopped)
     {
-        if (SoundRender->fTimer_Value >= m_propagadeTime)
+        if (SoundRender->Time() >= m_propagadeTime)
         {
             OnPropagade();
         }
@@ -262,7 +266,7 @@ void SoundEmitter::Update(float deltaTime)
 
 void SoundEmitter::Rewind()
 {
-    float fTime = SoundRender->Timer.GetElapsed_sec();
+    float fTime = SoundRender->ElapsedTime();
     float fDiff = fTime - m_startTime;
 
     m_isStopped = false;
@@ -590,11 +594,11 @@ void SoundEmitter::OnStart(float deltaTime, bool isLooped)
         ? 1.f
         : m_occluderVolume;
 
-    m_startTime = SoundRender->fTimer_Value;    
-    m_propagadeTime = SoundRender->fTimer_Value;
+    m_startTime = SoundRender->Time();
+    m_propagadeTime = SoundRender->Time();
     m_stopTime = isLooped 
         ? TIME_TO_STOP_INFINITE 
-        : SoundRender->fTimer_Value + (m_soundData->get_length_sec() / m_params.freq);
+        : SoundRender->Time() + (m_soundData->get_length_sec() / m_params.freq);
 
     m_fadeVolume = 1.f;
     m_occluderVolume = SoundRender->get_occlusion(m_params.position, .2f, m_occluder);
@@ -646,16 +650,16 @@ void SoundEmitter::OnPlay(float deltaTime, bool isLooped)
                 : EmitterState::Simulating;
         }
 
-        m_startTime += SoundRender->fTimer_Delta;        
-        m_propagadeTime += SoundRender->fTimer_Delta;
+        m_startTime += SoundRender->DeltaTime();
+        m_propagadeTime += SoundRender->DeltaTime();
 
         if (!isLooped)
         {
-            m_stopTime += SoundRender->fTimer_Delta;
+            m_stopTime += SoundRender->DeltaTime();
         }
         return;
     }
-    if (SoundRender->fTimer_Value >= m_stopTime)
+    if (SoundRender->Time() >= m_stopTime)
     {
         if (!isLooped)
         {
@@ -679,14 +683,14 @@ void SoundEmitter::OnSimulate(float deltaTime)
 {
     if (m_paused)
     {
-        m_startTime += SoundRender->fTimer_Delta;
-        m_stopTime += SoundRender->fTimer_Delta;
-        m_propagadeTime += SoundRender->fTimer_Delta;
+        m_startTime += SoundRender->DeltaTime();
+        m_stopTime += SoundRender->DeltaTime();
+        m_propagadeTime += SoundRender->DeltaTime();
 
         return;
     }
 
-    if (SoundRender->fTimer_Value >= m_stopTime)
+    if (SoundRender->Time() >= m_stopTime)
     {
         m_state = EmitterState::Stopped;
     }
@@ -694,7 +698,7 @@ void SoundEmitter::OnSimulate(float deltaTime)
     {
         auto cursor = calc_cursor(
             m_startTime, 
-            SoundRender->fTimer_Value, 
+            SoundRender->Time(),
             m_soundData->get_length_sec(), 
             m_params.freq, 
             RenderSource()->Format());
@@ -713,8 +717,8 @@ void SoundEmitter::OnLoopedSimulate(float deltaTime)
 {
     if (m_paused)
     {
-        m_startTime += SoundRender->fTimer_Delta;
-        m_propagadeTime += SoundRender->fTimer_Delta;
+        m_startTime += SoundRender->DeltaTime();
+        m_propagadeTime += SoundRender->DeltaTime();
         return;
     }
 
@@ -723,7 +727,7 @@ void SoundEmitter::OnLoopedSimulate(float deltaTime)
         m_state = EmitterState::PlayingLooped;
         auto cursor = calc_cursor(
             m_startTime, 
-            SoundRender->fTimer_Value, 
+            SoundRender->Time(),
             m_soundData->get_length_sec(), 
             m_params.freq, 
             RenderSource()->Format());
@@ -748,26 +752,26 @@ void SoundEmitter::OnRewind()
     float remainTime = (length - m_rewindTime) / m_params.freq;
     float pastTime = m_rewindTime / m_params.freq;
 
-    m_startTime = SoundRender->fTimer_Value - pastTime;
+    m_startTime = SoundRender->Time() - pastTime;
     m_propagadeTime = m_startTime; //--> For AI events
 
     if (m_startTime < 0.0f)
     {
         R_ASSERT2(m_startTime >= 0.0f, "Possible error in sound rewind logic! See log.");
 
-        m_startTime = SoundRender->fTimer_Value;
+        m_startTime = SoundRender->Time();
         m_propagadeTime = m_startTime;
     }
 
     if (!isLooped)
     {
         //--> Пересчитываем время, когда звук должен остановиться [recalculate stop time]
-        m_stopTime = SoundRender->fTimer_Value + remainTime;
+        m_stopTime = SoundRender->Time() + remainTime;
     }
 
     auto cursor = calc_cursor(
         m_startTime, 
-        SoundRender->fTimer_Value, 
+        SoundRender->Time(),
         length, 
         m_params.freq, 
         RenderSource()->Format());

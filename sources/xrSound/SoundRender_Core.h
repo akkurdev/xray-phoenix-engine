@@ -11,10 +11,7 @@ class CSoundRender_Core : public CSound_manager_interface
 public:
     typedef std::pair<ref_sound_data_ptr, float> event;
     xr_vector<event> s_events;
-    BOOL bPresent;
-    CTimer Timer;
-    float fTimer_Value;
-    float fTimer_Delta;
+    BOOL bPresent;       
     sound_event* Handler;
     SoundRenderCache cache;    
 
@@ -22,10 +19,15 @@ public:
     CSoundRender_Core();
     virtual ~CSoundRender_Core();
 
+    float Time() const;
+    float ElapsedTime() const;
+    float DeltaTime() const;
+    void SetTime(float time);
+
     virtual void _create_data(ref_sound_data& S, LPCSTR fName, esound_type sound_type, int game_type);
     virtual void _destroy_data(ref_sound_data& S);
     virtual void create(ref_sound& S, const char* fName, esound_type sound_type, int game_type);
-    virtual void attach_tail(ref_sound& S, LPCSTR fName);
+    virtual void attach_tail(ref_sound& S, const char* fName);
     virtual void clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type);
     virtual void destroy(ref_sound& S);    
     virtual void play(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f);
@@ -72,6 +74,9 @@ protected:
     void env_apply();
 
 protected:
+    float m_time;
+    float m_deltaTime;
+    CTimer m_timer;
     bool m_isListenerMoved;
     SoundEnvironment m_currentEnvironment;
     SoundEnvironment m_targetEnvironment;
