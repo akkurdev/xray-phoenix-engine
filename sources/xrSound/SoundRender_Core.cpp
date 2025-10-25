@@ -53,7 +53,7 @@ CSoundRender_Core::CSoundRender_Core()
     m_environments = nullptr;
     Handler = NULL;
     s_targets_pu = 0;
-    s_emitters_u = 0;
+    m_emitterMarker = 0;
     m_currentEnvironment.SetIdentity();
     m_targetEnvironment.SetIdentity();
     m_isListenerMoved = false;
@@ -637,7 +637,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     float dt_sec = fTimer_Delta;
     fTimer_Value = new_tm;
 
-    s_emitters_u++;
+    m_emitterMarker++;
 
     // Firstly update emitters, which are now being rendered
     for (it = 0; it < m_renderTargets.size(); it++)
@@ -647,7 +647,7 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
         if (E)
         {
             E->Update(dt_sec);
-            E->SetMarker(s_emitters_u);
+            E->SetMarker(m_emitterMarker);
             E = T->Emitter(); // update can stop itself
             if (E)
                 T->SetPriority(E->Priority());
@@ -664,10 +664,10 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D, const Fvector
     for (it = 0; it < m_emitters.size(); it++)
     {
         ISoundEmitter* pEmitter = m_emitters[it];
-        if (pEmitter->Marker() != s_emitters_u)
+        if (pEmitter->Marker() != m_emitterMarker)
         {
             pEmitter->Update(dt_sec);
-            pEmitter->SetMarker(s_emitters_u);
+            pEmitter->SetMarker(m_emitterMarker);
         }
         if (!pEmitter->IsPlaying())
         {
